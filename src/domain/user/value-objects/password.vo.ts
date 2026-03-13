@@ -32,8 +32,8 @@ function make(input: unknown): string {
   return normalized;
 }
 
-const password = Object.freeze({
+const passwordValue = Object.freeze({
   make,
 });
 
-export default password;
+export default passwordValue;

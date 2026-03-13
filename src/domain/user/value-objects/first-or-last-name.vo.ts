@@ -35,8 +35,8 @@ function make(input: unknown): FirstOrLastName {
   return normalized as FirstOrLastName;
 }
 
-const firstOrLastName = Object.freeze({
+const firstOrLastNameValue = Object.freeze({
   make,
 });
 
-export default firstOrLastName;
+export default firstOrLastNameValue;

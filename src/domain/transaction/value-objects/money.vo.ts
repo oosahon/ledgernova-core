@@ -169,7 +169,7 @@ function divide(
   };
 }
 
-const money = Object.freeze({
+const moneyValue = Object.freeze({
   make,
   makeZeroAmount,
   isSameCurrency,
@@ -179,4 +179,4 @@ const money = Object.freeze({
   multiply,
 });
 
-export default money;
+export default moneyValue;

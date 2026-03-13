@@ -57,7 +57,7 @@ function domain(email: string): string {
   return email.slice(atIndex + 1);
 }
 
-const email = Object.freeze({
+const emailValue = Object.freeze({
   normalize,
   isValid,
   make,
@@ -65,4 +65,4 @@ const email = Object.freeze({
   domain,
 });
 
-export default email;
+export default emailValue;
