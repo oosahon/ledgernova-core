@@ -1,4 +1,6 @@
-const expenseTaxKeys = Object.freeze({
+import { ECategoryType } from '../../category/types/category.types';
+
+const expenseTaxKeys = {
   other: 'expense:other',
   rent: 'expense:rent',
   lifeInsurance: 'expense:life_insurance',
@@ -7,9 +9,9 @@ const expenseTaxKeys = Object.freeze({
   nhisContribution: 'expense:nhis_contribution',
   nhfContribution: 'expense:nhf_contribution',
   interestOnHouseLoan: 'expense:interest_on_house_loan',
-});
+};
 
-const incomeTaxKeys = Object.freeze({
+const incomeTaxKeys = {
   salary: 'income:salary',
   sales: 'income:sales',
   homeSale: 'income:home_sale',
@@ -39,29 +41,53 @@ const incomeTaxKeys = Object.freeze({
   pensionPRA: 'income:pensions_rsa',
   retirementBenefit: 'income:retirement_benefit',
   other: 'income:other',
-});
+};
 
 function makeIncome(userId?: string | null) {
-  return !userId
-    ? incomeTaxKeys.other
-    : `${incomeTaxKeys.other}::${userId}::${Date.now()}`;
+  return !userId ? incomeTaxKeys.other : `${incomeTaxKeys.other}::${userId}`;
+}
+
+function makeLiabilityIncome(userId?: string | null) {
+  const base = `income:liability`;
+  return !userId ? base : `${base}::${userId}`;
 }
 
 function makeExpense(userId?: string | null) {
-  return !userId
-    ? expenseTaxKeys.other
-    : `${expenseTaxKeys.other}::${userId}::${Date.now()}`;
+  return !userId ? expenseTaxKeys.other : `${expenseTaxKeys.other}::${userId}`;
 }
 
-const taxKey = Object.freeze({
-  income: {
+function makeLiabilityExpense(userId?: string | null) {
+  const base = `expense:liability`;
+  return !userId ? base : `${base}::${userId}`;
+}
+
+function isValid(taxKey: string, type: ECategoryType) {
+  switch (type) {
+    case ECategoryType.Income:
+      return Object.values(incomeTaxKeys).includes(taxKey);
+    case ECategoryType.Expense:
+      return Object.values(expenseTaxKeys).includes(taxKey);
+    case ECategoryType.LiabilityIncome:
+      return taxKey.startsWith('income:liability');
+    case ECategoryType.LiabilityExpense:
+      return taxKey.startsWith('expense:liability');
+    default:
+      return false;
+  }
+}
+
+const taxKeyValue = Object.freeze({
+  income: Object.freeze({
     make: makeIncome,
-    value: incomeTaxKeys,
-  },
-  expense: {
+    value: Object.freeze(incomeTaxKeys),
+    makeLiability: makeLiabilityIncome,
+  }),
+  expense: Object.freeze({
     make: makeExpense,
-    value: expenseTaxKeys,
-  },
+    value: Object.freeze(expenseTaxKeys),
+    makeLiability: makeLiabilityExpense,
+  }),
+  isValid,
 });
 
-export default taxKey;
+export default taxKeyValue;
