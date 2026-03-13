@@ -44,7 +44,7 @@ describe('Currency Value Object', () => {
       expect(currency.value.NGN.code).toBe('NGN');
       expect(currency.value.NGN.symbol).toBe('₦');
       expect(currency.value.NGN.name).toBe('Naira');
-      expect(currency.value.NGN.minorUnit).toBe(2);
+      expect(currency.value.NGN.minorUnit).toBe(2n);
 
       expect(currency.value.USD).toBeDefined();
       expect(currency.value.USD.code).toBe('USD');
@@ -52,7 +52,7 @@ describe('Currency Value Object', () => {
 
       expect(currency.value.JPY).toBeDefined();
       expect(currency.value.JPY.code).toBe('JPY');
-      expect(currency.value.JPY.minorUnit).toBe(0);
+      expect(currency.value.JPY.minorUnit).toBe(0n);
     });
 
     it('should be frozen to prevent modifications', () => {

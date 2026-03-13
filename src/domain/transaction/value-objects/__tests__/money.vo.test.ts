@@ -44,7 +44,7 @@ describe('Money Value Object', () => {
     it('should throw an error for an invalid currency code', () => {
       const fakeCurrency = { ...NGN, code: 'FAKE' };
       expect(() => money.make(100, fakeCurrency, true)).toThrow(
-        new AppError('error.currency.invalid_code')
+        new AppError('Invalid currency code')
       );
     });
 

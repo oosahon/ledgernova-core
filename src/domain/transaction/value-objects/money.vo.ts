@@ -51,7 +51,7 @@ function make(
   );
 
   if (!isValidCurrencyCode) {
-    throw new AppError('error.currency.invalid_code');
+    throw new AppError('Invalid currency code');
   }
 
   if (
