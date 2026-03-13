@@ -3,8 +3,9 @@ import { POSTGRES_URL } from './src/infra/config/vars';
 
 export default defineConfig({
   dialect: 'postgresql',
-  schema: './src/infra/db/schema/index.ts',
+  out: './src/infra/db/drizzle',
   dbCredentials: {
     url: POSTGRES_URL,
   },
+  schemaFilter: ['core', 'audit', 'public'],
 });
