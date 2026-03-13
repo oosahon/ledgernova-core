@@ -72,7 +72,9 @@ describe('Category Entity', () => {
       };
 
       expect(() => categoryEntity.make(payload)).toThrow(AppError);
-      expect(() => categoryEntity.make(payload)).toThrow('No parent id provided for user category');
+      expect(() => categoryEntity.make(payload)).toThrow(
+        'No parent id provided for user category'
+      );
     });
 
     describe('taxKey generation via getTaxKey', () => {
@@ -84,28 +86,44 @@ describe('Category Entity', () => {
       };
 
       it('should generate income taxKey for ECategoryType.Income', () => {
-        const result = categoryEntity.make({ ...basePayload, type: ECategoryType.Income });
+        const result = categoryEntity.make({
+          ...basePayload,
+          type: ECategoryType.Income,
+        });
         expect(result.taxKey).toBe(taxKey.income.make(null));
       });
 
       it('should generate income taxKey for ECategoryType.LiabilityIncome', () => {
-        const result = categoryEntity.make({ ...basePayload, type: ECategoryType.LiabilityIncome });
+        const result = categoryEntity.make({
+          ...basePayload,
+          type: ECategoryType.LiabilityIncome,
+        });
         expect(result.taxKey).toBe(taxKey.income.make(null));
       });
 
       it('should generate expense taxKey for ECategoryType.Expense', () => {
-        const result = categoryEntity.make({ ...basePayload, type: ECategoryType.Expense });
+        const result = categoryEntity.make({
+          ...basePayload,
+          type: ECategoryType.Expense,
+        });
         expect(result.taxKey).toBe(taxKey.expense.make(null));
       });
 
       it('should generate expense taxKey for ECategoryType.LiabilityExpense', () => {
-        const result = categoryEntity.make({ ...basePayload, type: ECategoryType.LiabilityExpense });
+        const result = categoryEntity.make({
+          ...basePayload,
+          type: ECategoryType.LiabilityExpense,
+        });
         expect(result.taxKey).toBe(taxKey.expense.make(null));
       });
 
       it('should throw an error for an invalid category type', () => {
-        expect(() => categoryEntity.make({ ...basePayload, type: 'invalid_type' as any })).toThrow(AppError);
-        expect(() => categoryEntity.make({ ...basePayload, type: 'invalid_type' as any })).toThrow('Invalid category type');
+        expect(() =>
+          categoryEntity.make({ ...basePayload, type: 'invalid_type' as any })
+        ).toThrow(AppError);
+        expect(() =>
+          categoryEntity.make({ ...basePayload, type: 'invalid_type' as any })
+        ).toThrow('Invalid category type');
       });
     });
 
@@ -118,23 +136,37 @@ describe('Category Entity', () => {
       };
 
       it('should throw an error for empty, null, or undefined name', () => {
-        expect(() => categoryEntity.make({ ...basePayload, name: '' })).toThrow(AppError);
-        expect(() => categoryEntity.make({ ...basePayload, name: null as any })).toThrow(AppError);
-        expect(() => categoryEntity.make({ ...basePayload, name: undefined as any })).toThrow(AppError);
+        expect(() => categoryEntity.make({ ...basePayload, name: '' })).toThrow(
+          AppError
+        );
+        expect(() =>
+          categoryEntity.make({ ...basePayload, name: null as any })
+        ).toThrow(AppError);
+        expect(() =>
+          categoryEntity.make({ ...basePayload, name: undefined as any })
+        ).toThrow(AppError);
       });
 
       it('should throw an error if name is not a string', () => {
-        expect(() => categoryEntity.make({ ...basePayload, name: 123 as any })).toThrow(AppError);
-        expect(() => categoryEntity.make({ ...basePayload, name: {} as any })).toThrow(AppError);
+        expect(() =>
+          categoryEntity.make({ ...basePayload, name: 123 as any })
+        ).toThrow(AppError);
+        expect(() =>
+          categoryEntity.make({ ...basePayload, name: {} as any })
+        ).toThrow(AppError);
       });
 
       it('should throw an error if trimmed name is empty', () => {
-        expect(() => categoryEntity.make({ ...basePayload, name: '    ' })).toThrow(AppError);
+        expect(() =>
+          categoryEntity.make({ ...basePayload, name: '    ' })
+        ).toThrow(AppError);
       });
 
       it('should throw an error if trimmed name length is > 100', () => {
         const longName = 'A'.repeat(101);
-        expect(() => categoryEntity.make({ ...basePayload, name: longName })).toThrow(AppError);
+        expect(() =>
+          categoryEntity.make({ ...basePayload, name: longName })
+        ).toThrow(AppError);
       });
 
       it('should accept trimmed name length up to 100', () => {
@@ -166,7 +198,9 @@ describe('Category Entity', () => {
 
       expect(result.name).toBe('Updated Name');
       expect(result.description).toBe('Original Description');
-      expect(result.updatedAt.getTime()).toBeGreaterThan(existingCategory.updatedAt.getTime());
+      expect(result.updatedAt.getTime()).toBeGreaterThan(
+        existingCategory.updatedAt.getTime()
+      );
       expect(Object.isFrozen(result)).toBe(true);
     });
 
@@ -176,11 +210,16 @@ describe('Category Entity', () => {
 
       expect(result.name).toBe('Original Name');
       expect(result.description).toBe('Updated Description');
-      expect(result.updatedAt.getTime()).toBeGreaterThan(existingCategory.updatedAt.getTime());
+      expect(result.updatedAt.getTime()).toBeGreaterThan(
+        existingCategory.updatedAt.getTime()
+      );
     });
-    
+
     it('should update both name and description correctly', () => {
-      const options = { name: 'Updated Name', description: 'Updated Description' };
+      const options = {
+        name: 'Updated Name',
+        description: 'Updated Description',
+      };
       const result = categoryEntity.update(existingCategory, options);
 
       expect(result.name).toBe('Updated Name');
@@ -189,7 +228,9 @@ describe('Category Entity', () => {
 
     it('should throw an error when updating with invalid name', () => {
       const options = { name: '   ' };
-      expect(() => categoryEntity.update(existingCategory, options)).toThrow(AppError);
+      expect(() => categoryEntity.update(existingCategory, options)).toThrow(
+        AppError
+      );
     });
 
     it('should keep existing values if options are empty', () => {
@@ -217,7 +258,9 @@ describe('Category Entity', () => {
       const result = categoryEntity.archive(activeCategory);
 
       expect(result.status).toBe('archived');
-      expect(result.updatedAt.getTime()).toBeGreaterThan(activeCategory.updatedAt.getTime());
+      expect(result.updatedAt.getTime()).toBeGreaterThan(
+        activeCategory.updatedAt.getTime()
+      );
       expect(Object.isFrozen(result)).toBe(true);
     });
 
@@ -226,8 +269,10 @@ describe('Category Entity', () => {
       jest.advanceTimersByTime(1000);
       const result = categoryEntity.archive(archivedCategory);
 
-      expect(result).toBe(archivedCategory); 
-      expect(result.updatedAt.getTime()).toBe(archivedCategory.updatedAt.getTime());
+      expect(result).toBe(archivedCategory);
+      expect(result.updatedAt.getTime()).toBe(
+        archivedCategory.updatedAt.getTime()
+      );
     });
   });
 
@@ -251,7 +296,9 @@ describe('Category Entity', () => {
       const result = categoryEntity.unarchive(archivedCategory);
 
       expect(result.status).toBe('active');
-      expect(result.updatedAt.getTime()).toBeGreaterThan(archivedCategory.updatedAt.getTime());
+      expect(result.updatedAt.getTime()).toBeGreaterThan(
+        archivedCategory.updatedAt.getTime()
+      );
       expect(Object.isFrozen(result)).toBe(true);
     });
 
@@ -260,8 +307,10 @@ describe('Category Entity', () => {
       jest.advanceTimersByTime(1000);
       const result = categoryEntity.unarchive(activeCategory);
 
-      expect(result).toBe(activeCategory); 
-      expect(result.updatedAt.getTime()).toBe(activeCategory.updatedAt.getTime());
+      expect(result).toBe(activeCategory);
+      expect(result.updatedAt.getTime()).toBe(
+        activeCategory.updatedAt.getTime()
+      );
     });
   });
 });

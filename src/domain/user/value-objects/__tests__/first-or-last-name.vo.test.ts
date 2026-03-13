@@ -25,7 +25,7 @@ describe('FirstOrLastName Value Object', () => {
       expect(firstOrLastName.make('Sørina')).toBe('Sørina');
       expect(firstOrLastName.make('François')).toBe('François');
       expect(firstOrLastName.make('Ångström')).toBe('Ångström');
-      
+
       // Test unicode normalization: 'e' + combining acute accent vs 'é'
       const combined = '\u0065\u0301';
       const normalized = '\u00e9';
