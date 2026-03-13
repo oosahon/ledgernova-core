@@ -26,6 +26,7 @@ describe('Category Entity', () => {
         description: 'System Description',
         parentId: null,
         userId: null,
+        taxKey: taxKey.income.make(null),
       };
 
       const result = categoryEntity.make(payload);
@@ -53,6 +54,7 @@ describe('Category Entity', () => {
         description: 'User Description',
         parentId: 'parent-uuid',
         userId: 'user-uuid',
+        taxKey: undefined as any,
       };
 
       const result = categoryEntity.make(payload);
@@ -69,6 +71,7 @@ describe('Category Entity', () => {
         description: 'No parent id',
         parentId: null, // missing parent id
         userId: 'user-uuid',
+        taxKey: undefined as any,
       };
 
       expect(() => categoryEntity.make(payload)).toThrow(AppError);
@@ -81,8 +84,9 @@ describe('Category Entity', () => {
       const basePayload = {
         name: 'Test Category',
         description: 'Desc',
-        parentId: null,
-        userId: null,
+        parentId: 'parent-id',
+        userId: 'user-id',
+        taxKey: undefined as any,
       };
 
       it('should generate income taxKey for ECategoryType.Income', () => {
@@ -90,7 +94,7 @@ describe('Category Entity', () => {
           ...basePayload,
           type: ECategoryType.Income,
         });
-        expect(result.taxKey).toBe(taxKey.income.make(null));
+        expect(result.taxKey).toBe(taxKey.income.make('user-id'));
       });
 
       it('should generate income taxKey for ECategoryType.LiabilityIncome', () => {
@@ -98,7 +102,7 @@ describe('Category Entity', () => {
           ...basePayload,
           type: ECategoryType.LiabilityIncome,
         });
-        expect(result.taxKey).toBe(taxKey.income.make(null));
+        expect(result.taxKey).toBe(taxKey.income.makeLiability('user-id'));
       });
 
       it('should generate expense taxKey for ECategoryType.Expense', () => {
@@ -106,7 +110,7 @@ describe('Category Entity', () => {
           ...basePayload,
           type: ECategoryType.Expense,
         });
-        expect(result.taxKey).toBe(taxKey.expense.make(null));
+        expect(result.taxKey).toBe(taxKey.expense.make('user-id'));
       });
 
       it('should generate expense taxKey for ECategoryType.LiabilityExpense', () => {
@@ -114,7 +118,7 @@ describe('Category Entity', () => {
           ...basePayload,
           type: ECategoryType.LiabilityExpense,
         });
-        expect(result.taxKey).toBe(taxKey.expense.make(null));
+        expect(result.taxKey).toBe(taxKey.expense.makeLiability('user-id'));
       });
 
       it('should throw an error for an invalid category type', () => {
@@ -133,6 +137,7 @@ describe('Category Entity', () => {
         description: 'Desc',
         parentId: null,
         userId: null,
+        taxKey: taxKey.income.make(null),
       };
 
       it('should throw an error for empty, null, or undefined name', () => {
@@ -187,6 +192,7 @@ describe('Category Entity', () => {
         description: 'Original Description',
         parentId: null,
         userId: null,
+        taxKey: taxKey.income.make(null),
       });
 
       jest.advanceTimersByTime(1000);
@@ -250,6 +256,7 @@ describe('Category Entity', () => {
         description: 'Desc',
         parentId: null,
         userId: null,
+        taxKey: taxKey.income.make(null),
       });
       jest.advanceTimersByTime(1000);
     });
@@ -286,6 +293,7 @@ describe('Category Entity', () => {
         description: 'Desc',
         parentId: null,
         userId: null,
+        taxKey: taxKey.income.make(null),
       });
       jest.advanceTimersByTime(1000);
       archivedCategory = categoryEntity.archive(activeCategory);

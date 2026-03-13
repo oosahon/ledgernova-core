@@ -1,7 +1,7 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import { AppError } from '../../../shared/value-objects/error';
-import taxKey from '../../tax/value-objects/tax-keys.vo';
+import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
 import { ECategoryType, ICategory } from '../types/category.types';
 
 function sanitizeName(name: string) {
@@ -23,12 +23,16 @@ function sanitizeName(name: string) {
 function getTaxKey(type: ECategoryType, userId?: string | null) {
   switch (type) {
     case ECategoryType.Income:
-    case ECategoryType.LiabilityIncome:
-      return taxKey.income.make(userId);
+      return taxKeyValue.income.make(userId);
 
     case ECategoryType.Expense:
+      return taxKeyValue.expense.make(userId);
+
+    case ECategoryType.LiabilityIncome:
+      return taxKeyValue.income.makeLiability(userId);
+
     case ECategoryType.LiabilityExpense:
-      return taxKey.expense.make(userId);
+      return taxKeyValue.expense.makeLiability(userId);
 
     default:
       throw new AppError('Invalid category type', {
@@ -38,7 +42,7 @@ function getTaxKey(type: ECategoryType, userId?: string | null) {
 }
 
 function make(
-  payload: TCreationOmits<ICategory, 'status' | 'taxKey'>
+  payload: TCreationOmits<ICategory, 'status'> & { taxKey?: string }
 ): ICategory {
   const timestamps = new Date();
 
@@ -49,10 +53,22 @@ function make(
     });
   }
 
+  if (!payload.userId && !payload.taxKey) {
+    throw new AppError('No tax key provided for system category', {
+      cause: payload,
+    });
+  }
+
+  if (payload.taxKey && !taxKeyValue.isValid(payload.taxKey, payload.type)) {
+    throw new AppError('Invalid tax key', {
+      cause: payload.taxKey,
+    });
+  }
+
   return Object.freeze({
     id: generateUUID(),
     name: sanitizeName(payload.name),
-    taxKey: getTaxKey(payload.type, payload.userId),
+    taxKey: payload.taxKey ?? getTaxKey(payload.type, payload.userId),
     type: payload.type,
     parentId: payload.parentId,
     description: payload.description,
@@ -100,11 +116,11 @@ function unarchive(category: ICategory): ICategory {
   });
 }
 
-const category = Object.freeze({
+const categoryEntity = Object.freeze({
   make,
   update,
   archive,
   unarchive,
 });
 
-export default category;
+export default categoryEntity;
