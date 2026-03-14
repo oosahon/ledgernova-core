@@ -19,7 +19,7 @@
     "build:routes": "tsoa spec-and-routes ",
     "drizzle:pull": "drizzle-kit pull",
     "db:seed:generate": "node bin/generate-seed-file.js",
-    "db:seed": "ts-node src/infra/db/seeds/index.ts",
+    "db:seed": "ts-node bin/run-seed.ts",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org purpleledger --project node-express ./dist && sentry-cli sourcemaps upload --org purpleledger --project node-express ./dist",
     "prepare": "husky",
     "email:build": "node bin/mjml-to-html.js"
