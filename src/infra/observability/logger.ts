@@ -1,6 +1,7 @@
 import * as winston from 'winston';
+import ILogger from '../../app/contracts/infra-services/logger.contract';
 
-const logger = winston.createLogger({
+const logger: ILogger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
   transports: [

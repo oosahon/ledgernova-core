@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.0",
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "ECategoryType": {
+        "enum": ["income", "expense", "liability_income", "liability_expense"],
+        "type": "string"
+      },
+      "UCategoryStatus": {
+        "type": "string",
+        "enum": ["active", "archived"]
+      },
+      "ICategory": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ECategoryType"
+          },
+          "taxKey": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UCategoryStatus"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "taxKey",
+          "status",
+          "description",
+          "parentId",
+          "userId",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {}
+  },
+  "info": {
+    "title": "purple-ledger-be",
+    "version": "1.0.0",
+    "description": "This repo contains the server-side source code for Purple Ledger's bookkeeping and tax app.",
+    "license": {
+      "name": "ISC"
+    },
+    "contact": {
+      "name": "Osahon Oboite"
+    }
+  },
+  "paths": {
+    "/categories": {
+      "get": {
+        "operationId": "getCategories",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ICategory"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "description": "Get Categories",
+        "tags": ["Category"],
+        "security": [],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "categoryType",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ECategoryType"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ]
+}

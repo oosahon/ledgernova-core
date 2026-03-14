@@ -7,7 +7,7 @@ import {
 import taxKeyValue from '../../../domain/tax/value-objects/tax-keys.vo';
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import { seeds } from '../drizzle/schema';
-import categoryRepo from '../repo/category.repo.impl';
+import categoryRepo from '../repos/category.repo.impl';
 
 type TPayload = TCreationOmits<ICategory, 'status' | 'parentId' | 'userId'>;
 

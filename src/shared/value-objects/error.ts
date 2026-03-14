@@ -65,10 +65,10 @@ export class ErrorUnprocessableEntity extends ApiError {
 
   constructor(
     validationErrors: IApiValidationError[],
-    message: string,
+    message?: string,
     cause?: Record<string, unknown>
   ) {
-    super(422, message, cause);
+    super(422, message || 'Unprocessable Entity', cause);
     this.validationErrors = validationErrors;
   }
 }
