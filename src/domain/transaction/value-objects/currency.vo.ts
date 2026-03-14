@@ -59,10 +59,10 @@ function isValidMinorUnit(minorUnit: number): boolean {
   return Number.isInteger(minorUnit) && minorUnit >= 0 && minorUnit <= 8;
 }
 
-const currency = Object.freeze({
+const currencyValue = Object.freeze({
   value: currencies,
   isValidCurrencyCode,
   isValidMinorUnit,
 });
 
-export default currency;
+export default currencyValue;

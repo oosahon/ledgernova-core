@@ -88,6 +88,46 @@
     }
   },
   "paths": {
+    "/currencies": {
+      "get": {
+        "operationId": "getCurrencies",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "symbol": {
+                        "type": "string"
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "minorUnit": {
+                        "type": "number",
+                        "format": "double"
+                      }
+                    },
+                    "required": ["name", "symbol", "code", "minorUnit"],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        "description": "Get Currencies",
+        "tags": ["Currency"],
+        "security": [],
+        "parameters": []
+      }
+    },
     "/categories": {
       "get": {
         "operationId": "getCategories",

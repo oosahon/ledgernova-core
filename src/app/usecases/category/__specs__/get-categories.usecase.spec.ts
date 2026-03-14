@@ -1,7 +1,11 @@
 import getCategoriesUseCase from '../get-categories.usecase';
 import ICategoryRepo from '../../../../domain/category/repos/category.repo';
-import { ECategoryType } from '../../../../domain/category/types/category.types';
+import {
+  ECategoryType,
+  ICategory,
+} from '../../../../domain/category/types/category.types';
 import { MockStore } from '../../../contracts/storage/__mocks__/store.contract.mock';
+import { IStore } from '../../../../shared/types/store.types';
 
 describe('getCategoriesUseCase', () => {
   let categoryRepo: jest.Mocked<ICategoryRepo>;
@@ -21,9 +25,9 @@ describe('getCategoriesUseCase', () => {
     MockStore.get.mockReturnValue({
       correlationId,
       user: { id: userId },
-    } as any);
+    } as IStore);
 
-    const mockCategories = [{ id: '1', name: 'category 1' }] as any;
+    const mockCategories = [{ id: '1', name: 'category 1' }] as ICategory[];
     categoryRepo.findAll.mockResolvedValue(mockCategories);
 
     const execute = getCategoriesUseCase(categoryRepo, MockStore);
@@ -115,14 +119,14 @@ describe('getCategoriesUseCase', () => {
 
     MockStore.get.mockReturnValue({
       correlationId,
-      user: null as any,
-    } as any);
+      user: null,
+    } as IStore);
 
     const mockCategories = [] as any;
     categoryRepo.findAll.mockResolvedValue(mockCategories);
 
-    const execute = getCategoriesUseCase(categoryRepo, MockStore);
-    const result = await execute(ECategoryType.Income);
+    const usecase = getCategoriesUseCase(categoryRepo, MockStore);
+    const result = await usecase(ECategoryType.Income);
 
     expect(MockStore.get).toHaveBeenCalledTimes(1);
     expect(categoryRepo.findAll).toHaveBeenCalledWith(

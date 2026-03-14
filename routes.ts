@@ -4,6 +4,8 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import { fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { CurrencyController } from './src/http/controllers/currency.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CategoryController } from './src/http/controllers/category.controller';
 import type {
   Request as ExRequest,
@@ -85,6 +87,48 @@ export function RegisterRoutes(app: Router) {
   //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
   // ###########################################################################################################
 
+  const argsCurrencyController_getCurrencies: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {};
+  app.get(
+    '/api/v1/currencies',
+    ...fetchMiddlewares<RequestHandler>(CurrencyController),
+    ...fetchMiddlewares<RequestHandler>(
+      CurrencyController.prototype.getCurrencies
+    ),
+
+    async function CurrencyController_getCurrencies(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsCurrencyController_getCurrencies,
+          request,
+          response,
+        });
+
+        const controller = new CurrencyController();
+
+        await templateService.apiHandler({
+          methodName: 'getCurrencies',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: 200,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   const argsCategoryController_getCategories: Record<
     string,
     TsoaRoute.ParameterSchema

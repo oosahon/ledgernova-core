@@ -1,5 +1,8 @@
 import categoryMapper from '../category.mapper';
-import { ECategoryType } from '../../../domain/category/types/category.types';
+import {
+  ECategoryType,
+  ICategory,
+} from '../../../domain/category/types/category.types';
 
 describe('Category Mapper', () => {
   const commonDomainDates = {
@@ -16,7 +19,7 @@ describe('Category Mapper', () => {
 
   describe('toRepo', () => {
     it('should map a domain category to a repo model', () => {
-      const domainCategory = {
+      const domainCategory: ICategory = {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
@@ -24,8 +27,7 @@ describe('Category Mapper', () => {
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
-        isDefaultRoot: false,
-        isActive: true,
+        status: 'active' as const,
         ...commonDomainDates,
       };
 
@@ -37,43 +39,33 @@ describe('Category Mapper', () => {
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
-        isDefaultRoot: false,
-        isActive: true,
+        status: 'active' as const,
         ...commonRepoDates,
       };
 
-      expect(categoryMapper.toRepo(domainCategory as any)).toEqual(
-        expectedRepoModel
-      );
+      expect(categoryMapper.toRepo(domainCategory)).toEqual(expectedRepoModel);
     });
 
     it('should handle missing optional fields when mapping to repo model', () => {
-      const domainCategory = {
+      const domainCategory: ICategory = {
         id: 'category-id',
         name: 'Test Category',
-        description: null,
+        description: 'sas',
         type: ECategoryType.Income,
-        isDefaultRoot: true,
-        isActive: true,
+        status: 'active' as const,
+        parentId: null,
+        taxKey: 'sxa',
+        userId: null,
         ...commonDomainDates,
       };
 
       const expectedRepoModel = {
-        id: 'category-id',
-        name: 'Test Category',
-        description: null,
-        type: ECategoryType.Income,
-        userId: null,
-        parentId: null,
-        taxKey: null,
-        isDefaultRoot: true,
-        isActive: true,
+        ...domainCategory,
+        type: 'income',
         ...commonRepoDates,
       };
 
-      expect(categoryMapper.toRepo(domainCategory as any)).toEqual(
-        expectedRepoModel
-      );
+      expect(categoryMapper.toRepo(domainCategory)).toEqual(expectedRepoModel);
     });
   });
 
@@ -87,12 +79,11 @@ describe('Category Mapper', () => {
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',
-        isDefaultRoot: false,
-        isActive: true,
+        status: 'active' as const,
         ...commonRepoDates,
       };
 
-      const expectedDomainCategory = {
+      const expectedDomainCategory: ICategory = {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
@@ -100,12 +91,11 @@ describe('Category Mapper', () => {
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',
-        isDefaultRoot: false,
-        isActive: true,
+        status: 'active' as const,
         ...commonDomainDates,
       };
 
-      expect(categoryMapper.toDomainExpense(repoModel as any)).toEqual(
+      expect(categoryMapper.toDomainExpense(repoModel)).toEqual(
         expectedDomainCategory
       );
     });
@@ -119,8 +109,7 @@ describe('Category Mapper', () => {
         userId: null,
         parentId: null,
         taxKey: null,
-        isDefaultRoot: false,
-        isActive: true,
+        status: 'active' as const,
         ...commonRepoDates,
       };
 
@@ -139,8 +128,7 @@ describe('Category Mapper', () => {
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
-        isDefaultRoot: true,
-        isActive: true,
+        status: 'active' as const,
         ...commonRepoDates,
       };
 
@@ -152,8 +140,7 @@ describe('Category Mapper', () => {
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
-        isDefaultRoot: true,
-        isActive: true,
+        status: 'active' as const,
         ...commonDomainDates,
       };
 
@@ -171,8 +158,7 @@ describe('Category Mapper', () => {
         userId: null,
         parentId: null,
         taxKey: null,
-        isDefaultRoot: false,
-        isActive: true,
+        status: 'active' as const,
         ...commonRepoDates,
       };
 
