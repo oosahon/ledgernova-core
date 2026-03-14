@@ -1,22 +1,22 @@
 import currency from '../currency.vo';
 
 describe('Currency Value Object', () => {
-  describe('isValidCurrencyCode', () => {
+  describe('isValidCode', () => {
     it('should return true for valid currency codes', () => {
-      expect(currency.isValidCurrencyCode('NGN')).toBe(true);
-      expect(currency.isValidCurrencyCode('USD')).toBe(true);
-      expect(currency.isValidCurrencyCode('CAD')).toBe(true);
-      expect(currency.isValidCurrencyCode('EUR')).toBe(true);
-      expect(currency.isValidCurrencyCode('GBP')).toBe(true);
-      expect(currency.isValidCurrencyCode('JPY')).toBe(true);
+      expect(currency.isValidCode('NGN')).toBe(true);
+      expect(currency.isValidCode('USD')).toBe(true);
+      expect(currency.isValidCode('CAD')).toBe(true);
+      expect(currency.isValidCode('EUR')).toBe(true);
+      expect(currency.isValidCode('GBP')).toBe(true);
+      expect(currency.isValidCode('JPY')).toBe(true);
     });
 
     it('should return false for invalid currency codes', () => {
-      expect(currency.isValidCurrencyCode('xyz')).toBe(false);
-      expect(currency.isValidCurrencyCode('')).toBe(false);
-      expect(currency.isValidCurrencyCode('NGN ')).toBe(false);
-      expect(currency.isValidCurrencyCode('ngn')).toBe(false);
-      expect(currency.isValidCurrencyCode('123')).toBe(false);
+      expect(currency.isValidCode('xyz')).toBe(false);
+      expect(currency.isValidCode('')).toBe(false);
+      expect(currency.isValidCode('NGN ')).toBe(false);
+      expect(currency.isValidCode('ngn')).toBe(false);
+      expect(currency.isValidCode('123')).toBe(false);
     });
   });
 

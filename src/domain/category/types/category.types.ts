@@ -1,16 +1,18 @@
-export enum ECategoryType {
-  Income = 'income',
-  Expense = 'expense',
-  LiabilityIncome = 'liability_income',
-  LiabilityExpense = 'liability_expense',
-}
+export const ECategoryType = {
+  Income: 'income',
+  Expense: 'expense',
+  LiabilityIncome: 'liability_income',
+  LiabilityExpense: 'liability_expense',
+} as const;
+
+export type UCategoryType = (typeof ECategoryType)[keyof typeof ECategoryType];
 
 export type UCategoryStatus = 'active' | 'archived';
 
 export interface ICategory {
   id: string;
   name: string;
-  type: ECategoryType;
+  type: UCategoryType;
   taxKey: string;
   status: UCategoryStatus;
   description: string;
@@ -22,17 +24,17 @@ export interface ICategory {
 }
 
 export interface IIncomeCategory extends ICategory {
-  type: ECategoryType.Income;
+  type: 'income';
 }
 
 export interface IExpenseCategory extends ICategory {
-  type: ECategoryType.Expense;
+  type: 'expense';
 }
 
 export interface ILiabilityIncomeCategory extends ICategory {
-  type: ECategoryType.LiabilityIncome;
+  type: 'liability_income';
 }
 
 export interface ILiabilityExpenseCategory extends ICategory {
-  type: ECategoryType.LiabilityExpense;
+  type: 'liability_expense';
 }

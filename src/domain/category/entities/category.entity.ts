@@ -2,7 +2,11 @@ import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import { AppError } from '../../../shared/value-objects/error';
 import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
-import { ECategoryType, ICategory } from '../types/category.types';
+import {
+  ECategoryType,
+  ICategory,
+  UCategoryType,
+} from '../types/category.types';
 
 function sanitizeName(name: string) {
   if (!name || typeof name !== 'string') {
@@ -20,7 +24,7 @@ function sanitizeName(name: string) {
   return trimmed;
 }
 
-function getTaxKey(type: ECategoryType, userId?: string | null) {
+function getTaxKey(type: UCategoryType, userId?: string | null) {
   switch (type) {
     case ECategoryType.Income:
       return taxKeyValue.income.make(userId);

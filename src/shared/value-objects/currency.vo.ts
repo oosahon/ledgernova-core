@@ -1,3 +1,4 @@
+import { AppError } from './error';
 import { ICurrency } from '../types/money.types';
 
 const Naira: ICurrency = {
@@ -59,10 +60,17 @@ function isValidMinorUnit(minorUnit: number): boolean {
   return Number.isInteger(minorUnit) && minorUnit >= 0 && minorUnit <= 8;
 }
 
+function validateCurrencyCode(code: string) {
+  if (!isValidCurrencyCode(code)) {
+    throw new AppError('Invalid currency code', { cause: code });
+  }
+}
+
 const currencyValue = Object.freeze({
   value: currencies,
-  isValidCurrencyCode,
+  isValidCode: isValidCurrencyCode,
   isValidMinorUnit,
+  validateCode: validateCurrencyCode,
 });
 
 export default currencyValue;

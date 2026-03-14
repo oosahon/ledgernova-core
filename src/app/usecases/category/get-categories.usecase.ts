@@ -1,15 +1,18 @@
 import ICategoryRepo from '../../../domain/category/repos/category.repo';
-import { ECategoryType } from '../../../domain/category/types/category.types';
+import {
+  ECategoryType,
+  UCategoryType,
+} from '../../../domain/category/types/category.types';
 import IStorage from '../../contracts/storage/store.contract';
 
 export default function getCategoriesUseCase(
   categoryRepo: ICategoryRepo,
   storage: IStorage
 ) {
-  return async (categoryType: ECategoryType) => {
+  return async (categoryType: UCategoryType) => {
     const { user, correlationId } = storage.get();
 
-    const typePayload = [];
+    const typePayload: UCategoryType[] = [];
 
     switch (categoryType) {
       case ECategoryType.Income:

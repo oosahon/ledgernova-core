@@ -1,4 +1,7 @@
-import { ECategoryType } from '../../category/types/category.types';
+import {
+  ECategoryType,
+  UCategoryType,
+} from '../../category/types/category.types';
 
 const expenseTaxKeys = {
   other: 'expense:other',
@@ -61,7 +64,7 @@ function makeLiabilityExpense(userId?: string | null) {
   return !userId ? base : `${base}::${userId}`;
 }
 
-function isValid(taxKey: string, type: ECategoryType) {
+function isValid(taxKey: string, type: UCategoryType) {
   switch (type) {
     case ECategoryType.Income:
       return Object.values(incomeTaxKeys).includes(taxKey);

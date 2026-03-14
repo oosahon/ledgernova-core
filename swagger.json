@@ -7,9 +7,9 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
-      "ECategoryType": {
-        "enum": ["income", "expense", "liability_income", "liability_expense"],
-        "type": "string"
+      "UCategoryType": {
+        "type": "string",
+        "enum": ["income", "expense", "liability_income", "liability_expense"]
       },
       "UCategoryStatus": {
         "type": "string",
@@ -24,7 +24,7 @@
             "type": "string"
           },
           "type": {
-            "$ref": "#/components/schemas/ECategoryType"
+            "$ref": "#/components/schemas/UCategoryType"
           },
           "taxKey": {
             "type": "string"
@@ -155,7 +155,7 @@
             "name": "categoryType",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/ECategoryType"
+              "$ref": "#/components/schemas/UCategoryType"
             }
           }
         ]

@@ -17,9 +17,18 @@ import type {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-  ECategoryType: {
-    dataType: 'refEnum',
-    enums: ['income', 'expense', 'liability_income', 'liability_expense'],
+  UCategoryType: {
+    dataType: 'refAlias',
+    type: {
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['income'] },
+        { dataType: 'enum', enums: ['expense'] },
+        { dataType: 'enum', enums: ['liability_income'] },
+        { dataType: 'enum', enums: ['liability_expense'] },
+      ],
+      validators: {},
+    },
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   UCategoryStatus: {
@@ -39,7 +48,7 @@ const models: TsoaRoute.Models = {
     properties: {
       id: { dataType: 'string', required: true },
       name: { dataType: 'string', required: true },
-      type: { ref: 'ECategoryType', required: true },
+      type: { ref: 'UCategoryType', required: true },
       taxKey: { dataType: 'string', required: true },
       status: { ref: 'UCategoryStatus', required: true },
       description: { dataType: 'string', required: true },
@@ -137,7 +146,7 @@ export function RegisterRoutes(app: Router) {
       in: 'query',
       name: 'categoryType',
       required: true,
-      ref: 'ECategoryType',
+      ref: 'UCategoryType',
     },
   };
   app.get(

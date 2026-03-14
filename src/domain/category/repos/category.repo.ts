@@ -1,5 +1,5 @@
 import IRepoOptions from '../../../shared/types/repo-options.types';
-import { ECategoryType, ICategory } from '../types/category.types';
+import { ICategory, UCategoryType } from '../types/category.types';
 
 export default interface ICategoryRepo {
   save(category: ICategory, params: IRepoOptions): Promise<void>;
@@ -12,7 +12,7 @@ export default interface ICategoryRepo {
 
   findByName(
     name: string,
-    type: ECategoryType,
+    type: UCategoryType,
     userId: string,
     params: IRepoOptions
   ): Promise<ICategory | null>;
@@ -24,7 +24,7 @@ export default interface ICategoryRepo {
   ): Promise<void>;
 
   findAll(
-    type: ECategoryType[],
+    type: UCategoryType[],
     params: IRepoOptions,
     query?: { userId?: string; ids?: string[] }
   ): Promise<ICategory[]>;

@@ -1,6 +1,6 @@
 import money from '../money.vo';
 import currency from '../currency.vo';
-import { AppError } from '../../../../shared/value-objects/error';
+import { AppError } from '../error';
 
 describe('Money Value Object', () => {
   const NGN = currency.value.NGN;

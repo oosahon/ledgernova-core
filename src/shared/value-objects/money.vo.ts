@@ -1,6 +1,6 @@
-import { AppError } from '../../../shared/value-objects/error';
+import { AppError } from './error';
 import { ICurrency, IMoney } from '../types/money.types';
-import currencyValueObject from '../value-objects/currency.vo';
+import currencyValueObject from './currency.vo';
 
 // TODO (i18n): translate error messages
 
@@ -46,9 +46,7 @@ function make(
   currency: ICurrency,
   isInMinorUnit: boolean
 ) {
-  const isValidCurrencyCode = currencyValueObject.isValidCurrencyCode(
-    currency.code
-  );
+  const isValidCurrencyCode = currencyValueObject.isValidCode(currency.code);
 
   if (!isValidCurrencyCode) {
     throw new AppError('Invalid currency code');

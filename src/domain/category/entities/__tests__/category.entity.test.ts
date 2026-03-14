@@ -1,11 +1,8 @@
+import _ from 'lodash';
 import { AppError } from '../../../../shared/value-objects/error';
 import categoryEntity from '../category.entity';
 import { ECategoryType } from '../../types/category.types';
 import taxKey from '../../../tax/value-objects/tax-keys.vo';
-
-jest.mock('../../../../shared/utils/uuid-generator', () => {
-  return jest.fn(() => 'mocked-uuid');
-});
 
 describe('Category Entity', () => {
   beforeEach(() => {
@@ -31,8 +28,7 @@ describe('Category Entity', () => {
 
       const result = categoryEntity.make(payload);
 
-      expect(result).toEqual({
-        id: 'mocked-uuid',
+      expect(_.omit(result, 'id')).toEqual({
         name: 'System Category', // trimmed
         taxKey: taxKey.income.make(null), // 'income:other' since userId is null
         type: ECategoryType.Income,

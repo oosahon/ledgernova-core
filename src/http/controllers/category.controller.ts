@@ -10,7 +10,7 @@ import {
 } from 'tsoa';
 import categoryUseCase from '../../app/usecases/category';
 import middlewares from '../middlewares';
-import { ECategoryType } from '../../domain/category/types/category.types';
+import { UCategoryType } from '../../domain/category/types/category.types';
 
 @Route('categories')
 @Tags('Category')
@@ -22,7 +22,7 @@ export class CategoryController extends Controller {
   @OperationId('getCategories')
   @SuccessResponse('200')
   @Middlewares(middlewares.isOptionalAuthenticatedUser)
-  public async getCategories(@Query() categoryType: ECategoryType) {
+  public async getCategories(@Query() categoryType: UCategoryType) {
     return categoryUseCase.getAll(categoryType);
   }
 }

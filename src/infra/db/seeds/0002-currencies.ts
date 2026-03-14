@@ -1,4 +1,4 @@
-import currencyValue from '../../../domain/transaction/value-objects/currency.vo';
+import currencyValue from '../../../shared/value-objects/currency.vo';
 import { TDBTransaction } from '../../../shared/types/seeder.types';
 import currencyRepo from '../repos/currency.repo.impl';
 
