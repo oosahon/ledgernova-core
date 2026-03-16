@@ -1,3 +1,6 @@
+import { IMoney } from '../../../shared/types/money.types';
+import { ICategory } from '../../category/types/category.types';
+
 export const ETransactionDirection = {
   Debit: 'debit',
   Credit: 'credit',
@@ -32,15 +35,27 @@ export type UTransactionStatus =
 export type UTransactionType =
   (typeof ETransactionType)[keyof typeof ETransactionType];
 
+export interface ITransactionItem {
+  id: string;
+  name: string;
+  price: IMoney;
+  quantity: number;
+  unitPrice: IMoney | null;
+  transactionId: string;
+  category: ICategory;
+  isSystemGenerated: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}
+
 export interface ITransaction {
   id: string;
   status: UTransactionStatus;
   createdBy: string;
   type: UTransactionType;
   accountId: string;
-  amount: bigint;
-  currencyCode: string;
-  categoryId: string | null;
+  amount: IMoney;
   attachmentIds: string[];
   date: Date;
   recipientAccountId: string | null;
@@ -49,4 +64,12 @@ export interface ITransaction {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+}
+
+export interface ITransactionWithItems extends ITransaction {
+  items: ITransactionItem[];
+}
+
+export interface ITransactionAttachment {
+  // TODO: implement
 }

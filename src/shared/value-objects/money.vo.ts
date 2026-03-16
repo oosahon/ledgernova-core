@@ -1,13 +1,9 @@
 import { AppError } from './error';
 import { ICurrency, IMoney } from '../types/money.types';
 import currencyValueObject from './currency.vo';
+import { IFactor } from '../types/number.types';
 
 // TODO (i18n): translate error messages
-
-interface IFactor {
-  numerator: number;
-  denominator: number;
-}
 
 /**
  * Checks if the factor is valid.
@@ -167,6 +163,22 @@ function divide(
   };
 }
 
+function validate(money: IMoney) {
+  if (typeof money.amount !== 'bigint') {
+    throw new AppError('Invalid amount', { cause: money.amount });
+  }
+
+  if (!currencyValueObject.isValidCode(money.currency.code)) {
+    throw new AppError('Invalid currency code', { cause: money.currency.code });
+  }
+}
+
+function equals(money: IMoney, other: IMoney) {
+  return (
+    money.amount === other.amount && money.currency.code === other.currency.code
+  );
+}
+
 const moneyValue = Object.freeze({
   make,
   makeZeroAmount,
@@ -175,6 +187,8 @@ const moneyValue = Object.freeze({
   subtract,
   divide,
   multiply,
+  validate,
+  equals,
 });
 
 export default moneyValue;

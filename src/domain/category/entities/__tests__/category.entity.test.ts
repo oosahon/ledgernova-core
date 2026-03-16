@@ -1,8 +1,12 @@
 import _ from 'lodash';
 import { AppError } from '../../../../shared/value-objects/error';
 import categoryEntity from '../category.entity';
-import { ECategoryType } from '../../types/category.types';
+import { ECategoryType, ICategory } from '../../types/category.types';
 import taxKey from '../../../tax/value-objects/tax-keys.vo';
+import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
+import taxKeyValue from '../../../tax/value-objects/tax-keys.vo';
+
+type TMakePayload = TCreationOmits<ICategory, 'status'>;
 
 describe('Category Entity', () => {
   beforeEach(() => {
@@ -44,20 +48,37 @@ describe('Category Entity', () => {
     });
 
     it('should create a valid user category successfully (with parentId)', () => {
-      const payload = {
+      const validParentId = '123e4567-e89b-12d3-a456-426614174000';
+      const validUserId = '987fcdeb-51a2-43d7-9012-3456789abcde';
+      const payload: TCreationOmits<ICategory, 'status'> = {
         name: 'User Category',
         type: ECategoryType.Expense,
         description: 'User Description',
-        parentId: 'parent-uuid',
-        userId: 'user-uuid',
-        taxKey: undefined as any,
+        parentId: validParentId,
+        userId: validUserId,
+        taxKey: taxKeyValue.expense.make(),
       };
 
       const result = categoryEntity.make(payload);
 
-      expect(result.userId).toBe('user-uuid');
-      expect(result.parentId).toBe('parent-uuid');
-      expect(result.taxKey).toBe(taxKey.expense.make('user-uuid'));
+      expect(result.userId).toBe(validUserId);
+      expect(result.parentId).toBe(validParentId);
+      expect(result.taxKey).toBe(payload.taxKey);
+    });
+
+    it('should create a category and use the provided taxKey instead of generating it', () => {
+      const payload = {
+        name: 'Custom Tax Category',
+        type: ECategoryType.Income,
+        description: 'Uses taxKey explicitly',
+        parentId: null,
+        userId: null,
+        taxKey: 'custom-tax-key',
+      };
+
+      const result = categoryEntity.make(payload);
+
+      expect(result.taxKey).toBe('custom-tax-key');
     });
 
     it('should throw an error if a user category does not have a parentId', () => {
@@ -66,31 +87,31 @@ describe('Category Entity', () => {
         type: ECategoryType.Expense,
         description: 'No parent id',
         parentId: null, // missing parent id
-        userId: 'user-uuid',
-        taxKey: undefined as any,
-      };
+        userId: '987fcdeb-51a2-43d7-9012-3456789abcde',
+        taxKey: undefined,
+      } as unknown as TMakePayload;
 
       expect(() => categoryEntity.make(payload)).toThrow(AppError);
-      expect(() => categoryEntity.make(payload)).toThrow(
-        'No parent id provided for user category'
-      );
+      expect(() => categoryEntity.make(payload)).toThrow('Invalid parent id');
     });
 
     describe('taxKey generation via getTaxKey', () => {
+      const validParentId = '123e4567-e89b-12d3-a456-426614174000';
+      const validUserId = '987fcdeb-51a2-43d7-9012-3456789abcde';
       const basePayload = {
         name: 'Test Category',
         description: 'Desc',
-        parentId: 'parent-id',
-        userId: 'user-id',
-        taxKey: undefined as any,
-      };
+        parentId: validParentId,
+        userId: validUserId,
+        taxKey: undefined,
+      } as unknown as TMakePayload;
 
       it('should generate income taxKey for ECategoryType.Income', () => {
         const result = categoryEntity.make({
           ...basePayload,
           type: ECategoryType.Income,
         });
-        expect(result.taxKey).toBe(taxKey.income.make('user-id'));
+        expect(result.taxKey).toBe(taxKey.income.make(validUserId));
       });
 
       it('should generate income taxKey for ECategoryType.LiabilityIncome', () => {
@@ -98,7 +119,7 @@ describe('Category Entity', () => {
           ...basePayload,
           type: ECategoryType.LiabilityIncome,
         });
-        expect(result.taxKey).toBe(taxKey.income.makeLiability('user-id'));
+        expect(result.taxKey).toBe(taxKey.income.makeLiability(validUserId));
       });
 
       it('should generate expense taxKey for ECategoryType.Expense', () => {
@@ -106,7 +127,7 @@ describe('Category Entity', () => {
           ...basePayload,
           type: ECategoryType.Expense,
         });
-        expect(result.taxKey).toBe(taxKey.expense.make('user-id'));
+        expect(result.taxKey).toBe(taxKey.expense.make(validUserId));
       });
 
       it('should generate expense taxKey for ECategoryType.LiabilityExpense', () => {
@@ -114,15 +135,21 @@ describe('Category Entity', () => {
           ...basePayload,
           type: ECategoryType.LiabilityExpense,
         });
-        expect(result.taxKey).toBe(taxKey.expense.makeLiability('user-id'));
+        expect(result.taxKey).toBe(taxKey.expense.makeLiability(validUserId));
       });
 
       it('should throw an error for an invalid category type', () => {
         expect(() =>
-          categoryEntity.make({ ...basePayload, type: 'invalid_type' as any })
+          categoryEntity.make({
+            ...basePayload,
+            type: 'invalid_type',
+          } as unknown as TMakePayload)
         ).toThrow(AppError);
         expect(() =>
-          categoryEntity.make({ ...basePayload, type: 'invalid_type' as any })
+          categoryEntity.make({
+            ...basePayload,
+            type: 'invalid_type',
+          } as unknown as TMakePayload)
         ).toThrow('Invalid category type');
       });
     });
@@ -141,26 +168,37 @@ describe('Category Entity', () => {
           AppError
         );
         expect(() =>
-          categoryEntity.make({ ...basePayload, name: null as any })
+          categoryEntity.make({
+            ...basePayload,
+            name: null,
+          } as unknown as TMakePayload)
         ).toThrow(AppError);
         expect(() =>
-          categoryEntity.make({ ...basePayload, name: undefined as any })
+          categoryEntity.make({
+            ...basePayload,
+            name: undefined,
+          } as unknown as TMakePayload)
         ).toThrow(AppError);
       });
 
       it('should throw an error if name is not a string', () => {
         expect(() =>
-          categoryEntity.make({ ...basePayload, name: 123 as any })
+          categoryEntity.make({
+            ...basePayload,
+            name: 123,
+          } as unknown as TMakePayload)
         ).toThrow(AppError);
         expect(() =>
-          categoryEntity.make({ ...basePayload, name: {} as any })
+          categoryEntity.make({
+            ...basePayload,
+            name: {},
+          } as unknown as TMakePayload)
         ).toThrow(AppError);
       });
 
-      it('should throw an error if trimmed name is empty', () => {
-        expect(() =>
-          categoryEntity.make({ ...basePayload, name: '    ' })
-        ).toThrow(AppError);
+      it('should trim string with only spaces and successfully create category with empty name', () => {
+        const result = categoryEntity.make({ ...basePayload, name: '    ' });
+        expect(result.name).toBe('');
       });
 
       it('should throw an error if trimmed name length is > 100', () => {
@@ -179,7 +217,7 @@ describe('Category Entity', () => {
   });
 
   describe('update', () => {
-    let existingCategory: any;
+    let existingCategory: ICategory;
 
     beforeEach(() => {
       existingCategory = categoryEntity.make({
@@ -228,8 +266,33 @@ describe('Category Entity', () => {
       expect(result.description).toBe('Updated Description');
     });
 
-    it('should throw an error when updating with invalid name', () => {
+    it('should update name to empty string when updating with a string of only spaces', () => {
       const options = { name: '   ' };
+      const result = categoryEntity.update(existingCategory, options);
+      expect(result.name).toBe('');
+    });
+
+    it('should ignore falsy name during update and fallback to original name', () => {
+      const options = { name: '' };
+      const result = categoryEntity.update(existingCategory, options);
+      expect(result.name).toBe('Original Name');
+    });
+
+    it('should fallback to category description if options.description is undefined', () => {
+      const options = { description: undefined };
+      const result = categoryEntity.update(existingCategory, options);
+      expect(result.description).toBe('Original Description');
+    });
+
+    it('should update description to empty string if empty string is provided', () => {
+      const options = { description: '' };
+      const result = categoryEntity.update(existingCategory, options);
+      expect(result.description).toBe('');
+    });
+
+    it('should throw an error if description exceeds 255 characters', () => {
+      const longDescription = 'A'.repeat(256);
+      const options = { description: longDescription };
       expect(() => categoryEntity.update(existingCategory, options)).toThrow(
         AppError
       );

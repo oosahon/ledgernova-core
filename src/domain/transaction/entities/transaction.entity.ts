@@ -1,127 +1,95 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
+import deepFreeze from '../../../shared/utils/deep-freeze';
+import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import { AppError } from '../../../shared/value-objects/error';
 import {
-  ETransactionStatus,
-  ETransactionType,
   ITransaction,
-  UTransactionStatus,
-  UTransactionType,
+  ITransactionItem,
+  ITransactionWithItems,
 } from '../types/transaction.types';
+import transactionItemEntity from './transaction-item.entity';
+import helpers from './helpers/transaction.helpers';
 
-function isValidTransactionType(type: UTransactionType) {
-  return Object.values(ETransactionType).includes(type);
+interface IMakeItemPayload extends TCreationOmits<
+  ITransactionItem,
+  'name' | 'transactionId'
+> {
+  name?: string;
 }
 
-function validateType(type: UTransactionType) {
-  if (!isValidTransactionType(type)) {
-    throw new AppError('Invalid transaction type', {
-      cause: type,
-    });
-  }
-}
-
-function validateCategoryId(
-  transactionType: UTransactionType,
-  category: string | null
-) {
-  const doesNotRequireCategory = [
-    ETransactionType.Transfer,
-    ETransactionType.Journal,
-  ];
-
-  if (doesNotRequireCategory.includes(transactionType)) {
-    return;
-  }
-
-  if (!category) {
-    throw new AppError('Invalid category', {
-      cause: category,
-    });
-  }
-}
-
-function validateAccount(accountId: string) {
-  if (!accountId || typeof accountId !== 'string') {
-    throw new AppError('Invalid account id', {
-      cause: accountId,
-    });
-  }
-}
-
-function validateRecipientAccount(
-  transactionType: UTransactionType,
-  recipientAccountId?: string | null
-) {
-  const isTransfer = transactionType === ETransactionType.Transfer;
-
-  if (!isTransfer) {
-    return;
-  }
-
-  if (!recipientAccountId || typeof recipientAccountId !== 'string') {
-    throw new AppError('Invalid recipient account id', {
-      cause: recipientAccountId,
-    });
-  }
-}
-
-function sanitizeNote(note: string | null) {
-  if (!note || typeof note !== 'string') {
-    return null;
-  }
-
-  const trimmed = note.trim();
-
-  if (trimmed.length > 250) {
-    throw new AppError('Note cannot be more than 250 characters', {
-      cause: note,
+function addItems(
+  transaction: ITransaction,
+  itemsPayload: IMakeItemPayload[]
+): ITransactionWithItems {
+  if (!itemsPayload || itemsPayload.length === 0) {
+    throw new AppError('Transaction items are required', {
+      cause: itemsPayload,
     });
   }
 
-  return trimmed;
-}
+  const items = itemsPayload.map((item) =>
+    transactionItemEntity.make(transaction.id, transaction.createdAt, item)
+  );
 
-function validateStatus(status: UTransactionStatus) {
-  if (!Object.values(ETransactionStatus).includes(status)) {
-    throw new AppError('Invalid transaction status', {
-      cause: status,
-    });
-  }
-}
+  transactionItemEntity.validateItemsAmount(items, transaction.amount);
 
-function make(payload: TCreationOmits<ITransaction>): ITransaction {
-  validateType(payload.type);
-  validateCategoryId(payload.type, payload.categoryId);
-  validateAccount(payload.accountId);
-  validateRecipientAccount(payload.type, payload.recipientAccountId);
-  validateStatus(payload.status);
-  const note = sanitizeNote(payload.note);
-
-  const timestamps = new Date();
-
-  return Object.freeze({
-    id: generateUUID(),
-    createdBy: payload.createdBy,
-    type: payload.type,
-    accountId: payload.accountId,
-    amount: payload.amount,
-    currencyCode: payload.currencyCode,
-    categoryId: payload.categoryId,
-    attachmentIds: payload.attachmentIds,
-    date: payload.date,
-    recipientAccountId: payload.recipientAccountId,
-    exchangeRate: payload.exchangeRate,
-    status: payload.status,
-    note,
-    createdAt: timestamps,
-    updatedAt: timestamps,
-    deletedAt: null,
+  return deepFreeze<ITransactionWithItems>({
+    ...transaction,
+    items,
   });
+}
+
+/**
+ * Creates a transaction with at least one transaction item.
+ *  - No transaction item is created for transfer transaction.
+ *  - Transactions are created without attachments initially.
+ *    To add an attachment, call the makeTransactionAttachments() function
+ */
+function make(
+  transactionPayload: TCreationOmits<ITransaction>,
+  itemsPayload: IMakeItemPayload[]
+): ITransactionWithItems {
+  helpers.validateMakePayload(transactionPayload, itemsPayload.length);
+
+  const transactionId = generateUUID();
+  const timestamp = new Date();
+
+  const note = stringUtils.sanitizeAndValidate(transactionPayload.note, {
+    min: 0,
+    max: 255,
+  });
+
+  const transaction: ITransaction = {
+    id: transactionId,
+    status: transactionPayload.status,
+    createdBy: transactionPayload.createdBy,
+    type: transactionPayload.type,
+    accountId: transactionPayload.accountId,
+    amount: transactionPayload.amount,
+    attachmentIds: [],
+    date: transactionPayload.date,
+    recipientAccountId: transactionPayload.recipientAccountId,
+    exchangeRate: transactionPayload.exchangeRate,
+    note,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    deletedAt: null,
+  };
+
+  if (helpers.doesNotRequireItem(transaction.type)) {
+    return deepFreeze<ITransactionWithItems>({
+      ...transaction,
+      items: [],
+    });
+  }
+
+  return addItems(transaction, itemsPayload);
 }
 
 const transactionEntity = Object.freeze({
   make,
+  ...helpers,
 });
 
 export default transactionEntity;

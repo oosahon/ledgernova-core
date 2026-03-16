@@ -10,48 +10,12 @@ import {
   IAccount,
   ULedgerAccountType,
 } from '../types/account.types';
+import helpers from './helpers/account.helpers';
 
 interface IGetBalanceParams {
   type: ULedgerAccountType;
   totalCredit: IMoney;
   totalDebit: IMoney;
-}
-
-function validateAccountType(type: ULedgerAccountType) {
-  const isValid = [
-    ELedgerAccountType.Asset,
-    ELedgerAccountType.Liability,
-    ELedgerAccountType.Equity,
-    ELedgerAccountType.Revenue,
-    ELedgerAccountType.Expense,
-  ].includes(type);
-
-  if (!isValid) {
-    throw new AppError('Invalid account type', { cause: type });
-  }
-}
-
-function sanitizeName(name: string): string {
-  const isInvalid =
-    typeof name !== 'string' || name.trim().length === 0 || name.length > 100;
-  if (isInvalid) {
-    throw new AppError('Invalid account name', { cause: name });
-  }
-  return name.trim();
-}
-
-function sanitizeSubType(subType?: string | null): string | null {
-  if (!subType) {
-    return null;
-  }
-  const isInvalid =
-    typeof subType !== 'string' ||
-    subType.trim().length === 0 ||
-    subType.length > 100;
-  if (isInvalid) {
-    throw new AppError('Invalid account sub type', { cause: subType });
-  }
-  return subType.trim();
 }
 
 function make(payload: TCreationOmits<IAccount>): IAccount {
@@ -67,9 +31,9 @@ function make(payload: TCreationOmits<IAccount>): IAccount {
   return Object.freeze({
     id: generateUUID(),
     userId: payload.userId,
-    name: sanitizeName(payload.name),
+    name: helpers.sanitizeName(payload.name),
     type: payload.type,
-    subType: sanitizeSubType(payload.subType),
+    subType: helpers.sanitizeSubType(payload.subType),
     currencyCode: payload.currencyCode,
     status: EAccountStatus.Active,
     createdAt: timestamp,
@@ -107,9 +71,9 @@ function update(
 
   return Object.freeze({
     ...account,
-    name: payload.name ? sanitizeName(payload.name) : account.name,
+    name: payload.name ? helpers.sanitizeName(payload.name) : account.name,
     subType: payload.subType
-      ? sanitizeSubType(payload.subType)
+      ? helpers.sanitizeSubType(payload.subType)
       : account.subType,
     currencyCode: payload.currencyCode || account.currencyCode,
     updatedAt: new Date(),
@@ -138,7 +102,7 @@ const accountEntity = Object.freeze({
   update,
   archive,
   unarchive,
-  validateAccountType,
+  ...helpers,
 });
 
 export default accountEntity;
