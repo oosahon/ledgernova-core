@@ -1,6 +1,4 @@
-import { TDBTransaction } from '../../../shared/types/seeder.types';
-import currencyRepo from '../repos/currency.repo.impl';
-import { ICurrency } from '../../../shared/types/money.types';
+import { ICurrency } from '../../types/money.types';
 
 const Naira: ICurrency = {
   code: 'NGN',
@@ -44,14 +42,13 @@ const Yen: ICurrency = {
   minorUnit: 0n,
 };
 
-const currencies = [Naira, USDollar, CanadianDollar, Euro, Pounds, Yen];
+const mockCurrencies = Object.freeze({
+  NGN: Naira,
+  USD: USDollar,
+  CAD: CanadianDollar,
+  EUR: Euro,
+  GBP: Pounds,
+  JPY: Yen,
+});
 
-// Always use the transaction passed to you
-export default async function main(tx: TDBTransaction) {
-  for (const currency of currencies) {
-    await currencyRepo.save(currency, {
-      tx,
-      correlationId: '0002-currencies-seed',
-    });
-  }
-}
+export default mockCurrencies;

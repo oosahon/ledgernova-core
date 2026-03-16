@@ -1,15 +1,12 @@
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
-import { IMoney } from '../../../../shared/types/money.types';
 import dateUtils from '../../../../shared/utils/date';
-import numberUtils from '../../../../shared/utils/number';
+import stringUtils from '../../../../shared/utils/string';
 import { AppError } from '../../../../shared/value-objects/error';
 import moneyValue from '../../../../shared/value-objects/money.vo';
-import { ICategory } from '../../../category/types/category.types';
 import {
   ETransactionStatus,
   ETransactionType,
   ITransaction,
-  ITransactionItem,
   UTransactionStatus,
   UTransactionType,
 } from '../../types/transaction.types';
@@ -127,6 +124,17 @@ function validateTransactionStatus(status: UTransactionStatus) {
   }
 }
 
+function sanitizeNote(note: string | null) {
+  if (!note) {
+    return null;
+  }
+
+  return stringUtils.sanitizeAndValidate(note, {
+    min: 0,
+    max: 255,
+  });
+}
+
 function validateMakePayload(
   transactionPayload: TCreationOmits<ITransaction>,
   itemsLength: number
@@ -152,6 +160,7 @@ const transactionHelpers = Object.freeze({
   validateMakePayload,
   doesNotRequireItem,
   validateItemsOnMake,
+  sanitizeNote,
 });
 
 export default transactionHelpers;

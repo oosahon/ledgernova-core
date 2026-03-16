@@ -1,11 +1,11 @@
 import money from '../money.vo';
-import currency from '../currency.vo';
 import { AppError } from '../error';
+import mockCurrencies from '../__mocks__/currencies.mock';
 
 describe('Money Value Object', () => {
-  const NGN = currency.value.NGN;
-  const USD = currency.value.USD;
-  const JPY = currency.value.JPY;
+  const NGN = mockCurrencies.NGN;
+  const USD = mockCurrencies.USD;
+  const JPY = mockCurrencies.JPY;
 
   describe('make', () => {
     it('should create money from minor units correctly', () => {
@@ -44,7 +44,7 @@ describe('Money Value Object', () => {
     it('should throw an error for an invalid currency code', () => {
       const fakeCurrency = { ...NGN, code: 'FAKE' };
       expect(() => money.make(100, fakeCurrency, true)).toThrow(
-        new AppError('Invalid currency code')
+        new AppError('Invalid currency code', { cause: 'FAKE' })
       );
     });
 
@@ -92,7 +92,7 @@ describe('Money Value Object', () => {
 
     it('should throw if no arguments are provided', () => {
       expect(() => money.add()).toThrow(
-        new AppError('Provide at least one parameter')
+        new AppError('Provide at least one parameter for addition')
       );
     });
 
@@ -120,7 +120,7 @@ describe('Money Value Object', () => {
 
     it('should throw if no arguments are provided', () => {
       expect(() => money.subtract()).toThrow(
-        new AppError('Provide at least one parameter', { cause: [] })
+        new AppError('Provide at least one parameter for subtraction')
       );
     });
 

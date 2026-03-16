@@ -1,3 +1,4 @@
+import { AppError } from '../../../shared/value-objects/error';
 import {
   ECategoryType,
   UCategoryType,
@@ -65,17 +66,27 @@ function makeLiabilityExpense(userId?: string | null) {
 }
 
 function isValid(taxKey: string, type: UCategoryType) {
+  if (!taxKey || typeof taxKey !== 'string') return false;
+
+  const baseTaxKey = taxKey.split('::')[0];
+
   switch (type) {
     case ECategoryType.Income:
-      return Object.values(incomeTaxKeys).includes(taxKey);
+      return Object.values(incomeTaxKeys).includes(baseTaxKey as any);
     case ECategoryType.Expense:
-      return Object.values(expenseTaxKeys).includes(taxKey);
+      return Object.values(expenseTaxKeys).includes(baseTaxKey as any);
     case ECategoryType.LiabilityIncome:
-      return taxKey.startsWith('income:liability');
+      return baseTaxKey === 'income:liability';
     case ECategoryType.LiabilityExpense:
-      return taxKey.startsWith('expense:liability');
+      return baseTaxKey === 'expense:liability';
     default:
       return false;
+  }
+}
+
+function validate(taxKey: string, type: UCategoryType) {
+  if (!isValid(taxKey, type)) {
+    throw new AppError('Invalid tax key', { cause: taxKey });
   }
 }
 
@@ -91,6 +102,7 @@ const taxKeyValue = Object.freeze({
     makeLiability: makeLiabilityExpense,
   }),
   isValid,
+  validate,
 });
 
 export default taxKeyValue;

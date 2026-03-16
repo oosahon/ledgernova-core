@@ -1,59 +1,24 @@
 import { AppError } from './error';
-import { ICurrency } from '../types/money.types';
-
-const Naira: ICurrency = {
-  code: 'NGN',
-  symbol: '₦',
-  name: 'Naira',
-  minorUnit: 2n,
-};
-
-const USDollar: ICurrency = {
-  code: 'USD',
-  symbol: '$',
-  name: 'Dollar',
-  minorUnit: 2n,
-};
-
-const CanadianDollar: ICurrency = {
-  code: 'CAD',
-  symbol: '$',
-  name: 'Dollar',
-  minorUnit: 2n,
-};
-
-const Euro: ICurrency = {
-  code: 'EUR',
-  symbol: '€',
-  name: 'Euro',
-  minorUnit: 2n,
-};
-
-const Pounds: ICurrency = {
-  code: 'GBP',
-  symbol: '£',
-  name: 'Pounds',
-  minorUnit: 2n,
-};
-
-const Yen: ICurrency = {
-  code: 'JPY',
-  symbol: '¥',
-  name: 'Yen',
-  minorUnit: 0n,
-};
-
-const currencies: Record<string, ICurrency> = {
-  NGN: Naira,
-  USD: USDollar,
-  CAD: CanadianDollar,
-  EUR: Euro,
-  GBP: Pounds,
-  JPY: Yen,
-};
 
 function isValidCurrencyCode(code: string): boolean {
-  return Object.keys(currencies).includes(code);
+  const isInvalidFormat =
+    typeof code !== 'string' ||
+    code.length !== 3 ||
+    code !== code.toUpperCase();
+
+  if (isInvalidFormat) {
+    return false;
+  }
+
+  try {
+    const dn = new Intl.DisplayNames(['en'], {
+      type: 'currency',
+      fallback: 'none',
+    });
+    return dn.of(code) !== undefined;
+  } catch {
+    return false;
+  }
 }
 
 function isValidMinorUnit(minorUnit: number): boolean {
@@ -67,7 +32,6 @@ function validateCurrencyCode(code: string) {
 }
 
 const currencyValue = Object.freeze({
-  value: currencies,
   isValidCode: isValidCurrencyCode,
   isValidMinorUnit,
   validateCode: validateCurrencyCode,

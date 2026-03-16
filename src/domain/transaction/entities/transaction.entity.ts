@@ -1,13 +1,8 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import deepFreeze from '../../../shared/utils/deep-freeze';
-import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import { AppError } from '../../../shared/value-objects/error';
-import {
-  ITransaction,
-  ITransactionItem,
-  ITransactionWithItems,
-} from '../types/transaction.types';
+import { ITransaction, ITransactionItem } from '../types/transaction.types';
 import transactionItemEntity from './transaction-item.entity';
 import helpers from './helpers/transaction.helpers';
 
@@ -18,10 +13,14 @@ interface IMakeItemPayload extends TCreationOmits<
   name?: string;
 }
 
+/**
+ * Adds transaction items to an existing transaction.
+ *  - No transaction item should be created for transfer transaction.
+ */
 function addItems(
-  transaction: ITransaction,
+  transaction: Omit<ITransaction, 'items'>,
   itemsPayload: IMakeItemPayload[]
-): ITransactionWithItems {
+): ITransaction {
   if (!itemsPayload || itemsPayload.length === 0) {
     throw new AppError('Transaction items are required', {
       cause: itemsPayload,
@@ -34,7 +33,7 @@ function addItems(
 
   transactionItemEntity.validateItemsAmount(items, transaction.amount);
 
-  return deepFreeze<ITransactionWithItems>({
+  return deepFreeze<ITransaction>({
     ...transaction,
     items,
   });
@@ -49,18 +48,13 @@ function addItems(
 function make(
   transactionPayload: TCreationOmits<ITransaction>,
   itemsPayload: IMakeItemPayload[]
-): ITransactionWithItems {
+): ITransaction {
   helpers.validateMakePayload(transactionPayload, itemsPayload.length);
 
   const transactionId = generateUUID();
   const timestamp = new Date();
 
-  const note = stringUtils.sanitizeAndValidate(transactionPayload.note, {
-    min: 0,
-    max: 255,
-  });
-
-  const transaction: ITransaction = {
+  const transactionWithoutItems: ITransaction = {
     id: transactionId,
     status: transactionPayload.status,
     createdBy: transactionPayload.createdBy,
@@ -71,20 +65,22 @@ function make(
     date: transactionPayload.date,
     recipientAccountId: transactionPayload.recipientAccountId,
     exchangeRate: transactionPayload.exchangeRate,
-    note,
+    note: helpers.sanitizeNote(transactionPayload.note),
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,
+    items: null,
   };
 
-  if (helpers.doesNotRequireItem(transaction.type)) {
-    return deepFreeze<ITransactionWithItems>({
-      ...transaction,
-      items: [],
-    });
+  const doesNotRequireItem = helpers.doesNotRequireItem(
+    transactionPayload.type
+  );
+
+  if (doesNotRequireItem) {
+    return deepFreeze<ITransaction>(transactionWithoutItems);
   }
 
-  return addItems(transaction, itemsPayload);
+  return addItems(transactionWithoutItems, itemsPayload);
 }
 
 const transactionEntity = Object.freeze({

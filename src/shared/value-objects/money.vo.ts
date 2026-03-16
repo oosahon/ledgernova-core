@@ -45,7 +45,7 @@ function make(
   const isValidCurrencyCode = currencyValueObject.isValidCode(currency.code);
 
   if (!isValidCurrencyCode) {
-    throw new AppError('Invalid currency code');
+    throw new AppError('Invalid currency code', { cause: currency.code });
   }
 
   if (
@@ -87,7 +87,7 @@ function isSameCurrency(...args: IMoney[]) {
  */
 function add(...args: IMoney[]): IMoney {
   if (!args.length) {
-    throw new AppError('Provide at least one parameter');
+    throw new AppError('Provide at least one parameter for addition');
   }
 
   if (!isSameCurrency(...args)) {
@@ -107,7 +107,7 @@ function add(...args: IMoney[]): IMoney {
  */
 function subtract(...args: IMoney[]): IMoney {
   if (!args.length) {
-    throw new AppError('Provide at least one parameter', { cause: args });
+    throw new AppError('Provide at least one parameter for subtraction');
   }
 
   if (!isSameCurrency(...args)) {

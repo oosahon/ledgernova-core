@@ -4,13 +4,13 @@ import {
   EAccountStatus,
   IAccount,
 } from '../types/account.types';
-import currencyValue from '../../../shared/value-objects/currency.vo';
 import moneyValue from '../../../shared/value-objects/money.vo';
 import { AppError } from '../../../shared/value-objects/error';
+import mockCurrencies from '../../../shared/value-objects/__mocks__/currencies.mock';
 
 describe('account.entity.ts', () => {
   const validUserId = 'test-user-id';
-  const usdCurrency = currencyValue.value.USD;
+  const usdCurrency = mockCurrencies.USD;
 
   function createValidPayload(overrides?: any) {
     return {
@@ -60,7 +60,7 @@ describe('account.entity.ts', () => {
       }
       expect(error).toBeInstanceOf(AppError);
       expect(error.message).toBe('Invalid currency code');
-      expect(error.cause).toEqual({ cause: payload });
+      expect(error.cause).toEqual({ cause: 'INVALID' });
     });
 
     describe('sanitizeName branches', () => {

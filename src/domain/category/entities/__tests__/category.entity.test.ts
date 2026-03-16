@@ -73,12 +73,12 @@ describe('Category Entity', () => {
         description: 'Uses taxKey explicitly',
         parentId: null,
         userId: null,
-        taxKey: 'custom-tax-key',
+        taxKey: taxKeyValue.income.value.sales,
       };
 
       const result = categoryEntity.make(payload);
 
-      expect(result.taxKey).toBe('custom-tax-key');
+      expect(result.taxKey).toBe(taxKeyValue.income.value.sales);
     });
 
     it('should throw an error if a user category does not have a parentId', () => {

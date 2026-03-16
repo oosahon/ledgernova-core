@@ -1,3 +1,4 @@
+import { IMoney } from '../../../shared/types/money.types';
 import { ULedgerAccountType } from '../../account/types/account.types';
 import { UTransactionDirection } from '../../transaction/types/transaction.types';
 
@@ -6,9 +7,8 @@ export interface IJournalEntry {
   ledgerAccountType: ULedgerAccountType;
   accountId: string;
   transactionId: string;
-  amount: bigint;
-  currencyCode: string;
-  functionalAmount: bigint;
+  amount: IMoney;
+  functionalAmount: IMoney;
   direction: UTransactionDirection;
   description: string;
   postedAt: Date | null;

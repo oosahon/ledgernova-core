@@ -14,18 +14,14 @@ import helpers from './helpers/account.helpers';
 
 interface IGetBalanceParams {
   type: ULedgerAccountType;
-  totalCredit: IMoney;
   totalDebit: IMoney;
+  totalCredit: IMoney;
 }
 
 function make(payload: TCreationOmits<IAccount>): IAccount {
-  const isValidCurrencyCode = currencyValue.isValidCode(payload.currencyCode);
+  currencyValue.validateCode(payload.currencyCode);
+  helpers.validateType(payload.type);
 
-  if (!isValidCurrencyCode) {
-    throw new AppError('Invalid currency code', {
-      cause: payload,
-    });
-  }
   const timestamp = new Date();
 
   return Object.freeze({
@@ -42,7 +38,7 @@ function make(payload: TCreationOmits<IAccount>): IAccount {
   });
 }
 
-function getBalance({ type, totalCredit, totalDebit }: IGetBalanceParams) {
+function getBalance({ type, totalDebit, totalCredit }: IGetBalanceParams) {
   switch (type) {
     case ELedgerAccountType.Asset:
     case ELedgerAccountType.Expense:

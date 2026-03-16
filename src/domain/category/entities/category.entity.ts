@@ -1,7 +1,7 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
-import { ICategory } from '../types/category.types';
+import { ECategoryStatus, ICategory } from '../types/category.types';
 import helpers from './helpers/category.helpers';
 
 function make(
@@ -9,17 +9,21 @@ function make(
 ): ICategory {
   const timestamps = new Date();
 
-  helpers.validatePayload(payload);
+  const taxKey =
+    payload.taxKey ?? helpers.getTaxKey(payload.type, payload.userId);
+  const fullPayload = { ...payload, taxKey };
+
+  helpers.validatePayload(fullPayload as TCreationOmits<ICategory, 'status'>);
 
   return Object.freeze({
     id: generateUUID(),
     name: helpers.sanitizeName(payload.name),
-    taxKey: payload.taxKey ?? helpers.getTaxKey(payload.type, payload.userId),
+    taxKey,
     type: payload.type,
     parentId: payload.parentId,
     description: payload.description,
     userId: payload.userId,
-    status: 'active',
+    status: ECategoryStatus.Active,
     createdAt: timestamps,
     updatedAt: timestamps,
     deletedAt: null,

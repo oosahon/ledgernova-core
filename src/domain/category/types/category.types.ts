@@ -7,7 +7,13 @@ export const ECategoryType = {
 
 export type UCategoryType = (typeof ECategoryType)[keyof typeof ECategoryType];
 
-export type UCategoryStatus = 'active' | 'archived';
+export const ECategoryStatus = {
+  Active: 'active',
+  Archived: 'archived',
+} as const;
+
+export type UCategoryStatus =
+  (typeof ECategoryStatus)[keyof typeof ECategoryStatus];
 
 export interface ICategory {
   id: string;

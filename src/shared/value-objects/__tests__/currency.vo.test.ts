@@ -1,3 +1,4 @@
+import mockCurrencies from '../__mocks__/currencies.mock';
 import currency from '../currency.vo';
 
 describe('Currency Value Object', () => {
@@ -40,19 +41,19 @@ describe('Currency Value Object', () => {
 
   describe('currency properties', () => {
     it('should contain known currency definitions', () => {
-      expect(currency.value.NGN).toBeDefined();
-      expect(currency.value.NGN.code).toBe('NGN');
-      expect(currency.value.NGN.symbol).toBe('₦');
-      expect(currency.value.NGN.name).toBe('Naira');
-      expect(currency.value.NGN.minorUnit).toBe(2n);
+      expect(mockCurrencies.NGN).toBeDefined();
+      expect(mockCurrencies.NGN.code).toBe('NGN');
+      expect(mockCurrencies.NGN.symbol).toBe('₦');
+      expect(mockCurrencies.NGN.name).toBe('Naira');
+      expect(mockCurrencies.NGN.minorUnit).toBe(2n);
 
-      expect(currency.value.USD).toBeDefined();
-      expect(currency.value.USD.code).toBe('USD');
-      expect(currency.value.USD.symbol).toBe('$');
+      expect(mockCurrencies.USD).toBeDefined();
+      expect(mockCurrencies.USD.code).toBe('USD');
+      expect(mockCurrencies.USD.symbol).toBe('$');
 
-      expect(currency.value.JPY).toBeDefined();
-      expect(currency.value.JPY.code).toBe('JPY');
-      expect(currency.value.JPY.minorUnit).toBe(0n);
+      expect(mockCurrencies.JPY).toBeDefined();
+      expect(mockCurrencies.JPY.code).toBe('JPY');
+      expect(mockCurrencies.JPY.minorUnit).toBe(0n);
     });
 
     it('should be frozen to prevent modifications', () => {

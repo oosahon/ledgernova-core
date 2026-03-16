@@ -3,10 +3,12 @@ import { ECategoryType } from '../../../category/types/category.types';
 import {
   ETransactionStatus,
   ETransactionType,
+  ITransaction,
 } from '../../types/transaction.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import categoryEntity from '../../../category/entities/category.entity';
 import { AppError } from '../../../../shared/value-objects/error';
+import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
 
 describe('Transaction Entity', () => {
   const currency = {
@@ -22,7 +24,7 @@ describe('Transaction Entity', () => {
     userId: null,
     parentId: null,
     description: 'Sales category',
-    taxKey: undefined as any,
+    taxKey: 'income:sales' as any,
   });
 
   const validItemPayload = {
@@ -34,7 +36,7 @@ describe('Transaction Entity', () => {
     isSystemGenerated: false,
   };
 
-  const validTransactionPayload = {
+  const validTransactionPayload: TCreationOmits<ITransaction> = {
     status: ETransactionStatus.Pending,
     createdBy: 'user-1',
     type: ETransactionType.Sale,
@@ -45,6 +47,7 @@ describe('Transaction Entity', () => {
     exchangeRate: 1,
     note: 'Test note',
     attachmentIds: [],
+    items: [],
   };
 
   describe('make', () => {
@@ -69,8 +72,8 @@ describe('Transaction Entity', () => {
       expect(transaction.note).toBe(validTransactionPayload.note);
 
       expect(transaction.items).toBeDefined();
-      expect(transaction.items.length).toBe(1);
-      const item = transaction.items[0];
+      expect(transaction.items?.length).toBe(1);
+      const item = transaction.items![0];
       expect(item.name).toBe(validItemPayload.name);
       expect(item.price).toEqual(validItemPayload.price);
       expect(item.transactionId).toBe(transaction.id); // Matches parent ID
@@ -85,7 +88,7 @@ describe('Transaction Entity', () => {
 
       const transaction = transactionEntity.make(transferPayload, []);
 
-      expect(transaction.items).toEqual([]);
+      expect(transaction.items).toBeNull();
       expect(transaction.type).toBe(ETransactionType.Transfer);
       expect(transaction.recipientAccountId).toBe('acc-2');
     });
@@ -98,7 +101,7 @@ describe('Transaction Entity', () => {
 
       const transaction = transactionEntity.make(journalPayload, []);
 
-      expect(transaction.items).toEqual([]);
+      expect(transaction.items).toBeNull();
       expect(transaction.type).toBe(ETransactionType.Journal);
     });
 
@@ -109,6 +112,24 @@ describe('Transaction Entity', () => {
       };
       const transaction = transactionEntity.make(payload, [validItemPayload]);
       expect(transaction.note).toBe('   A note   ');
+    });
+
+    it('should assign null to note if note is not provided or is empty', () => {
+      const payload = {
+        ...validTransactionPayload,
+        note: '',
+      };
+      const transaction = transactionEntity.make(payload, [validItemPayload]);
+      expect(transaction.note).toBeNull();
+
+      const payloadNull = {
+        ...validTransactionPayload,
+        note: null as any,
+      };
+      const transactionNull = transactionEntity.make(payloadNull, [
+        validItemPayload,
+      ]);
+      expect(transactionNull.note).toBeNull();
     });
 
     it('should throw an error if items are provided for transfer transaction', () => {

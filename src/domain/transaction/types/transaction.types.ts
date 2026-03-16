@@ -52,22 +52,19 @@ export interface ITransactionItem {
 export interface ITransaction {
   id: string;
   status: UTransactionStatus;
-  createdBy: string;
+  createdBy: string; // used instead of `userId` because the trx creator might not be the owner of the account
   type: UTransactionType;
   accountId: string;
   amount: IMoney;
   attachmentIds: string[];
+  items: ITransactionItem[] | null; // `null` for transfers and journals
   date: Date;
-  recipientAccountId: string | null;
+  recipientAccountId: string | null; // only used for transfers
   exchangeRate: number;
   note: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
-}
-
-export interface ITransactionWithItems extends ITransaction {
-  items: ITransactionItem[];
 }
 
 export interface ITransactionAttachment {
