@@ -68,7 +68,7 @@ function getTaxKey(type: UCategoryType, userId?: string | null) {
   }
 }
 
-function validatePayload(payload: TCreationOmits<ICategory, 'status'>) {
+function validate(payload: TCreationOmits<ICategory, 'status'>) {
   validateCategoryType(payload.type);
   validateParentId(payload);
   taxKeyValue.validate(payload.taxKey, payload.type);
@@ -79,7 +79,7 @@ const categoryUtils = Object.freeze({
   validateCategoryType,
   sanitizeName,
   validateParentId,
-  validatePayload,
+  validate,
   getTaxKey,
 });
 

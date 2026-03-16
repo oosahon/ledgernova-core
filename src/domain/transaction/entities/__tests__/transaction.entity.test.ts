@@ -286,5 +286,16 @@ describe('Transaction Entity', () => {
         transactionEntity.make(invalidAmountPayload, [validItemPayload])
       ).toThrow(AppError);
     });
+
+    it('should throw an error if transaction date is in the future', () => {
+      const futureDatePayload = {
+        ...validTransactionPayload,
+        date: new Date(Date.now() + 86400000), // 1 day in the future
+      };
+
+      expect(() =>
+        transactionEntity.make(futureDatePayload, [validItemPayload])
+      ).toThrow(AppError);
+    });
   });
 });

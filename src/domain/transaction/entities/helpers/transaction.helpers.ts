@@ -21,7 +21,7 @@ function doesNotRequireItem(type: UTransactionType) {
   return [ETransactionType.Transfer, ETransactionType.Journal].includes(type);
 }
 
-function validateItemsOnMake(type: UTransactionType, itemsLength: number) {
+function validateItems(type: UTransactionType, itemsLength: number) {
   if (doesNotRequireItem(type) && itemsLength > 0) {
     throw new AppError(`${type} transactions do not require items`, {
       cause: { type, itemsLength },
@@ -32,7 +32,7 @@ function validateItemsOnMake(type: UTransactionType, itemsLength: number) {
 /**
  * Validates if the transaction type is valid.
  */
-function validateTransactionType(type: UTransactionType) {
+function validateType(type: UTransactionType) {
   const isInvalid = !Object.values(ETransactionType).includes(type);
 
   if (isInvalid) {
@@ -135,32 +135,18 @@ function sanitizeNote(note: string | null) {
   });
 }
 
-function validateMakePayload(
-  transactionPayload: TCreationOmits<ITransaction>,
-  itemsLength: number
-) {
-  validateItemsOnMake(transactionPayload.type, itemsLength);
-
-  validateTransactionType(transactionPayload.type);
-  validateCreatedBy(transactionPayload.createdBy);
-  validateAccountId(transactionPayload.accountId);
-  validateTransactionStatus(transactionPayload.status);
-  moneyValue.validate(transactionPayload.amount);
-  dateUtils.validateDate(transactionPayload.date);
-  validateRecipientAccountId(
-    transactionPayload.type,
-    transactionPayload.recipientAccountId
-  );
-  validateExchangeRate(transactionPayload.exchangeRate);
-}
-
 // ========= END: TRANSACTION VALIDATORS ==============
 
 const transactionHelpers = Object.freeze({
-  validateMakePayload,
+  validateType,
   doesNotRequireItem,
-  validateItemsOnMake,
+  validateItems,
+  validateCreatedBy,
   sanitizeNote,
+  validateAccountId,
+  validateExchangeRate,
+  validateRecipientAccountId,
+  validateTransactionStatus,
 });
 
 export default transactionHelpers;

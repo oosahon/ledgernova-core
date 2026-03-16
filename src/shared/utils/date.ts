@@ -21,12 +21,25 @@ function validateDateIsNotInThePast(date: Date | string | number) {
   }
 }
 
+function isNotInTheFuture(date: Date | string | number) {
+  return dayjs(date).isBefore(dayjs());
+}
+
+function validateDateIsNotInTheFuture(date: Date | string | number) {
+  if (!isNotInTheFuture(date)) {
+    throw new AppError('Date is in the future', { cause: date });
+  }
+}
+
 const dateUtils = Object.freeze({
   isValidDate,
   validateDate,
 
   isNotInThePast,
   validateDateIsNotInThePast,
+
+  isNotInTheFuture,
+  validateDateIsNotInTheFuture,
 });
 
 export default dateUtils;

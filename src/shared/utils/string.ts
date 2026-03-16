@@ -17,8 +17,13 @@ function sanitizeAndValidateString(value: string, options: ISanitizeOptions) {
   return result.data;
 }
 
+function isUUID(value: string) {
+  return z.uuid().safeParse(value).success;
+}
+
 const stringUtils = Object.freeze({
   sanitizeAndValidate: sanitizeAndValidateString,
+  isUUID,
 });
 
 export default stringUtils;

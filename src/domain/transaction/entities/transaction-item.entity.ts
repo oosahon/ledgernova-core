@@ -1,5 +1,6 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import numberUtils from '../../../shared/utils/number';
+import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import categoryEntity from '../../category/entities/category.entity';
 import { ITransactionItem } from '../types/transaction.types';
@@ -33,7 +34,8 @@ function make(
     safeQuantity,
     payload.unitPrice
   );
-  categoryEntity.validatePayload(payload.category);
+  categoryEntity.validate(payload.category);
+  stringUtils.isUUID(transactionId);
 
   return Object.freeze({
     id: generateUUID(),

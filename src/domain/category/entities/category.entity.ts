@@ -13,7 +13,7 @@ function make(
     payload.taxKey ?? helpers.getTaxKey(payload.type, payload.userId);
   const fullPayload = { ...payload, taxKey };
 
-  helpers.validatePayload(fullPayload as TCreationOmits<ICategory, 'status'>);
+  helpers.validate(fullPayload as TCreationOmits<ICategory, 'status'>);
 
   return Object.freeze({
     id: generateUUID(),

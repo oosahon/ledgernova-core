@@ -5,6 +5,8 @@ import { AppError } from '../../../shared/value-objects/error';
 import { ITransaction, ITransactionItem } from '../types/transaction.types';
 import transactionItemEntity from './transaction-item.entity';
 import helpers from './helpers/transaction.helpers';
+import dateUtils from '../../../shared/utils/date';
+import moneyValue from '../../../shared/value-objects/money.vo';
 
 interface IMakeItemPayload extends TCreationOmits<
   ITransactionItem,
@@ -46,35 +48,40 @@ function addItems(
  *    To add an attachment, call the makeTransactionAttachments() function
  */
 function make(
-  transactionPayload: TCreationOmits<ITransaction>,
+  payload: TCreationOmits<ITransaction>,
   itemsPayload: IMakeItemPayload[]
 ): ITransaction {
-  helpers.validateMakePayload(transactionPayload, itemsPayload.length);
+  helpers.validateItems(payload.type, itemsPayload.length);
+  helpers.validateType(payload.type);
+  helpers.validateCreatedBy(payload.createdBy);
+  helpers.validateAccountId(payload.accountId);
+  helpers.validateTransactionStatus(payload.status);
+  moneyValue.validate(payload.amount);
+  dateUtils.validateDateIsNotInTheFuture(payload.date);
+  helpers.validateRecipientAccountId(payload.type, payload.recipientAccountId);
+  helpers.validateExchangeRate(payload.exchangeRate);
 
-  const transactionId = generateUUID();
   const timestamp = new Date();
 
   const transactionWithoutItems: ITransaction = {
-    id: transactionId,
-    status: transactionPayload.status,
-    createdBy: transactionPayload.createdBy,
-    type: transactionPayload.type,
-    accountId: transactionPayload.accountId,
-    amount: transactionPayload.amount,
+    id: generateUUID(),
+    status: payload.status,
+    createdBy: payload.createdBy,
+    type: payload.type,
+    accountId: payload.accountId,
+    amount: payload.amount,
     attachmentIds: [],
-    date: transactionPayload.date,
-    recipientAccountId: transactionPayload.recipientAccountId,
-    exchangeRate: transactionPayload.exchangeRate,
-    note: helpers.sanitizeNote(transactionPayload.note),
+    date: payload.date,
+    recipientAccountId: payload.recipientAccountId,
+    exchangeRate: payload.exchangeRate,
+    note: helpers.sanitizeNote(payload.note),
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,
     items: null,
   };
 
-  const doesNotRequireItem = helpers.doesNotRequireItem(
-    transactionPayload.type
-  );
+  const doesNotRequireItem = helpers.doesNotRequireItem(payload.type);
 
   if (doesNotRequireItem) {
     return deepFreeze<ITransaction>(transactionWithoutItems);
