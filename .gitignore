@@ -6,3 +6,6 @@ logs
 qodana.yaml
 # Sentry Config File
 .sentryclirc
+coverage
+scribbles.md
+scribbles.txt

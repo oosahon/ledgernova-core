@@ -2,11 +2,11 @@
 set -euo pipefail
 
 ENV_FILE=".env"
-REDIS_VOLUME="redisdata"
+REDIS_VOLUME="purple_ledger_redis_data"
 
 if [ "${NODE_ENV:-}" = "test" ]; then
   ENV_FILE=".env.test"
-  REDIS_VOLUME="redisdatatest"
+  REDIS_VOLUME="purple_ledger_redis_data_test"
 fi
 
 if [ ! -f "$ENV_FILE" ]; then

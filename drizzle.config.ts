@@ -1,10 +1,11 @@
 import { defineConfig } from 'drizzle-kit';
-import { POSTGRES_URL } from './src/infra/config/vars';
+import { POSTGRES_URL } from './src/infra/config/vars.config';
 
 export default defineConfig({
   dialect: 'postgresql',
-  schema: './src/infra/db/schema/index.ts',
+  out: './src/infra/db/drizzle',
   dbCredentials: {
     url: POSTGRES_URL,
   },
+  schemaFilter: ['core', 'audit', 'public'],
 });

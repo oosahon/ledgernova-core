@@ -2,11 +2,11 @@
 set -euo pipefail
 
 ENV_FILE=".env"
-POSTGRES_VOLUME="pgdata"
+POSTGRES_VOLUME="purple_ledger_pg_data"
 
 if [ "${NODE_ENV:-}" = "test" ]; then
   ENV_FILE=".env.test"
-  POSTGRES_VOLUME="pgdatatest"
+  POSTGRES_VOLUME="purple_ledger_pg_data_test"
 fi
 
 if [ ! -f "$ENV_FILE" ]; then

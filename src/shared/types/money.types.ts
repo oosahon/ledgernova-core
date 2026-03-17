@@ -1,12 +1,11 @@
-interface ICurrency {
+export interface ICurrency {
   code: string;
   symbol: string;
   name: string;
-  minorUnit: number;
+  minorUnit: bigint;
 }
 
 export interface IMoney {
   amount: bigint;
-  isInMinorUnit: boolean;
   currency: ICurrency;
 }
