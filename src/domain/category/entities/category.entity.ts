@@ -1,6 +1,8 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
+import accountEntity from '../../account/entities/account.entity';
+import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
 import { ECategoryStatus, ICategory } from '../types/category.types';
 import helpers from './helpers/category.helpers';
 
@@ -9,21 +11,20 @@ function make(
 ): ICategory {
   const timestamps = new Date();
 
-  const taxKey =
-    payload.taxKey ?? helpers.getTaxKey(payload.type, payload.userId);
-  const fullPayload = { ...payload, taxKey };
-
-  helpers.validate(fullPayload as TCreationOmits<ICategory, 'status'>);
+  accountEntity.validateType(payload.ledgerAccountType);
+  helpers.validateUserAndParentId(payload);
+  helpers.validateFlowType(payload.flowType);
 
   return Object.freeze({
     id: generateUUID(),
     name: helpers.sanitizeName(payload.name),
-    taxKey,
-    type: payload.type,
+    taxKey: taxKeyValue.make(payload.ledgerAccountType, payload.userId),
+    ledgerAccountType: payload.ledgerAccountType,
     parentId: payload.parentId,
-    description: payload.description,
+    description: helpers.sanitizeDescription(payload.description),
     userId: payload.userId,
     status: ECategoryStatus.Active,
+    flowType: payload.flowType,
     createdAt: timestamps,
     updatedAt: timestamps,
     deletedAt: null,

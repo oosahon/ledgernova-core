@@ -1,86 +1,63 @@
-import { z } from 'zod';
 import {
-  ECategoryType,
+  ECategoryFlowType,
   ICategory,
-  UCategoryType,
+  UCategoryFlowType,
 } from '../../types/category.types';
 import { AppError } from '../../../../shared/value-objects/error';
-import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
-import taxKeyValue from '../../../tax/value-objects/tax-keys.vo';
-
-function isValidCategoryType(type: UCategoryType): boolean {
-  return Object.values(ECategoryType).includes(type);
-}
-
-function validateCategoryType(type: UCategoryType): void {
-  const isValid = isValidCategoryType(type);
-
-  if (!isValid) {
-    throw new AppError('Invalid category type', { cause: type });
-  }
-}
+import stringUtils from '../../../../shared/utils/string';
 
 function sanitizeName(name: string): string {
-  try {
-    return z.string().min(1).max(100).trim().parse(name);
-  } catch (error) {
-    throw new AppError('Invalid category name', { cause: name });
-  }
+  return stringUtils.sanitizeAndValidate(name, {
+    min: 1,
+    max: 100,
+  });
 }
 
-function validateParentId(payload: Pick<ICategory, 'parentId' | 'userId'>) {
+function validateUserAndParentId(
+  payload: Pick<ICategory, 'parentId' | 'userId'>
+) {
   const { parentId, userId } = payload;
-  if (userId) {
-    try {
-      z.uuid().parse(parentId);
-    } catch (error) {
-      throw new AppError('Invalid parent id', { cause: parentId });
-    }
+
+  if (!parentId && !userId) {
+    return;
+  }
+  const isWrongSubCategory = (!!userId && !parentId) || (!!parentId && !userId);
+
+  if (isWrongSubCategory) {
+    throw new AppError(
+      'A user id must be provided along with a parent id for sub categories.',
+      { cause: payload }
+    );
   }
 
-  if (parentId) {
-    try {
-      z.uuid().parse(parentId);
-    } catch (error) {
-      throw new AppError('Invalid parent id', { cause: parentId });
-    }
+  stringUtils.validateUUID(parentId as string);
+  stringUtils.validateUUID(userId as string);
+}
+
+function isValidFlowType(flowType: UCategoryFlowType) {
+  return Object.values(ECategoryFlowType).includes(flowType);
+}
+
+function validateFlowType(flowType: UCategoryFlowType) {
+  if (!isValidFlowType(flowType)) {
+    throw new AppError('Invalid flow type', { cause: flowType });
   }
 }
 
-function getTaxKey(type: UCategoryType, userId?: string | null) {
-  switch (type) {
-    case ECategoryType.Income:
-      return taxKeyValue.income.make(userId);
-
-    case ECategoryType.Expense:
-      return taxKeyValue.expense.make(userId);
-
-    case ECategoryType.LiabilityIncome:
-      return taxKeyValue.income.makeLiability(userId);
-
-    case ECategoryType.LiabilityExpense:
-      return taxKeyValue.expense.makeLiability(userId);
-
-    default:
-      throw new AppError('Invalid category type', {
-        cause: type,
-      });
-  }
-}
-
-function validate(payload: TCreationOmits<ICategory, 'status'>) {
-  validateCategoryType(payload.type);
-  validateParentId(payload);
-  taxKeyValue.validate(payload.taxKey, payload.type);
+function sanitizeDescription(description: string) {
+  return stringUtils.sanitizeAndValidate(description, {
+    min: 0,
+    max: 250,
+  });
 }
 
 const categoryUtils = Object.freeze({
-  isValidCategoryType,
-  validateCategoryType,
   sanitizeName,
-  validateParentId,
-  validate,
-  getTaxKey,
+  validateUserAndParentId,
+
+  isValidFlowType,
+  validateFlowType,
+  sanitizeDescription,
 });
 
 export default categoryUtils;

@@ -1,5 +1,6 @@
 import IRepoOptions from '../../../shared/types/repo-options.types';
-import { ICategory, UCategoryType } from '../types/category.types';
+import { ULedgerAccountType } from '../../account/types/account.types';
+import { ICategory, UCategoryFlowType } from '../types/category.types';
 
 export default interface ICategoryRepo {
   save(category: ICategory, params: IRepoOptions): Promise<void>;
@@ -12,7 +13,7 @@ export default interface ICategoryRepo {
 
   findByName(
     name: string,
-    type: UCategoryType,
+    type: ULedgerAccountType,
     userId: string,
     params: IRepoOptions
   ): Promise<ICategory | null>;
@@ -23,9 +24,9 @@ export default interface ICategoryRepo {
     params: IRepoOptions
   ): Promise<void>;
 
-  findAll(
-    type: UCategoryType[],
+  findAllByFlowType(
+    flowType: UCategoryFlowType,
     params: IRepoOptions,
-    query?: { userId?: string; ids?: string[] }
+    userId?: string
   ): Promise<ICategory[]>;
 }

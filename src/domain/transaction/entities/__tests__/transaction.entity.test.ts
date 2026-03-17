@@ -1,5 +1,6 @@
 import transactionEntity from '../transaction.entity';
-import { ECategoryType } from '../../../category/types/category.types';
+import { ECategoryFlowType } from '../../../category/types/category.types';
+import { ELedgerAccountType } from '../../../account/types/account.types';
 import {
   ETransactionStatus,
   ETransactionType,
@@ -18,14 +19,20 @@ describe('Transaction Entity', () => {
     name: 'US Dollar',
   };
 
-  const validCategory = categoryEntity.make({
+  const baseCategory = categoryEntity.make({
     name: 'Sales',
-    type: ECategoryType.Income,
+    ledgerAccountType: ELedgerAccountType.Revenue,
+    flowType: ECategoryFlowType.In,
     userId: null,
     parentId: null,
     description: 'Sales category',
-    taxKey: 'income:sales' as any,
+    taxKey: 'revenue:sales',
   });
+
+  const validCategory = {
+    ...baseCategory,
+    taxKey: 'revenue:sales',
+  };
 
   const validItemPayload = {
     name: 'Item 1',

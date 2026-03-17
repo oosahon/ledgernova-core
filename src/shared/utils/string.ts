@@ -21,9 +21,16 @@ function isUUID(value: string) {
   return z.uuid().safeParse(value).success;
 }
 
+function validateUUID(value: string) {
+  if (!isUUID(value)) {
+    throw new AppError('Invalid UUID', { cause: value });
+  }
+}
+
 const stringUtils = Object.freeze({
   sanitizeAndValidate: sanitizeAndValidateString,
   isUUID,
+  validateUUID,
 });
 
 export default stringUtils;

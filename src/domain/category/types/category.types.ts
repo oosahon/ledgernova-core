@@ -1,11 +1,4 @@
-export const ECategoryType = {
-  Income: 'income',
-  Expense: 'expense',
-  LiabilityIncome: 'liability_income',
-  LiabilityExpense: 'liability_expense',
-} as const;
-
-export type UCategoryType = (typeof ECategoryType)[keyof typeof ECategoryType];
+import { ULedgerAccountType } from '../../account/types/account.types';
 
 export const ECategoryStatus = {
   Active: 'active',
@@ -15,10 +8,24 @@ export const ECategoryStatus = {
 export type UCategoryStatus =
   (typeof ECategoryStatus)[keyof typeof ECategoryStatus];
 
+/**
+ * Category flow types are not standard accounting terms
+ * but are used, solely for UX purposes, to describe the flow of money.
+ * NB: they have no effect on the accounting advisory.
+ */
+export const ECategoryFlowType = {
+  In: 'in',
+  Out: 'out',
+} as const;
+
+export type UCategoryFlowType =
+  (typeof ECategoryFlowType)[keyof typeof ECategoryFlowType];
+
 export interface ICategory {
   id: string;
   name: string;
-  type: UCategoryType;
+  ledgerAccountType: ULedgerAccountType;
+  flowType: UCategoryFlowType;
   taxKey: string;
   status: UCategoryStatus;
   description: string;
@@ -27,20 +34,4 @@ export interface ICategory {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
-}
-
-export interface IIncomeCategory extends ICategory {
-  type: 'income';
-}
-
-export interface IExpenseCategory extends ICategory {
-  type: 'expense';
-}
-
-export interface ILiabilityIncomeCategory extends ICategory {
-  type: 'liability_income';
-}
-
-export interface ILiabilityExpenseCategory extends ICategory {
-  type: 'liability_expense';
 }

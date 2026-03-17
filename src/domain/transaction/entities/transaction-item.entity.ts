@@ -2,7 +2,8 @@ import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import numberUtils from '../../../shared/utils/number';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
-import categoryEntity from '../../category/entities/category.entity';
+import accountEntity from '../../account/entities/account.entity';
+import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
 import { ITransactionItem } from '../types/transaction.types';
 import helpers from './helpers/transaction-item.helpers';
 
@@ -34,8 +35,13 @@ function make(
     safeQuantity,
     payload.unitPrice
   );
-  categoryEntity.validate(payload.category);
-  stringUtils.isUUID(transactionId);
+  stringUtils.validateUUID(transactionId);
+  stringUtils.validateUUID(payload.category.id);
+  taxKeyValue.validate(
+    payload.category.taxKey,
+    payload.category.ledgerAccountType
+  );
+  accountEntity.validateType(payload.category.ledgerAccountType);
 
   return Object.freeze({
     id: generateUUID(),

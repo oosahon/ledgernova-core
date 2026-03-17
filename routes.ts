@@ -17,15 +17,28 @@ import type {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-  UCategoryType: {
+  ULedgerAccountType: {
     dataType: 'refAlias',
     type: {
       dataType: 'union',
       subSchemas: [
-        { dataType: 'enum', enums: ['income'] },
+        { dataType: 'enum', enums: ['asset'] },
+        { dataType: 'enum', enums: ['liability'] },
+        { dataType: 'enum', enums: ['revenue'] },
         { dataType: 'enum', enums: ['expense'] },
-        { dataType: 'enum', enums: ['liability_income'] },
-        { dataType: 'enum', enums: ['liability_expense'] },
+        { dataType: 'enum', enums: ['equity'] },
+      ],
+      validators: {},
+    },
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UCategoryFlowType: {
+    dataType: 'refAlias',
+    type: {
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['in'] },
+        { dataType: 'enum', enums: ['out'] },
       ],
       validators: {},
     },
@@ -48,7 +61,8 @@ const models: TsoaRoute.Models = {
     properties: {
       id: { dataType: 'string', required: true },
       name: { dataType: 'string', required: true },
-      type: { ref: 'UCategoryType', required: true },
+      ledgerAccountType: { ref: 'ULedgerAccountType', required: true },
+      flowType: { ref: 'UCategoryFlowType', required: true },
       taxKey: { dataType: 'string', required: true },
       status: { ref: 'UCategoryStatus', required: true },
       description: { dataType: 'string', required: true },
@@ -142,11 +156,11 @@ export function RegisterRoutes(app: Router) {
     string,
     TsoaRoute.ParameterSchema
   > = {
-    categoryType: {
+    flowType: {
       in: 'query',
-      name: 'categoryType',
+      name: 'flowType',
       required: true,
-      ref: 'UCategoryType',
+      ref: 'UCategoryFlowType',
     },
   };
   app.get(
