@@ -1,5 +1,7 @@
 # Introduction
 
+![Coverage Badge](./badges/coverage.svg)
+
 This repo contains the server-side source code for Purple Ledger's bookkeeping and tax app.
 
 ## Requirements

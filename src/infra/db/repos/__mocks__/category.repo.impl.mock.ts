@@ -7,7 +7,7 @@ export const MockCategoryRepo: jest.Mocked<ICategoryRepo> = {
   findByTaxKey: jest.fn(),
   findByName: jest.fn(),
   delete: jest.fn(),
-  findAll: jest.fn(),
+  findAllByFlowType: jest.fn(),
 };
 
 export default MockCategoryRepo;
