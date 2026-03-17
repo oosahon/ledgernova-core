@@ -19,7 +19,7 @@ describe('Transaction Entity', () => {
     name: 'US Dollar',
   };
 
-  const baseCategory = categoryEntity.make({
+  const [baseCategory] = categoryEntity.make({
     name: 'Sales',
     ledgerAccountType: ELedgerAccountType.Revenue,
     flowType: ECategoryFlowType.In,
@@ -59,9 +59,10 @@ describe('Transaction Entity', () => {
 
   describe('make', () => {
     it('should create a valid transaction with items', () => {
-      const transaction = transactionEntity.make(validTransactionPayload, [
-        validItemPayload,
-      ]);
+      const [transaction, events] = transactionEntity.make(
+        validTransactionPayload,
+        [validItemPayload]
+      );
 
       expect(transaction.id).toBeDefined();
       expect(transaction.status).toBe(validTransactionPayload.status);
@@ -84,6 +85,12 @@ describe('Transaction Entity', () => {
       expect(item.name).toBe(validItemPayload.name);
       expect(item.price).toEqual(validItemPayload.price);
       expect(item.transactionId).toBe(transaction.id); // Matches parent ID
+
+      expect(events[0].event.type).toBe('domain:transaction:created');
+      expect(events[0].event.data).toEqual({ ...transaction, items: null }); // Transaction event is created before items are added
+
+      expect(events[1].event.type).toBe('domain:transaction_item:created');
+      expect(events[1].event.data).toEqual(item);
     });
 
     it('should create a valid transfer transaction without items', () => {
@@ -93,11 +100,13 @@ describe('Transaction Entity', () => {
         recipientAccountId: 'acc-2',
       };
 
-      const transaction = transactionEntity.make(transferPayload, []);
+      const [transaction, events] = transactionEntity.make(transferPayload, []);
 
       expect(transaction.items).toBeNull();
       expect(transaction.type).toBe(ETransactionType.Transfer);
       expect(transaction.recipientAccountId).toBe('acc-2');
+
+      expect(events[0].event.type).toBe('domain:transaction:created');
     });
 
     it('should create a valid journal transaction without items', () => {
@@ -106,10 +115,12 @@ describe('Transaction Entity', () => {
         type: ETransactionType.Journal,
       };
 
-      const transaction = transactionEntity.make(journalPayload, []);
+      const [transaction, events] = transactionEntity.make(journalPayload, []);
 
       expect(transaction.items).toBeNull();
       expect(transaction.type).toBe(ETransactionType.Journal);
+
+      expect(events[0].event.type).toBe('domain:transaction:created');
     });
 
     it('should assign memo/note correctly', () => {
@@ -117,7 +128,7 @@ describe('Transaction Entity', () => {
         ...validTransactionPayload,
         note: '   A note   ',
       };
-      const transaction = transactionEntity.make(payload, [validItemPayload]);
+      const [transaction] = transactionEntity.make(payload, [validItemPayload]);
       expect(transaction.note).toBe('   A note   ');
     });
 
@@ -126,14 +137,14 @@ describe('Transaction Entity', () => {
         ...validTransactionPayload,
         note: '',
       };
-      const transaction = transactionEntity.make(payload, [validItemPayload]);
+      const [transaction] = transactionEntity.make(payload, [validItemPayload]);
       expect(transaction.note).toBeNull();
 
       const payloadNull = {
         ...validTransactionPayload,
         note: null as any,
       };
-      const transactionNull = transactionEntity.make(payloadNull, [
+      const [transactionNull] = transactionEntity.make(payloadNull, [
         validItemPayload,
       ]);
       expect(transactionNull.note).toBeNull();

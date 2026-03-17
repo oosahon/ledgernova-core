@@ -6,12 +6,20 @@ import { UTransactionDirection } from '../../transaction/types/transaction.types
 import helpers from './helpers/journal-entry.helpers';
 import moneyValue from '../../../shared/value-objects/money.vo';
 import stringUtils from '../../../shared/utils/string';
+import { TEntityWithEvents } from '../../../shared/types/event.types';
+import journalEntryEvents from '../events/journal-entry.event';
 
-// The direction payload has been separated for explicitness
+/**
+ * Creates a new journal entry.
+ * @param direction The direction of the transaction.
+ * @param payload The payload of the journal entry.
+ * @returns A tuple containing the journal entry and the events.
+ * - The direction payload has been separated for explicitness
+ */
 function make(
   direction: UTransactionDirection,
   payload: TCreationOmits<IJournalEntry, 'direction'>
-): IJournalEntry {
+): TEntityWithEvents<IJournalEntry, IJournalEntry> {
   helpers.validateDirection(direction);
   accountEntity.validateType(payload.ledgerAccountType);
   moneyValue.validate(payload.amount);
@@ -25,7 +33,7 @@ function make(
     max: 255,
   });
 
-  return Object.freeze({
+  const journalEntry = Object.freeze({
     id: generateUUID(),
     direction,
     ledgerAccountType: payload.ledgerAccountType,
@@ -38,6 +46,8 @@ function make(
     createdAt: timestamp,
     updatedAt: timestamp,
   });
+  const event = journalEntryEvents.created(journalEntry);
+  return [journalEntry, [event]];
 }
 
 const journalEntriesEntity = Object.freeze({

@@ -12,7 +12,7 @@ describe('Transaction Item Entity', () => {
     symbol: '$',
     name: 'US Dollar',
   };
-  const baseCategory = categoryEntity.make({
+  const [baseCategory] = categoryEntity.make({
     name: 'Sales',
     ledgerAccountType: ELedgerAccountType.Revenue,
     flowType: ECategoryFlowType.In,
@@ -41,7 +41,7 @@ describe('Transaction Item Entity', () => {
         isSystemGenerated: false,
       };
 
-      const item = transactionItemEntity.make(
+      const [item, [event]] = transactionItemEntity.make(
         transactionId,
         transactionDate,
         payload
@@ -58,6 +58,10 @@ describe('Transaction Item Entity', () => {
       expect(item.createdAt).toBe(transactionDate);
       expect(item.updatedAt).toBe(transactionDate);
       expect(item.deletedAt).toBeNull();
+
+      expect(event.event.type).toBe('domain:transaction_item:created');
+      expect(event.event.data).toEqual(item);
+      expect(event.event.occurredAt).toBeDefined();
     });
 
     it('should create a valid transaction item without a provided name (system generated)', () => {
@@ -69,7 +73,7 @@ describe('Transaction Item Entity', () => {
         isSystemGenerated: false,
       };
 
-      const item = transactionItemEntity.make(
+      const [item, [event]] = transactionItemEntity.make(
         transactionId,
         transactionDate,
         payload
@@ -77,6 +81,9 @@ describe('Transaction Item Entity', () => {
 
       expect(item.name).toBe(validCategory.name); // Defaults to category name
       expect(item.isSystemGenerated).toBe(true);
+
+      expect(event.event.type).toBe('domain:transaction_item:created');
+      expect(event.event.data).toEqual(item);
     });
 
     it('should create a valid transaction item when unitPrice is null', () => {
@@ -87,12 +94,15 @@ describe('Transaction Item Entity', () => {
         category: validCategory,
         isSystemGenerated: false,
       };
-      const item = transactionItemEntity.make(
+      const [item, [event]] = transactionItemEntity.make(
         transactionId,
         transactionDate,
         payload
       );
       expect(item.unitPrice).toBeNull();
+
+      expect(event.event.type).toBe('domain:transaction_item:created');
+      expect(event.event.data).toEqual(item);
     });
 
     it('should throw an error if item name is invalid (empty string)', () => {
@@ -188,20 +198,28 @@ describe('Transaction Item Entity', () => {
 
   describe('validateItemsAmount', () => {
     it('should not throw if total items amount matches transaction amount', () => {
-      const item1 = transactionItemEntity.make(transactionId, transactionDate, {
-        price: moneyValue.make(100, currency, false),
-        quantity: 1,
-        unitPrice: null,
-        category: validCategory,
-        isSystemGenerated: false,
-      });
-      const item2 = transactionItemEntity.make(transactionId, transactionDate, {
-        price: moneyValue.make(50, currency, false),
-        quantity: 1,
-        unitPrice: null,
-        category: validCategory,
-        isSystemGenerated: false,
-      });
+      const [item1] = transactionItemEntity.make(
+        transactionId,
+        transactionDate,
+        {
+          price: moneyValue.make(100, currency, false),
+          quantity: 1,
+          unitPrice: null,
+          category: validCategory,
+          isSystemGenerated: false,
+        }
+      );
+      const [item2] = transactionItemEntity.make(
+        transactionId,
+        transactionDate,
+        {
+          price: moneyValue.make(50, currency, false),
+          quantity: 1,
+          unitPrice: null,
+          category: validCategory,
+          isSystemGenerated: false,
+        }
+      );
 
       expect(() =>
         transactionItemEntity.validateItemsAmount(
@@ -212,13 +230,17 @@ describe('Transaction Item Entity', () => {
     });
 
     it('should throw if total items amount does not match transaction amount', () => {
-      const item1 = transactionItemEntity.make(transactionId, transactionDate, {
-        price: moneyValue.make(100, currency, false),
-        quantity: 1,
-        unitPrice: null,
-        category: validCategory,
-        isSystemGenerated: false,
-      });
+      const [item1] = transactionItemEntity.make(
+        transactionId,
+        transactionDate,
+        {
+          price: moneyValue.make(100, currency, false),
+          quantity: 1,
+          unitPrice: null,
+          category: validCategory,
+          isSystemGenerated: false,
+        }
+      );
 
       expect(() =>
         transactionItemEntity.validateItemsAmount(

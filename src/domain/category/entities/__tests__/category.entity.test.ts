@@ -31,7 +31,11 @@ describe('Category Entity', () => {
         taxKey: '',
       };
 
-      const result = categoryEntity.make(payload);
+      const [result, events] = categoryEntity.make(payload);
+
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:created');
+      expect(events[0].event.data).toEqual(result);
 
       expect(_.omit(result, 'id')).toEqual({
         name: 'System Category',
@@ -62,7 +66,11 @@ describe('Category Entity', () => {
         taxKey: '',
       };
 
-      const result = categoryEntity.make(payload);
+      const [result, events] = categoryEntity.make(payload);
+
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:created');
+      expect(events[0].event.data).toEqual(result);
 
       expect(result.userId).toBe(validUserId);
       expect(result.parentId).toBe(validParentId);
@@ -84,7 +92,11 @@ describe('Category Entity', () => {
         taxKey: 'some-custom-taxkey',
       };
 
-      const result = categoryEntity.make(payload as any);
+      const [result, events] = categoryEntity.make(payload as any);
+
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:created');
+      expect(events[0].event.data).toEqual(result);
 
       // It should actually be 'revenue' because taxKeyValue.make(Revenue, null) = 'revenue'
       expect(result.taxKey).toBe(
@@ -153,7 +165,14 @@ describe('Category Entity', () => {
       });
 
       it('should preserve spaces in name if not trimmed by utility', () => {
-        const result = categoryEntity.make({ ...basePayload, name: '    ' });
+        const [result, events] = categoryEntity.make({
+          ...basePayload,
+          name: '    ',
+        });
+
+        expect(events).toHaveLength(1);
+        expect(events[0].event.type).toBe('domain:category:created');
+        expect(events[0].event.data).toEqual(result);
         expect(result.name).toBe('    ');
       });
 
@@ -166,7 +185,14 @@ describe('Category Entity', () => {
 
       it('should accept trimmed name length up to 100', () => {
         const longName = 'A'.repeat(100);
-        const result = categoryEntity.make({ ...basePayload, name: longName });
+        const [result, events] = categoryEntity.make({
+          ...basePayload,
+          name: longName,
+        });
+
+        expect(events).toHaveLength(1);
+        expect(events[0].event.type).toBe('domain:category:created');
+        expect(events[0].event.data).toEqual(result);
         expect(result.name).toBe(longName);
       });
     });
@@ -176,7 +202,7 @@ describe('Category Entity', () => {
     let existingCategory: ICategory;
 
     beforeEach(() => {
-      existingCategory = categoryEntity.make({
+      [existingCategory] = categoryEntity.make({
         name: 'Original Name',
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
@@ -191,7 +217,10 @@ describe('Category Entity', () => {
 
     it('should update name correctly', () => {
       const options = { name: 'Updated Name' };
-      const result = categoryEntity.update(existingCategory, options);
+      const [result, events] = categoryEntity.update(existingCategory, options);
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:updated');
+      expect(events[0].event.data).toEqual(result);
 
       expect(result.name).toBe('Updated Name');
       expect(result.description).toBe('Original Description');
@@ -203,7 +232,10 @@ describe('Category Entity', () => {
 
     it('should update description correctly', () => {
       const options = { description: 'Updated Description' };
-      const result = categoryEntity.update(existingCategory, options);
+      const [result, events] = categoryEntity.update(existingCategory, options);
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:updated');
+      expect(events[0].event.data).toEqual(result);
 
       expect(result.name).toBe('Original Name');
       expect(result.description).toBe('Updated Description');
@@ -217,7 +249,10 @@ describe('Category Entity', () => {
         name: 'Updated Name',
         description: 'Updated Description',
       };
-      const result = categoryEntity.update(existingCategory, options);
+      const [result, events] = categoryEntity.update(existingCategory, options);
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:updated');
+      expect(events[0].event.data).toEqual(result);
 
       expect(result.name).toBe('Updated Name');
       expect(result.description).toBe('Updated Description');
@@ -225,25 +260,37 @@ describe('Category Entity', () => {
 
     it('should update name to string of spaces when updating with a string of only spaces', () => {
       const options = { name: '   ' };
-      const result = categoryEntity.update(existingCategory, options);
+      const [result, events] = categoryEntity.update(existingCategory, options);
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:updated');
+      expect(events[0].event.data).toEqual(result);
       expect(result.name).toBe('   ');
     });
 
     it('should ignore falsy name during update and fallback to original name', () => {
       const options = { name: '' };
-      const result = categoryEntity.update(existingCategory, options);
+      const [result, events] = categoryEntity.update(existingCategory, options);
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:updated');
+      expect(events[0].event.data).toEqual(result);
       expect(result.name).toBe('Original Name');
     });
 
     it('should fallback to category description if options.description is undefined', () => {
       const options = { description: undefined };
-      const result = categoryEntity.update(existingCategory, options);
+      const [result, events] = categoryEntity.update(existingCategory, options);
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:updated');
+      expect(events[0].event.data).toEqual(result);
       expect(result.description).toBe('Original Description');
     });
 
     it('should update description to empty string if empty string is provided', () => {
       const options = { description: '' };
-      const result = categoryEntity.update(existingCategory, options);
+      const [result, events] = categoryEntity.update(existingCategory, options);
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:updated');
+      expect(events[0].event.data).toEqual(result);
       expect(result.description).toBe('');
     });
 
@@ -256,7 +303,10 @@ describe('Category Entity', () => {
     });
 
     it('should keep existing values if options are empty', () => {
-      const result = categoryEntity.update(existingCategory, {});
+      const [result, events] = categoryEntity.update(existingCategory, {});
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:category:updated');
+      expect(events[0].event.data).toEqual(result);
       expect(result.name).toBe('Original Name');
       expect(result.description).toBe('Original Description');
     });
@@ -266,7 +316,7 @@ describe('Category Entity', () => {
     let activeCategory: any;
 
     beforeEach(() => {
-      activeCategory = categoryEntity.make({
+      [activeCategory] = categoryEntity.make({
         name: 'Active Category',
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
@@ -279,7 +329,8 @@ describe('Category Entity', () => {
     });
 
     it('should archive an active category and update updatedAt', () => {
-      const result = categoryEntity.archive(activeCategory);
+      const [result, events] = categoryEntity.archive(activeCategory);
+      expect(events).toBeDefined();
 
       expect(result.status).toBe('archived');
       expect(result.updatedAt.getTime()).toBeGreaterThan(
@@ -289,9 +340,10 @@ describe('Category Entity', () => {
     });
 
     it('should return the identical category if already archived without updating timestamp', () => {
-      const archivedCategory = categoryEntity.archive(activeCategory);
+      const [archivedCategory] = categoryEntity.archive(activeCategory);
       jest.advanceTimersByTime(1000);
-      const result = categoryEntity.archive(archivedCategory);
+      const [result, events] = categoryEntity.archive(archivedCategory);
+      expect(events).toBeDefined();
 
       expect(result).toBe(archivedCategory);
       expect(result.updatedAt.getTime()).toBe(
@@ -304,7 +356,7 @@ describe('Category Entity', () => {
     let archivedCategory: any;
 
     beforeEach(() => {
-      const activeCategory = categoryEntity.make({
+      const [activeCategory] = categoryEntity.make({
         name: 'Category To Archive',
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
@@ -314,12 +366,13 @@ describe('Category Entity', () => {
         taxKey: '',
       });
       jest.advanceTimersByTime(1000);
-      archivedCategory = categoryEntity.archive(activeCategory);
+      [archivedCategory] = categoryEntity.archive(activeCategory);
       jest.advanceTimersByTime(1000);
     });
 
     it('should unarchive an archived category and update updatedAt', () => {
-      const result = categoryEntity.unarchive(archivedCategory);
+      const [result, events] = categoryEntity.unarchive(archivedCategory);
+      expect(events).toBeDefined();
 
       expect(result.status).toBe('active');
       expect(result.updatedAt.getTime()).toBeGreaterThan(
@@ -329,9 +382,10 @@ describe('Category Entity', () => {
     });
 
     it('should return the identical category if already active without updating timestamp', () => {
-      const activeCategory = categoryEntity.unarchive(archivedCategory);
+      const [activeCategory] = categoryEntity.unarchive(archivedCategory);
       jest.advanceTimersByTime(1000);
-      const result = categoryEntity.unarchive(activeCategory);
+      const [result, events] = categoryEntity.unarchive(activeCategory);
+      expect(events).toBeDefined();
 
       expect(result).toBe(activeCategory);
       expect(result.updatedAt.getTime()).toBe(

@@ -20,7 +20,7 @@ function validateDirection(direction: UTransactionDirection) {
 
 function validatePostedAt(postedAt: Date | null) {
   if (postedAt) {
-    dateUtils.isNotInThePast(postedAt);
+    dateUtils.validateDateIsNotInThePast(postedAt);
   }
 }
 
