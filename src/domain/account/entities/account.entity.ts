@@ -11,6 +11,8 @@ import {
   ULedgerAccountType,
 } from '../types/account.types';
 import helpers from './helpers/account.helpers';
+import accountEvents from '../events/account.events';
+import { TEntityWithEvents } from '../../../shared/types/event.types';
 
 interface IGetBalanceParams {
   type: ULedgerAccountType;
@@ -18,13 +20,20 @@ interface IGetBalanceParams {
   totalCredit: IMoney;
 }
 
-function make(payload: TCreationOmits<IAccount>): IAccount {
+/**
+ * Creates a new account.
+ * @param payload - The account payload.
+ * @returns A tuple containing the account and the created event.
+ */
+function make(
+  payload: TCreationOmits<IAccount>
+): TEntityWithEvents<IAccount, IAccount> {
   currencyValue.validateCode(payload.currencyCode);
   helpers.validateType(payload.type);
 
   const timestamp = new Date();
 
-  return Object.freeze({
+  const account = Object.freeze({
     id: generateUUID(),
     userId: payload.userId,
     name: helpers.sanitizeName(payload.name),
@@ -36,8 +45,14 @@ function make(payload: TCreationOmits<IAccount>): IAccount {
     updatedAt: timestamp,
     deletedAt: null,
   });
+
+  const event = accountEvents.created(account);
+  return [account, [event]];
 }
 
+/**
+ * Gets the balance of an account.
+ */
 function getBalance({ type, totalDebit, totalCredit }: IGetBalanceParams) {
   switch (type) {
     case ELedgerAccountType.Asset:
@@ -51,10 +66,16 @@ function getBalance({ type, totalDebit, totalCredit }: IGetBalanceParams) {
   }
 }
 
+/**
+ * Updates an account.
+ * @param account - The account to update.
+ * @param payload - The account payload.
+ * @returns A tuple containing the updated account and the updated event.
+ */
 function update(
   account: IAccount,
   payload: Pick<IAccount, 'name' | 'subType' | 'currencyCode'>
-): IAccount {
+): TEntityWithEvents<IAccount, IAccount> {
   if (payload.currencyCode) {
     const isValidCode = currencyValue.isValidCode(payload.currencyCode);
 
@@ -65,7 +86,7 @@ function update(
     }
   }
 
-  return Object.freeze({
+  const updatedAccount = Object.freeze({
     ...account,
     name: payload.name ? helpers.sanitizeName(payload.name) : account.name,
     subType: payload.subType
@@ -74,22 +95,45 @@ function update(
     currencyCode: payload.currencyCode || account.currencyCode,
     updatedAt: new Date(),
   });
+
+  const event = accountEvents.updated(account);
+  return [updatedAccount, [event]];
 }
 
-function archive(account: IAccount) {
-  return Object.freeze({
+/**
+ * Archives an account idempotently.
+ */
+function archive(account: IAccount): TEntityWithEvents<IAccount, IAccount> {
+  if (account.status === EAccountStatus.Archived) {
+    return [account, []];
+  }
+
+  const archivedAccount = Object.freeze({
     ...account,
     status: EAccountStatus.Archived,
     updatedAt: new Date(),
   });
+
+  const event = accountEvents.archived(archivedAccount);
+  return [archivedAccount, [event]];
 }
 
-function unarchive(account: IAccount) {
-  return Object.freeze({
+/**
+ * Unarchives an account idempotently.
+ */
+function unarchive(account: IAccount): TEntityWithEvents<IAccount, IAccount> {
+  if (account.status === EAccountStatus.Active) {
+    return [account, []];
+  }
+
+  const unarchivedAccount = Object.freeze({
     ...account,
     status: EAccountStatus.Active,
     updatedAt: new Date(),
   });
+
+  const event = accountEvents.unarchived(unarchivedAccount);
+  return [unarchivedAccount, [event]];
 }
 
 const accountEntity = Object.freeze({

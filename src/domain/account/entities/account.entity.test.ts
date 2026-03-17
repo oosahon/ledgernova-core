@@ -4,6 +4,7 @@ import {
   EAccountStatus,
   IAccount,
 } from '../types/account.types';
+import { EAccountEvents } from '../events/account.events';
 import moneyValue from '../../../shared/value-objects/money.vo';
 import { AppError } from '../../../shared/value-objects/error';
 import mockCurrencies from '../../../shared/value-objects/__mocks__/currencies.mock';
@@ -26,7 +27,7 @@ describe('account.entity.ts', () => {
   describe('make', () => {
     it('should create an account with valid payload', () => {
       const payload = createValidPayload();
-      const account = accountEntity.make(payload);
+      const [account, events] = accountEntity.make(payload);
 
       expect(account.id).toBeDefined();
       expect(typeof account.id).toBe('string');
@@ -39,6 +40,9 @@ describe('account.entity.ts', () => {
       expect(account.createdAt).toBeInstanceOf(Date);
       expect(account.updatedAt).toBeInstanceOf(Date);
       expect(account.deletedAt).toBeNull();
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe(EAccountEvents.Created);
+      expect(events[0].event.data).toEqual(account);
     });
 
     it('should create an account with valid subType payload', () => {
@@ -46,8 +50,11 @@ describe('account.entity.ts', () => {
         type: ELedgerAccountType.Liability,
         subType: '  My SubType  ',
       });
-      const account = accountEntity.make(payload);
+      const [account, events] = accountEntity.make(payload);
       expect(account.subType).toBe('My SubType');
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe(EAccountEvents.Created);
+      expect(events[0].event.data).toEqual(account);
     });
 
     it('should throw "Invalid currency code" on invalid currency', () => {
@@ -187,7 +194,7 @@ describe('account.entity.ts', () => {
     let baseAccount: IAccount;
 
     beforeEach(() => {
-      baseAccount = accountEntity.make(
+      [baseAccount] = accountEntity.make(
         createValidPayload({ name: 'Original' })
       );
     });
@@ -204,7 +211,7 @@ describe('account.entity.ts', () => {
         currencyCode: 'EUR',
       };
 
-      const updated = accountEntity.update(baseAccount, payload);
+      const [updated, events] = accountEntity.update(baseAccount, payload);
 
       expect(updated.name).toBe('New Name');
       expect(updated.subType).toBe('New SubType');
@@ -212,16 +219,19 @@ describe('account.entity.ts', () => {
       expect(updated.updatedAt.getTime()).toBeGreaterThan(
         baseAccount.updatedAt.getTime()
       );
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe(EAccountEvents.Updated);
+      expect(events[0].event.data).toEqual(baseAccount);
 
       jest.useRealTimers();
     });
 
     it('preserves existing properties if payload keys are missing/undefined', () => {
-      let accWithSubtype = accountEntity.make(
+      let [accWithSubtype] = accountEntity.make(
         createValidPayload({ subType: 'Original SubType' })
       );
 
-      const updated = accountEntity.update(accWithSubtype, {
+      const [updated, events] = accountEntity.update(accWithSubtype, {
         name: undefined as any,
         subType: undefined,
         currencyCode: undefined as any,
@@ -230,6 +240,9 @@ describe('account.entity.ts', () => {
       expect(updated.name).toBe(accWithSubtype.name);
       expect(updated.subType).toBe('Original SubType');
       expect(updated.currencyCode).toBe('USD');
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe(EAccountEvents.Updated);
+      expect(events[0].event.data).toEqual(accWithSubtype);
     });
 
     it('throws if invalid currency code is provided', () => {
@@ -246,19 +259,22 @@ describe('account.entity.ts', () => {
 
   describe('archive', () => {
     it('sets status to archived and updates timestamp', () => {
-      const baseAccount = accountEntity.make(
+      const [baseAccount] = accountEntity.make(
         createValidPayload({ name: 'Original' })
       );
 
       jest.useFakeTimers();
       jest.setSystemTime(new Date(baseAccount.updatedAt.getTime() + 10000));
 
-      const archived = accountEntity.archive(baseAccount);
+      const [archived, events] = accountEntity.archive(baseAccount);
 
       expect(archived.status).toBe(EAccountStatus.Archived);
       expect(archived.updatedAt.getTime()).toBeGreaterThan(
         baseAccount.updatedAt.getTime()
       );
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe(EAccountEvents.Archived);
+      expect(events[0].event.data).toEqual(archived);
 
       jest.useRealTimers();
     });
@@ -266,20 +282,23 @@ describe('account.entity.ts', () => {
 
   describe('unarchive', () => {
     it('sets status to active and updates timestamp', () => {
-      let baseAccount = accountEntity.make(
+      let [baseAccount] = accountEntity.make(
         createValidPayload({ name: 'Original' })
       );
-      baseAccount = accountEntity.archive(baseAccount);
+      [baseAccount] = accountEntity.archive(baseAccount);
 
       jest.useFakeTimers();
       jest.setSystemTime(new Date(baseAccount.updatedAt.getTime() + 10000));
 
-      const unArchived = accountEntity.unarchive(baseAccount);
+      const [unArchived, events] = accountEntity.unarchive(baseAccount);
 
       expect(unArchived.status).toBe(EAccountStatus.Active);
       expect(unArchived.updatedAt.getTime()).toBeGreaterThan(
         baseAccount.updatedAt.getTime()
       );
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe(EAccountEvents.Unarchived);
+      expect(events[0].event.data).toEqual(unArchived);
 
       jest.useRealTimers();
     });
