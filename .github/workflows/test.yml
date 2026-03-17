@@ -52,10 +52,3 @@ jobs:
           fi
           
           curl -s "https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR}" > badges/coverage.svg
-
-      - name: Commit Badge
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: update coverage badge [skip ci]"
-          file_pattern: badges/coverage.svg
