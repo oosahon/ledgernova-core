@@ -17,15 +17,20 @@ import { sql } from 'drizzle-orm';
 
 export const audit = pgSchema('audit');
 export const core = pgSchema('core');
+export const categoryFlowTypeInCore = core.enum('category_flow_type', [
+  'in',
+  'out',
+]);
 export const categoryStatusInCore = core.enum('category_status', [
   'active',
   'archived',
 ]);
-export const categoryTypeInCore = core.enum('category_type', [
-  'income',
+export const ledgerAccountTypeInCore = core.enum('ledger_account_type', [
+  'asset',
+  'liability',
+  'equity',
+  'revenue',
   'expense',
-  'liability_income',
-  'liability_expense',
 ]);
 
 export const pgmigrations = pgTable('pgmigrations', {
@@ -104,7 +109,8 @@ export const categoriesInCore = core.table(
       .notNull(),
     userId: uuid('user_id'),
     taxKey: varchar('tax_key', { length: 250 }).notNull(),
-    type: categoryTypeInCore().notNull(),
+    ledgerAccountType: ledgerAccountTypeInCore('ledger_account_type').notNull(),
+    flowType: categoryFlowTypeInCore('flow_type').notNull(),
     name: varchar({ length: 100 }).notNull(),
     description: varchar({ length: 200 }).notNull(),
     status: categoryStatusInCore().default('active').notNull(),
@@ -139,9 +145,10 @@ export const currenciesInCore = core.table('currencies', {
   symbol: varchar({ length: 5 }).notNull(),
   name: varchar({ length: 50 }).notNull(),
   minorUnit: smallint('minor_unit').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
-    .defaultNow()
-    .notNull(),
+  createdAt: timestamp('created_at', {
+    withTimezone: true,
+    mode: 'string',
+  }).notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
     .defaultNow()
     .notNull(),

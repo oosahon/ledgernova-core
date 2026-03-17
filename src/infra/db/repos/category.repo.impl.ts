@@ -2,7 +2,7 @@ import { and, asc, eq, inArray, isNull, or, SQL } from 'drizzle-orm';
 import categoryMapper from '../../../app/mappers/category.mapper';
 import ICategoryRepo from '../../../domain/category/repos/category.repo';
 import {
-  ECategoryType,
+  ECategoryStatus,
   ICategory,
 } from '../../../domain/category/types/category.types';
 import { categoriesInCore as categories } from '../drizzle/schema';
@@ -34,15 +34,12 @@ const categoryRepo: ICategoryRepo = {
 
   delete: async (categoryId, userId, options) => {},
 
-  findAll: async (type, options, query) => {
+  findAllByFlowType: async (flowType, options, userId) => {
     const dbQuery = getDbQuery(options);
 
-    const userId = query?.userId;
-    const ids = query?.ids;
-
     const conditions: (SQL<unknown> | undefined)[] = [
-      eq(categories.status, 'active'),
-      inArray(categories.type, type),
+      eq(categories.status, ECategoryStatus.Active),
+      eq(categories.flowType, flowType),
     ];
 
     if (userId) {
@@ -52,9 +49,6 @@ const categoryRepo: ICategoryRepo = {
     } else {
       conditions.push(isNull(categories.userId));
     }
-    if (ids) {
-      conditions.push(inArray(categories.id, ids));
-    }
 
     const result = await dbQuery
       .select()
@@ -62,11 +56,7 @@ const categoryRepo: ICategoryRepo = {
       .where(and(...conditions))
       .orderBy(asc(categories.name));
 
-    return result.map((category) =>
-      type.includes(ECategoryType.Expense)
-        ? categoryMapper.toDomainExpense(category)
-        : categoryMapper.toDomainIncome(category)
-    );
+    return result.map((category) => categoryMapper.toDomain(category));
   },
 };
 

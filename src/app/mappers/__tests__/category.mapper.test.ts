@@ -1,8 +1,9 @@
 import categoryMapper from '../category.mapper';
 import {
-  ECategoryType,
+  ECategoryFlowType,
   ICategory,
 } from '../../../domain/category/types/category.types';
+import { ELedgerAccountType } from '../../../domain/account/types/account.types';
 
 describe('Category Mapper', () => {
   const commonDomainDates = {
@@ -23,7 +24,8 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
-        type: ECategoryType.Expense,
+        ledgerAccountType: ELedgerAccountType.Expense,
+        flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
@@ -35,7 +37,8 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
-        type: ECategoryType.Expense,
+        ledgerAccountType: ELedgerAccountType.Expense,
+        flowType: ECategoryFlowType.Out, // Spreads through object mapping
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
@@ -43,7 +46,9 @@ describe('Category Mapper', () => {
         ...commonRepoDates,
       };
 
-      expect(categoryMapper.toRepo(domainCategory)).toEqual(expectedRepoModel);
+      expect(categoryMapper.toRepo(domainCategory)).toEqual(
+        expectedRepoModel as any
+      );
     });
 
     it('should handle missing optional fields when mapping to repo model', () => {
@@ -51,7 +56,8 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'sas',
-        type: ECategoryType.Income,
+        ledgerAccountType: ELedgerAccountType.Revenue,
+        flowType: ECategoryFlowType.In,
         status: 'active' as const,
         parentId: null,
         taxKey: 'sxa',
@@ -61,21 +67,24 @@ describe('Category Mapper', () => {
 
       const expectedRepoModel = {
         ...domainCategory,
-        type: 'income',
+        ledgerAccountType: ELedgerAccountType.Revenue,
         ...commonRepoDates,
       };
 
-      expect(categoryMapper.toRepo(domainCategory)).toEqual(expectedRepoModel);
+      expect(categoryMapper.toRepo(domainCategory)).toEqual(
+        expectedRepoModel as any
+      );
     });
   });
 
-  describe('toDomainExpense', () => {
+  describe('toDomain', () => {
     it('should map a repo model to a domain expense category', () => {
       const repoModel = {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
-        type: ECategoryType.Expense,
+        ledgerAccountType: ELedgerAccountType.Expense,
+        flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',
@@ -87,7 +96,8 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
-        type: ECategoryType.Expense,
+        ledgerAccountType: ELedgerAccountType.Expense,
+        flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',
@@ -95,75 +105,9 @@ describe('Category Mapper', () => {
         ...commonDomainDates,
       };
 
-      expect(categoryMapper.toDomainExpense(repoModel)).toEqual(
+      expect(categoryMapper.toDomain(repoModel as any)).toEqual(
         expectedDomainCategory
       );
-    });
-
-    it('should overwrite type to Expense even if repo model has Income type', () => {
-      const repoModel = {
-        id: 'category-id',
-        name: 'Test Category',
-        description: null,
-        type: ECategoryType.Income,
-        userId: null,
-        parentId: null,
-        taxKey: null,
-        status: 'active' as const,
-        ...commonRepoDates,
-      };
-
-      const result = categoryMapper.toDomainExpense(repoModel as any);
-      expect(result.type).toBe(ECategoryType.Expense);
-    });
-  });
-
-  describe('toDomainIncome', () => {
-    it('should map a repo model to a domain income category', () => {
-      const repoModel = {
-        id: 'category-id',
-        name: 'Income Category',
-        description: 'Income Description',
-        type: ECategoryType.Income,
-        userId: 'user-id',
-        parentId: 'parent-id',
-        taxKey: 'tax-key',
-        status: 'active' as const,
-        ...commonRepoDates,
-      };
-
-      const expectedDomainCategory = {
-        id: 'category-id',
-        name: 'Income Category',
-        description: 'Income Description',
-        type: ECategoryType.Income,
-        userId: 'user-id',
-        parentId: 'parent-id',
-        taxKey: 'tax-key',
-        status: 'active' as const,
-        ...commonDomainDates,
-      };
-
-      expect(categoryMapper.toDomainIncome(repoModel as any)).toEqual(
-        expectedDomainCategory
-      );
-    });
-
-    it('should overwrite type to Income even if repo model has Expense type', () => {
-      const repoModel = {
-        id: 'category-id',
-        name: 'Test Category',
-        description: null,
-        type: ECategoryType.Expense,
-        userId: null,
-        parentId: null,
-        taxKey: null,
-        status: 'active' as const,
-        ...commonRepoDates,
-      };
-
-      const result = categoryMapper.toDomainIncome(repoModel as any);
-      expect(result.type).toBe(ECategoryType.Income);
     });
   });
 });

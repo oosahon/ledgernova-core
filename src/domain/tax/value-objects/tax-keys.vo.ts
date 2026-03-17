@@ -1,8 +1,10 @@
+import stringUtils from '../../../shared/utils/string';
 import { AppError } from '../../../shared/value-objects/error';
+import accountEntity from '../../account/entities/account.entity';
 import {
-  ECategoryType,
-  UCategoryType,
-} from '../../category/types/category.types';
+  ELedgerAccountType,
+  ULedgerAccountType,
+} from '../../account/types/account.types';
 
 const expenseTaxKeys = {
   other: 'expense:other',
@@ -15,93 +17,83 @@ const expenseTaxKeys = {
   interestOnHouseLoan: 'expense:interest_on_house_loan',
 };
 
-const incomeTaxKeys = {
-  salary: 'income:salary',
-  sales: 'income:sales',
-  homeSale: 'income:home_sale',
-  salesPersonalEffect: 'income:sales_personal_effect',
-  salesPersonalVehicle: 'income:sales_personal_vehicles',
-  rebate: 'income:rebate',
+const revenueTaxKeys = {
+  salary: 'revenue:salary',
+  sales: 'revenue:sales',
+  homeSale: 'revenue:home_sale',
+  salesPersonalEffect: 'revenue:sales_personal_effect',
+  salesPersonalVehicle: 'revenue:sales_personal_vehicles',
+  rebate: 'revenue:rebate',
   // TODO: shares profit will be handled when the bookkeeping module is complete.
   // SharesProfit = 'shares_profit',
   // ServiceFee = 'Service Fee',
   // Bonus = 'bonus',
   // Compensation = 'compensation',
-  compensationLossOfEmployment: 'income:compensation_loss_of_employment',
+  compensationLossOfEmployment: 'revenue:compensation_loss_of_employment',
   // Business = 'business',
   // Commissions = 'commissions',
-  royalties: 'income:royalties',
-  rental: 'income:rental',
-  dividends: 'income:dividends',
-  interest: 'income:interest',
+  royalties: 'revenue:royalties',
+  rental: 'revenue:rental',
+  dividends: 'revenue:dividends',
+  interest: 'revenue:interest',
   // CapitalGains = 'capital_gains',
   // Grants = 'grants',
   // Sponsorships = 'sponsorships',
-  taxRefund: 'income:tax_refunds',
-  gift: 'income:gift',
+  taxRefund: 'revenue:tax_refunds',
+  gift: 'revenue:gift',
   // Insurance = 'insurance',
-  lifeInsurance: 'income:life_insurance',
+  lifeInsurance: 'revenue:life_insurance',
   // Pension = 'pension',
-  pensionPRA: 'income:pensions_rsa',
-  retirementBenefit: 'income:retirement_benefit',
-  other: 'income:other',
+  pensionPRA: 'revenue:pensions_rsa',
+  retirementBenefit: 'revenue:retirement_benefit',
+  other: 'revenue:other',
 };
 
-function makeIncome(userId?: string | null) {
-  return !userId ? incomeTaxKeys.other : `${incomeTaxKeys.other}::${userId}`;
-}
-
-function makeLiabilityIncome(userId?: string | null) {
-  const base = `income:liability`;
+function make(type: ULedgerAccountType, userId?: string | null) {
+  accountEntity.validateType(type);
+  if (userId) {
+    stringUtils.validateUUID(userId);
+  }
+  const base = `${type}`;
   return !userId ? base : `${base}::${userId}`;
 }
 
-function makeExpense(userId?: string | null) {
-  return !userId ? expenseTaxKeys.other : `${expenseTaxKeys.other}::${userId}`;
-}
-
-function makeLiabilityExpense(userId?: string | null) {
-  const base = `expense:liability`;
-  return !userId ? base : `${base}::${userId}`;
-}
-
-function isValid(taxKey: string, type: UCategoryType) {
+function isValid(taxKey: string, type: ULedgerAccountType) {
   if (!taxKey || typeof taxKey !== 'string') return false;
 
-  const baseTaxKey = taxKey.split('::')[0];
+  const [baseTaxKey, userId] = taxKey.split('::');
+
+  if (userId) {
+    stringUtils.validateUUID(userId);
+  }
 
   switch (type) {
-    case ECategoryType.Income:
-      return Object.values(incomeTaxKeys).includes(baseTaxKey as any);
-    case ECategoryType.Expense:
+    case ELedgerAccountType.Revenue:
+      return Object.values(revenueTaxKeys).includes(baseTaxKey as any);
+    case ELedgerAccountType.Expense:
       return Object.values(expenseTaxKeys).includes(baseTaxKey as any);
-    case ECategoryType.LiabilityIncome:
-      return baseTaxKey === 'income:liability';
-    case ECategoryType.LiabilityExpense:
-      return baseTaxKey === 'expense:liability';
+    case ELedgerAccountType.Liability:
+      return baseTaxKey === ELedgerAccountType.Liability;
+    case ELedgerAccountType.Asset:
+      return baseTaxKey === ELedgerAccountType.Asset;
+    case ELedgerAccountType.Equity:
+      return baseTaxKey === ELedgerAccountType.Equity;
     default:
       return false;
   }
 }
 
-function validate(taxKey: string, type: UCategoryType) {
+function validate(taxKey: string, type: ULedgerAccountType) {
   if (!isValid(taxKey, type)) {
     throw new AppError('Invalid tax key', { cause: taxKey });
   }
 }
 
 const taxKeyValue = Object.freeze({
-  income: Object.freeze({
-    make: makeIncome,
-    value: Object.freeze(incomeTaxKeys),
-    makeLiability: makeLiabilityIncome,
-  }),
-  expense: Object.freeze({
-    make: makeExpense,
-    value: Object.freeze(expenseTaxKeys),
-    makeLiability: makeLiabilityExpense,
-  }),
+  make,
   isValid,
+  revenue: Object.freeze(revenueTaxKeys),
+  expense: Object.freeze(expenseTaxKeys),
   validate,
 });
 

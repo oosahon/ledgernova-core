@@ -1,5 +1,6 @@
 import transactionItemEntity from '../transaction-item.entity';
-import { ECategoryType } from '../../../category/types/category.types';
+import { ECategoryFlowType } from '../../../category/types/category.types';
+import { ELedgerAccountType } from '../../../account/types/account.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import categoryEntity from '../../../category/entities/category.entity';
 import { AppError } from '../../../../shared/value-objects/error';
@@ -11,16 +12,22 @@ describe('Transaction Item Entity', () => {
     symbol: '$',
     name: 'US Dollar',
   };
-  const validCategory = categoryEntity.make({
+  const baseCategory = categoryEntity.make({
     name: 'Sales',
-    type: ECategoryType.Income,
+    ledgerAccountType: ELedgerAccountType.Revenue,
+    flowType: ECategoryFlowType.In,
     userId: null,
     parentId: null,
     description: 'Sales category',
-    taxKey: undefined as any,
+    taxKey: 'revenue:sales',
   });
 
-  const transactionId = 'txn-123';
+  const validCategory = {
+    ...baseCategory,
+    taxKey: 'revenue:sales',
+  };
+
+  const transactionId = '550e8400-e29b-41d4-a716-446655440000';
   const transactionDate = new Date('2024-01-01');
 
   describe('make', () => {

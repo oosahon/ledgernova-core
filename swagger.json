@@ -7,9 +7,13 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
-      "UCategoryType": {
+      "ULedgerAccountType": {
         "type": "string",
-        "enum": ["income", "expense", "liability_income", "liability_expense"]
+        "enum": ["asset", "liability", "revenue", "expense", "equity"]
+      },
+      "UCategoryFlowType": {
+        "type": "string",
+        "enum": ["in", "out"]
       },
       "UCategoryStatus": {
         "type": "string",
@@ -23,8 +27,11 @@
           "name": {
             "type": "string"
           },
-          "type": {
-            "$ref": "#/components/schemas/UCategoryType"
+          "ledgerAccountType": {
+            "$ref": "#/components/schemas/ULedgerAccountType"
+          },
+          "flowType": {
+            "$ref": "#/components/schemas/UCategoryFlowType"
           },
           "taxKey": {
             "type": "string"
@@ -60,7 +67,8 @@
         "required": [
           "id",
           "name",
-          "type",
+          "ledgerAccountType",
+          "flowType",
           "taxKey",
           "status",
           "description",
@@ -152,10 +160,10 @@
         "parameters": [
           {
             "in": "query",
-            "name": "categoryType",
+            "name": "flowType",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UCategoryType"
+              "$ref": "#/components/schemas/UCategoryFlowType"
             }
           }
         ]
