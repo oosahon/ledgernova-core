@@ -1,10 +1,12 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
+import { TEntityWithEvents } from '../../../shared/types/event.types';
 import numberUtils from '../../../shared/utils/number';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import accountEntity from '../../account/entities/account.entity';
 import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
 import { ITransactionItem } from '../types/transaction.types';
+import transactionItemEvents from './events/transaction-item.events';
 import helpers from './helpers/transaction-item.helpers';
 
 interface IMakePayload extends TCreationOmits<
@@ -27,7 +29,7 @@ function make(
   transactionId: string,
   transactionDate: Date,
   payload: IMakePayload
-): ITransactionItem {
+): TEntityWithEvents<ITransactionItem, ITransactionItem> {
   const safeQuantity = numberUtils.toNonNegativeNumber(payload.quantity);
 
   helpers.validatePriceAndUnitPrice(
@@ -43,7 +45,7 @@ function make(
   );
   accountEntity.validateType(payload.category.ledgerAccountType);
 
-  return Object.freeze({
+  const item = Object.freeze({
     id: generateUUID(),
     name: helpers.getName(payload.category, payload.name),
     price: payload.price,
@@ -56,6 +58,9 @@ function make(
     updatedAt: transactionDate,
     deletedAt: null,
   });
+
+  const event = transactionItemEvents.created(item);
+  return [item, [event]];
 }
 
 const transactionItemEntity = Object.freeze({

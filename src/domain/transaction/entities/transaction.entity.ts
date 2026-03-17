@@ -1,44 +1,19 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import deepFreeze from '../../../shared/utils/deep-freeze';
 import generateUUID from '../../../shared/utils/uuid-generator';
-import { AppError } from '../../../shared/value-objects/error';
 import { ITransaction, ITransactionItem } from '../types/transaction.types';
 import transactionItemEntity from './transaction-item.entity';
 import helpers from './helpers/transaction.helpers';
 import dateUtils from '../../../shared/utils/date';
 import moneyValue from '../../../shared/value-objects/money.vo';
+import transactionEvents from './events/transaction.events';
+import { TEntityWithEvents } from '../../../shared/types/event.types';
 
 interface IMakeItemPayload extends TCreationOmits<
   ITransactionItem,
   'name' | 'transactionId'
 > {
   name?: string;
-}
-
-/**
- * Adds transaction items to an existing transaction.
- *  - No transaction item should be created for transfer transaction.
- */
-function addItems(
-  transaction: Omit<ITransaction, 'items'>,
-  itemsPayload: IMakeItemPayload[]
-): ITransaction {
-  if (!itemsPayload || itemsPayload.length === 0) {
-    throw new AppError('Transaction items are required', {
-      cause: itemsPayload,
-    });
-  }
-
-  const items = itemsPayload.map((item) =>
-    transactionItemEntity.make(transaction.id, transaction.createdAt, item)
-  );
-
-  transactionItemEntity.validateItemsAmount(items, transaction.amount);
-
-  return deepFreeze<ITransaction>({
-    ...transaction,
-    items,
-  });
 }
 
 /**
@@ -50,7 +25,7 @@ function addItems(
 function make(
   payload: TCreationOmits<ITransaction>,
   itemsPayload: IMakeItemPayload[]
-): ITransaction {
+): TEntityWithEvents<ITransaction, ITransaction | ITransactionItem> {
   helpers.validateItems(payload.type, itemsPayload.length);
   helpers.validateType(payload.type);
   helpers.validateCreatedBy(payload.createdBy);
@@ -81,13 +56,41 @@ function make(
     items: null,
   };
 
-  const doesNotRequireItem = helpers.doesNotRequireItem(payload.type);
+  const trxEvents = transactionEvents.created(transactionWithoutItems);
 
+  // =========== transactions that do not require items (eg transfer transactions) ===========
+  const doesNotRequireItem = helpers.doesNotRequireItem(payload.type);
   if (doesNotRequireItem) {
-    return deepFreeze<ITransaction>(transactionWithoutItems);
+    const entity = deepFreeze<ITransaction>(transactionWithoutItems);
+    return [entity, [trxEvents]];
   }
 
-  return addItems(transactionWithoutItems, itemsPayload);
+  // =========== transactions that require items (eg sales, purchases) ===========
+  const itemsWithEvents = itemsPayload.map((item) =>
+    transactionItemEntity.make(
+      transactionWithoutItems.id,
+      transactionWithoutItems.createdAt,
+      item
+    )
+  );
+
+  const transactionItems = itemsWithEvents.map(([item]) => item);
+
+  transactionItemEntity.validateItemsAmount(
+    transactionItems,
+    transactionWithoutItems.amount
+  );
+
+  const transactionItemEvents = itemsWithEvents.flatMap(
+    ([_, events]) => events
+  );
+
+  const transaction = deepFreeze<ITransaction>({
+    ...transactionWithoutItems,
+    items: transactionItems,
+  });
+
+  return [transaction, [trxEvents, ...transactionItemEvents]];
 }
 
 const transactionEntity = Object.freeze({

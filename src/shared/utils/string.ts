@@ -6,6 +6,14 @@ interface ISanitizeOptions {
   max: number;
 }
 
+function isString(value: string) {
+  return typeof value === 'string';
+}
+
+function isNonEmptyString(value: string) {
+  return isString(value) && value.trim().length > 0;
+}
+
 function sanitizeAndValidateString(value: string, options: ISanitizeOptions) {
   const schema = z.string().min(options.min).max(options.max);
   const result = schema.safeParse(value);
@@ -30,6 +38,7 @@ function validateUUID(value: string) {
 const stringUtils = Object.freeze({
   sanitizeAndValidate: sanitizeAndValidateString,
   isUUID,
+  isNonEmptyString,
   validateUUID,
 });
 
