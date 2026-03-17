@@ -10,8 +10,8 @@ fi
 
 # Start dev services
 npx cross-env NODE_ENV=test concurrently \
-  "yarn start:postgres" \
-  "yarn start:redis" \
-  "yarn db:migrate" \
+  "npm run start:postgres" \
+  "npm run start:redis" \
+  "npm run db:migrate" \
   "nodemon" \
   "nodemon -x 'tsoa spec-and-routes -c tsoa.json'"

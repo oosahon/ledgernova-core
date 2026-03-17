@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Create Env File
         run: |
@@ -29,13 +29,13 @@ jobs:
           EOF
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Create tmp directory for potential mock setups
         run: mkdir -p tmp
 
       - name: Run Tests with Coverage
-        run: yarn test --coverage --coverageReporters="json-summary" --coverageReporters="text" --coverageReporters="lcov"
+        run: npm test -- --coverage --coverageReporters="json-summary" --coverageReporters="text" --coverageReporters="lcov"
         
       - name: Generate Coverage Badge
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
