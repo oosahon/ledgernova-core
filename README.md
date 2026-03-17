@@ -1,33 +1,34 @@
 # Introduction
 
+![Coverage Badge](./badges/coverage.svg)
+
 This repo contains the server-side source code for Purple Ledger's bookkeeping and tax app.
 
 ## Requirements
 
 - Docker
 - Node.js (>=20.18.1 as specified in `package.json`)
-- Yarn
-  NB: we use yarn specifically because of its peer dependency resolution. Please DO NOT use npm.
+- npm
 
 ## Installation
 
 - Clone the repo
-- Run `yarn install`
+- Run `npm install`
 - Copy the environment variables from Doppler (dev) and save them in a `.env` file in the root directory. [Env URL](https://dashboard.doppler.com/workplace/b0fb8d6179aa66108eac/projects/purple-ledger-be/configs/dev)
 
 ## Running the app
 
 - Ensure docker is running
-- Run `yarn migrate`
-- Run `yarn dev`
+- Run `npm run migrate`
+- Run `npm run dev`
 - The app should now be running on `http://localhost:${PORT}`
 
 For database setup:
 
 ```bash
-yarn start:postgres
-yarn start:redis
-yarn db:migrate
+npm run start:postgres
+npm run start:redis
+npm run db:migrate
 ```
 
 ### Testing
@@ -35,7 +36,7 @@ yarn db:migrate
 Run the test suite:
 
 ```bash
-yarn test
+npm test
 ```
 
 ### Linting and Formatting

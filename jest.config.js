@@ -12,4 +12,5 @@ module.exports = {
       tsconfig: 'tsconfig.test.json',
     },
   },
+  coverageReporters: ['json-summary', 'text', 'lcov'],
 };

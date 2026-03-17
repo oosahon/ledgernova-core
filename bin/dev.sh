@@ -10,7 +10,7 @@ fi
 
 # Start dev services
 npx concurrently \
-  "yarn start:postgres" \
-  "yarn start:redis" \
+  "npm run start:postgres" \
+  "npm run start:redis" \
   "nodemon" \
   "nodemon -x 'tsoa spec-and-routes -c tsoa.json'"
