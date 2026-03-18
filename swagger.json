@@ -7,6 +7,10 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
+      "UAccountingDomain": {
+        "type": "string",
+        "enum": ["corporate", "sole_trader", "personal"]
+      },
       "ULedgerAccountType": {
         "type": "string",
         "enum": ["asset", "liability", "revenue", "expense", "equity"]
@@ -26,6 +30,9 @@
           },
           "name": {
             "type": "string"
+          },
+          "accountingDomain": {
+            "$ref": "#/components/schemas/UAccountingDomain"
           },
           "ledgerAccountType": {
             "$ref": "#/components/schemas/ULedgerAccountType"
@@ -67,6 +74,7 @@
         "required": [
           "id",
           "name",
+          "accountingDomain",
           "ledgerAccountType",
           "flowType",
           "taxKey",
@@ -89,7 +97,7 @@
     "version": "1.0.0",
     "description": "This repo contains the server-side source code for Purple Ledger's bookkeeping and tax app.",
     "license": {
-      "name": "ISC"
+      "name": "AGPL-3.0-or-later"
     },
     "contact": {
       "name": "Osahon Oboite"
