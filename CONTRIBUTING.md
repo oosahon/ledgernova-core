@@ -74,7 +74,7 @@ To maintain a clean and organized codebase, please follow these strict git workf
 - **Target**: Every update must be submitted as a PR to the `development` branch.
 - **Naming Convention**:
   - Branches should be named using the format: `<type>/<description-with-hyphens>-<optional-issue-id>`
-  - **Types**: `feat`, `fix`, `chore`, `refactor`, `test`
+  - **Types**: `feat`, `fix`, `chore`, `refactor`, `test`, `doc`
   - **Examples**:
     - `feat/add-accounts-endpoint-49494`
     - `fix/login-error`
