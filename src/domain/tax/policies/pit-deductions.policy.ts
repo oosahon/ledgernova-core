@@ -54,9 +54,9 @@ function fullyDeductible(
   validateTrxItemsLength(items);
 
   const applicableTaxKeys = [
-    taxKeyValue.asset.pensionContribution,
-    taxKeyValue.asset.nhfContribution,
-    taxKeyValue.asset.annuityPremium,
+    taxKeyValue.payment.pensionContribution,
+    taxKeyValue.payment.nhfContribution,
+    taxKeyValue.payment.annuityPremium,
 
     taxKeyValue.expense.nhisContribution,
     taxKeyValue.expense.lifeInsurance,

@@ -3,10 +3,8 @@ import { TEntityWithEvents } from '../../../shared/types/event.types';
 import numberUtils from '../../../shared/utils/number';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
-import accountEntity from '../../account/entities/account.entity';
-import { ELedgerAccountType } from '../../account/types/account.types';
 import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
-import { ITransactionItem } from '../types/transaction.types';
+import { ITransactionItem, UTransactionType } from '../types/transaction.types';
 import transactionItemEvents from './events/transaction-item.events';
 import helpers from './helpers/transaction-item.helpers';
 
@@ -28,6 +26,7 @@ interface IMakePayload extends TCreationOmits<
  */
 function make(
   transactionId: string,
+  transactionType: UTransactionType,
   transactionDate: Date,
   payload: IMakePayload
 ): TEntityWithEvents<ITransactionItem, ITransactionItem> {
@@ -40,11 +39,7 @@ function make(
   );
   stringUtils.validateUUID(transactionId);
   stringUtils.validateUUID(payload.category.id);
-  taxKeyValue.validate(
-    payload.category.taxKey,
-    payload.category.ledgerAccountType
-  );
-  accountEntity.validateType(payload.category.ledgerAccountType);
+  taxKeyValue.validate(payload.category.taxKey, transactionType);
 
   const item = Object.freeze({
     id: generateUUID(),
@@ -65,18 +60,8 @@ function make(
   return [item, [event]];
 }
 
-function isExpense(item: ITransactionItem) {
-  return item.category.ledgerAccountType === ELedgerAccountType.Expense;
-}
-
-function isRevenue(item: ITransactionItem) {
-  return item.category.ledgerAccountType === ELedgerAccountType.Revenue;
-}
-
 const transactionItemEntity = Object.freeze({
   make,
-  isExpense,
-  isRevenue,
   ...helpers,
 });
 

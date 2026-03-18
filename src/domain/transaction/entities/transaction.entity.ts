@@ -71,6 +71,7 @@ function make(
   const itemsWithEvents = itemsPayload.map((item) =>
     transactionItemEntity.make(
       transactionWithoutItems.id,
+      transactionWithoutItems.type,
       transactionWithoutItems.createdAt,
       item
     )

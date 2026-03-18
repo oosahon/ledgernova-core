@@ -1,31 +1,27 @@
-import { ELedgerAccountType } from '../../../account/types/account.types';
+import { ETransactionType } from '../../../transaction/types/transaction.types';
 import taxKeyValue from '../tax-keys.vo';
 
 describe('taxKeyValue', () => {
   describe('make', () => {
-    it('should return system default when no userId is provided (revenue)', () => {
-      expect(taxKeyValue.make(ELedgerAccountType.Revenue)).toBe(
-        'revenue:other'
-      );
-      expect(taxKeyValue.make(ELedgerAccountType.Revenue, null)).toBe(
-        'revenue:other'
+    it('should return system default when no userId is provided (receipt)', () => {
+      expect(taxKeyValue.make(ETransactionType.Receipt)).toBe('receipt:other');
+      expect(taxKeyValue.make(ETransactionType.Receipt, null)).toBe(
+        'receipt:other'
       );
     });
 
-    it('should return formatted key when userId is provided (revenue)', () => {
+    it('should return formatted key when userId is provided (receipt)', () => {
       expect(
         taxKeyValue.make(
-          ELedgerAccountType.Revenue,
+          ETransactionType.Receipt,
           '987fcdeb-51a2-43d7-9012-3456789abcde'
         )
-      ).toBe('revenue:other::987fcdeb-51a2-43d7-9012-3456789abcde');
+      ).toBe('receipt:other::987fcdeb-51a2-43d7-9012-3456789abcde');
     });
 
     it('should return system default when no userId is provided (expense)', () => {
-      expect(taxKeyValue.make(ELedgerAccountType.Expense)).toBe(
-        'expense:other'
-      );
-      expect(taxKeyValue.make(ELedgerAccountType.Expense, null)).toBe(
+      expect(taxKeyValue.make(ETransactionType.Expense)).toBe('expense:other');
+      expect(taxKeyValue.make(ETransactionType.Expense, null)).toBe(
         'expense:other'
       );
     });
@@ -33,128 +29,114 @@ describe('taxKeyValue', () => {
     it('should return formatted key when userId is provided (expense)', () => {
       expect(
         taxKeyValue.make(
-          ELedgerAccountType.Expense,
+          ETransactionType.Expense,
           '987fcdeb-51a2-43d7-9012-3456789abcde'
         )
       ).toBe('expense:other::987fcdeb-51a2-43d7-9012-3456789abcde');
     });
 
-    it('should return system default when no userId is provided (asset)', () => {
-      expect(taxKeyValue.make(ELedgerAccountType.Asset)).toBe('asset:other');
-      expect(taxKeyValue.make(ELedgerAccountType.Asset, null)).toBe(
-        'asset:other'
+    it('should return system default when no userId is provided (payment)', () => {
+      expect(taxKeyValue.make(ETransactionType.Payment)).toBe('payment:other');
+      expect(taxKeyValue.make(ETransactionType.Payment, null)).toBe(
+        'payment:other'
       );
     });
 
-    it('should return formatted key when userId is provided (asset)', () => {
+    it('should return formatted key when userId is provided (payment)', () => {
       expect(
         taxKeyValue.make(
-          ELedgerAccountType.Asset,
+          ETransactionType.Payment,
           '987fcdeb-51a2-43d7-9012-3456789abcde'
         )
-      ).toBe('asset:other::987fcdeb-51a2-43d7-9012-3456789abcde');
+      ).toBe('payment:other::987fcdeb-51a2-43d7-9012-3456789abcde');
     });
 
-    it('should return base when no userId is provided (liability)', () => {
-      expect(taxKeyValue.make(ELedgerAccountType.Liability)).toBe('liability');
+    it('should return base when no userId is provided (sale)', () => {
+      expect(taxKeyValue.make(ETransactionType.Sale)).toBe('sale:other');
     });
   });
 
   describe('isValid', () => {
-    it('should validate ELedgerAccountType.Revenue', () => {
+    it('should validate ETransactionType.Receipt', () => {
       expect(
-        taxKeyValue.isValid('revenue:salary', ELedgerAccountType.Revenue)
+        taxKeyValue.isValid('receipt:salary', ETransactionType.Receipt)
       ).toBe(true);
       expect(
-        taxKeyValue.isValid('revenue:other', ELedgerAccountType.Revenue)
+        taxKeyValue.isValid('receipt:other', ETransactionType.Receipt)
       ).toBe(true);
-      expect(
-        taxKeyValue.isValid('invalid:key', ELedgerAccountType.Revenue)
-      ).toBe(false);
+      expect(taxKeyValue.isValid('invalid:key', ETransactionType.Receipt)).toBe(
+        false
+      );
       expect(
         taxKeyValue.isValid(
-          'revenue:salary::987fcdeb-51a2-43d7-9012-3456789abcde',
-          ELedgerAccountType.Revenue
+          'receipt:salary::987fcdeb-51a2-43d7-9012-3456789abcde',
+          ETransactionType.Receipt
         )
       ).toBe(true);
     });
 
-    it('should validate ELedgerAccountType.Expense', () => {
+    it('should validate ETransactionType.Expense', () => {
       expect(
-        taxKeyValue.isValid('expense:rent', ELedgerAccountType.Expense)
+        taxKeyValue.isValid('expense:rent', ETransactionType.Expense)
       ).toBe(true);
       expect(
-        taxKeyValue.isValid('expense:other', ELedgerAccountType.Expense)
+        taxKeyValue.isValid('expense:other', ETransactionType.Expense)
       ).toBe(true);
-      expect(
-        taxKeyValue.isValid('invalid:key', ELedgerAccountType.Expense)
-      ).toBe(false);
+      expect(taxKeyValue.isValid('invalid:key', ETransactionType.Expense)).toBe(
+        false
+      );
       expect(
         taxKeyValue.isValid(
           'expense:rent::987fcdeb-51a2-43d7-9012-3456789abcde',
-          ELedgerAccountType.Expense
+          ETransactionType.Expense
         )
       ).toBe(true);
     });
 
-    it('should validate ELedgerAccountType.Liability', () => {
-      expect(
-        taxKeyValue.isValid('liability', ELedgerAccountType.Liability)
-      ).toBe(true);
-      expect(
-        taxKeyValue.isValid(
-          'liability::987fcdeb-51a2-43d7-9012-3456789abcde',
-          ELedgerAccountType.Liability
-        )
-      ).toBe(true);
-      expect(
-        taxKeyValue.isValid('revenue:salary', ELedgerAccountType.Liability)
-      ).toBe(false);
-    });
-
-    it('should validate ELedgerAccountType.Asset', () => {
-      expect(taxKeyValue.isValid('asset:other', ELedgerAccountType.Asset)).toBe(
+    it('should validate ETransactionType.Sale', () => {
+      expect(taxKeyValue.isValid('sale:sales', ETransactionType.Sale)).toBe(
         true
       );
       expect(
         taxKeyValue.isValid(
-          'asset:other::987fcdeb-51a2-43d7-9012-3456789abcde',
-          ELedgerAccountType.Asset
+          'sale:sales::987fcdeb-51a2-43d7-9012-3456789abcde',
+          ETransactionType.Sale
         )
       ).toBe(true);
-      expect(
-        taxKeyValue.isValid('expense:rent', ELedgerAccountType.Asset)
-      ).toBe(false);
+      expect(taxKeyValue.isValid('receipt:salary', ETransactionType.Sale)).toBe(
+        false
+      );
     });
 
-    it('should validate ELedgerAccountType.Equity', () => {
-      expect(taxKeyValue.isValid('equity', ELedgerAccountType.Equity)).toBe(
-        true
-      );
+    it('should validate ETransactionType.Payment', () => {
+      expect(
+        taxKeyValue.isValid('payment:other', ETransactionType.Payment)
+      ).toBe(true);
       expect(
         taxKeyValue.isValid(
-          'equity::987fcdeb-51a2-43d7-9012-3456789abcde',
-          ELedgerAccountType.Equity
+          'payment:other::987fcdeb-51a2-43d7-9012-3456789abcde',
+          ETransactionType.Payment
         )
       ).toBe(true);
       expect(
-        taxKeyValue.isValid('expense:rent', ELedgerAccountType.Equity)
+        taxKeyValue.isValid('expense:rent', ETransactionType.Payment)
       ).toBe(false);
     });
 
     it('should invalidate unknown or undefined category types', () => {
-      expect(taxKeyValue.isValid('revenue:other', 'unknown' as any)).toBe(
+      expect(taxKeyValue.isValid('receipt:other', 'unknown' as any)).toBe(
         false
       );
     });
   });
+
   describe('getBaseTaxKey', () => {
     it('should return the base tax key by stripping the user ID', () => {
       expect(taxKeyValue.getBaseTaxKey('expense:rent::123')).toBe(
         'expense:rent'
       );
-      expect(taxKeyValue.getBaseTaxKey('revenue:salary')).toBe(
-        'revenue:salary'
+      expect(taxKeyValue.getBaseTaxKey('receipt:salary')).toBe(
+        'receipt:salary'
       );
     });
   });

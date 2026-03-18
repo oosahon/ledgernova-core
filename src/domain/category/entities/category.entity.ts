@@ -3,8 +3,17 @@ import { TEntityWithEvents } from '../../../shared/types/event.types';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import accountEntity from '../../account/entities/account.entity';
+import {
+  ELedgerAccountType,
+  ULedgerAccountType,
+} from '../../account/types/account.types';
 import accountingHelpers from '../../accounting/helpers/accounting.helpers';
 import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
+import transactionEntity from '../../transaction/entities/transaction.entity';
+import {
+  ETransactionType,
+  UTransactionType,
+} from '../../transaction/types/transaction.types';
 import categoryEvents from '../events/category.events';
 import { ECategoryStatus, ICategory } from '../types/category.types';
 import helpers from './helpers/category.helpers';
@@ -17,7 +26,7 @@ function make(
 ): TEntityWithEvents<ICategory, ICategory> {
   const timestamps = new Date();
 
-  accountEntity.validateType(payload.ledgerAccountType);
+  transactionEntity.validateType(payload.transactionType);
   helpers.validateUserAndParentId(payload);
   helpers.validateFlowType(payload.flowType);
   accountingHelpers.validateDomain(payload.accountingDomain);
@@ -26,8 +35,8 @@ function make(
     id: generateUUID(),
     name: helpers.sanitizeName(payload.name),
     accountingDomain: payload.accountingDomain,
-    taxKey: taxKeyValue.make(payload.ledgerAccountType, payload.userId),
-    ledgerAccountType: payload.ledgerAccountType,
+    taxKey: taxKeyValue.make(payload.transactionType, payload.userId),
+    transactionType: payload.transactionType,
     parentId: payload.parentId,
     description: helpers.sanitizeDescription(payload.description),
     userId: payload.userId,

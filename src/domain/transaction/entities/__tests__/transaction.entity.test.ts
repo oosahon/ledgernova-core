@@ -22,18 +22,18 @@ describe('Transaction Entity', () => {
 
   const [baseCategory] = categoryEntity.make({
     name: 'Sales',
-    ledgerAccountType: ELedgerAccountType.Revenue,
+    transactionType: ETransactionType.Receipt,
     flowType: ECategoryFlowType.In,
     userId: null,
     parentId: null,
     description: 'Sales category',
-    taxKey: 'revenue:sales',
+    taxKey: 'sale:sales',
     accountingDomain: EAccountingDomain.Personal,
   });
 
   const validCategory = {
     ...baseCategory,
-    taxKey: 'revenue:sales',
+    taxKey: 'sale:sales',
   };
 
   const validItemPayload = {

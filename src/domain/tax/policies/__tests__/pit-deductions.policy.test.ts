@@ -37,10 +37,10 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
 
     it('should filter only applicable items and sum their total properly', () => {
       const pensionItem = createItem(
-        taxKeyValue.asset.pensionContribution,
+        taxKeyValue.payment.pensionContribution,
         1000
       );
-      const nhfItem = createItem(taxKeyValue.asset.nhfContribution, 1500);
+      const nhfItem = createItem(taxKeyValue.payment.nhfContribution, 1500);
       const nhisItem = createItem(taxKeyValue.expense.nhisContribution, 2000);
       const lifeInsuranceItem = createItem(
         taxKeyValue.expense.lifeInsurance,
@@ -223,13 +223,13 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
     });
 
     it('should filter items based on applicable tax keys', () => {
-      const item1 = createItem(taxKeyValue.asset.pensionContribution, 1000);
+      const item1 = createItem(taxKeyValue.payment.pensionContribution, 1000);
       const item2 = createItem(taxKeyValue.expense.rent, 2000);
       const item3 = createItem('expense:other', 3000);
 
       const items = [item1, item2, item3];
       const keys = [
-        taxKeyValue.asset.pensionContribution,
+        taxKeyValue.payment.pensionContribution,
         taxKeyValue.expense.rent,
       ];
 

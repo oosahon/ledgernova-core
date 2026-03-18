@@ -3,8 +3,8 @@ import {
   ECategoryFlowType,
   ICategory,
 } from '../../../domain/category/types/category.types';
-import { ELedgerAccountType } from '../../../domain/account/types/account.types';
 import { EAccountingDomain } from '../../../domain/accounting/types/accounting.types';
+import { ETransactionType } from '../../../domain/transaction/types/transaction.types';
 
 describe('Category Mapper', () => {
   const commonDomainDates = {
@@ -25,7 +25,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
-        ledgerAccountType: ELedgerAccountType.Expense,
+        transactionType: ETransactionType.Expense,
         flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: 'parent-id',
@@ -39,7 +39,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
-        ledgerAccountType: ELedgerAccountType.Expense,
+        transactionType: ETransactionType.Expense,
         flowType: ECategoryFlowType.Out, // Spreads through object mapping
         userId: 'user-id',
         parentId: 'parent-id',
@@ -59,7 +59,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'sas',
-        ledgerAccountType: ELedgerAccountType.Revenue,
+        transactionType: ETransactionType.Receipt,
         flowType: ECategoryFlowType.In,
         status: 'active' as const,
         parentId: null,
@@ -71,7 +71,7 @@ describe('Category Mapper', () => {
 
       const expectedRepoModel = {
         ...domainCategory,
-        ledgerAccountType: ELedgerAccountType.Revenue,
+        transactionType: ETransactionType.Receipt,
         ...commonRepoDates,
       };
 
@@ -87,7 +87,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
-        ledgerAccountType: ELedgerAccountType.Expense,
+        transactionType: ETransactionType.Expense,
         flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: null,
@@ -101,7 +101,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
-        ledgerAccountType: ELedgerAccountType.Expense,
+        transactionType: ETransactionType.Expense,
         flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: null,
