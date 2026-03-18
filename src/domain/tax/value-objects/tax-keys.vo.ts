@@ -25,6 +25,7 @@ const systemAssetTaxKeys = {
   nhfContribution: 'asset:nhf_contribution',
   stocksPurchase: 'asset:stocks_purchase',
   stocksReinvestment: 'asset:stocks_reinvestment',
+  annuityPremium: 'asset:annuity_premium',
   other: 'asset:other',
 };
 

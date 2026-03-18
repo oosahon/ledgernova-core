@@ -2,17 +2,19 @@
  * This policy covers personal income tax deductions under the Nigeria Tax Act (NTA) 2025.
  * See public/Nigeria-Tax-Act-2025.pdf for more information.
  */
-
-import { AppError } from '../../../../shared/value-objects/error';
-import moneyValue from '../../../../shared/value-objects/money.vo';
-import { ITransactionItem } from '../../../transaction/types/transaction.types';
-import { IPersonalIncomeTaxDeductionPolicy } from '../../types/tax-policy.types';
-import taxKeyValue from '../../value-objects/tax-keys.vo';
+import { AppError } from '../../../shared/value-objects/error';
+import moneyValue from '../../../shared/value-objects/money.vo';
+import { ITransactionItemWithPITUserInput } from '../types/pit.types';
+import { IPITDeductionPolicy } from '../types/pit.types';
+import taxKeyValue from '../value-objects/tax-keys.vo';
 
 /**
  * Filters transaction items to get the ones that are applicable to the tax policy
  */
-function getApplicable(taxKeys: string[], items: ITransactionItem[]) {
+function getApplicable(
+  taxKeys: string[],
+  items: ITransactionItemWithPITUserInput[]
+) {
   if (!taxKeys.length) {
     throw new AppError('Provide at least one tax key', {
       cause: taxKeys,
@@ -24,11 +26,11 @@ function getApplicable(taxKeys: string[], items: ITransactionItem[]) {
   );
 }
 
-function getZeroAmount(items: ITransactionItem[]) {
+function getZeroAmount(items: ITransactionItemWithPITUserInput[]) {
   return moneyValue.makeZeroAmount(items[0].functionalCurrencyAmount.currency);
 }
 
-function validateTrxItemsLength(items: ITransactionItem[]) {
+function validateTrxItemsLength(items: ITransactionItemWithPITUserInput[]) {
   if (!items.length) {
     throw new AppError('Provide at least one transaction item', {
       cause: items,
@@ -47,13 +49,14 @@ function validateTrxItemsLength(items: ITransactionItem[]) {
  * See public/Nigeria-Tax-Act-2025.pdf for more information.
  */
 function fullyDeductible(
-  items: ITransactionItem[]
-): IPersonalIncomeTaxDeductionPolicy {
+  items: ITransactionItemWithPITUserInput[]
+): IPITDeductionPolicy {
   validateTrxItemsLength(items);
 
   const applicableTaxKeys = [
     taxKeyValue.asset.pensionContribution,
     taxKeyValue.asset.nhfContribution,
+    taxKeyValue.asset.annuityPremium,
 
     taxKeyValue.expense.nhisContribution,
     taxKeyValue.expense.lifeInsurance,
@@ -76,12 +79,12 @@ function fullyDeductible(
 /**
  * ========= Rent =========
  * This policy covers rent expenses.
- *  - Rent expenses are deductible up to N500,000 per annum
+ *  - Rent expenses are deductible: 20% of rent amount, up to N500,000 per annum
  * See public/Nigeria-Tax-Act-2025.pdf for more information.
  */
 function rentPolicy(
-  items: ITransactionItem[]
-): IPersonalIncomeTaxDeductionPolicy {
+  items: ITransactionItemWithPITUserInput[]
+): IPITDeductionPolicy {
   validateTrxItemsLength(items);
 
   const applicableTaxKeys = [taxKeyValue.expense.rent];
@@ -91,9 +94,15 @@ function rentPolicy(
     getZeroAmount(items),
     ...rentItems.map((item) => item.functionalCurrencyAmount)
   );
+
+  const twentyPercent = moneyValue.multiply(totalAmount, {
+    numerator: 20,
+    denominator: 100,
+  });
+
   const cap = moneyValue.make(500_000, totalAmount.currency, false);
 
-  const deductibleAmount = moneyValue.min(cap, totalAmount);
+  const deductibleAmount = moneyValue.min(cap, twentyPercent);
 
   return Object.freeze({
     transactionItems: rentItems,
@@ -101,10 +110,44 @@ function rentPolicy(
   });
 }
 
+/**
+ * ========= Interest On Owner Occupied Home =========
+ * This policy covers interest on owner-occupied home expenses.
+ *  - by default, all interest on owner-occupied home expenses are deductible
+ *  - if the user explicitly states that the home is not owner-occupied,
+ *     then the interest on owner-occupied home expenses are not deductible
+ * See public/Nigeria-Tax-Act-2025.pdf for more information.
+ */
+function interestOnOwnerOccupiedHomePolicy(
+  items: ITransactionItemWithPITUserInput[]
+): IPITDeductionPolicy {
+  validateTrxItemsLength(items);
+
+  const applicableTaxKeys = [
+    taxKeyValue.expense.interestOnOwnerOccupiedHouseLoan,
+  ];
+  const interestItems = getApplicable(applicableTaxKeys, items);
+
+  const itemsWithoutExplicitNo = interestItems.filter(
+    (item) => item.userInput?.ownerOccupiedHome !== false
+  );
+
+  const totalAmount = moneyValue.add(
+    getZeroAmount(items),
+    ...itemsWithoutExplicitNo.map((item) => item.functionalCurrencyAmount)
+  );
+
+  return Object.freeze({
+    transactionItems: itemsWithoutExplicitNo,
+    deductibleAmount: totalAmount,
+  });
+}
+
 const personalIncomeTaxDeductionPolicy = Object.freeze({
   fullyDeductible,
   rentPolicy,
   getApplicable,
+  interestOnOwnerOccupiedHomePolicy,
 });
 
 export default personalIncomeTaxDeductionPolicy;
