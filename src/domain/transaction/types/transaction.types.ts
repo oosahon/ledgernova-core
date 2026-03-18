@@ -38,7 +38,11 @@ export type UTransactionType =
 export interface ITransactionItem {
   id: string;
   name: string;
-  price: IMoney;
+  // actual transaction amount in any currency
+  amount: IMoney;
+
+  // amount in the user's functional currency
+  functionalCurrencyAmount: IMoney;
   quantity: number;
   unitPrice: IMoney | null;
   transactionId: string;
@@ -52,14 +56,25 @@ export interface ITransactionItem {
 export interface ITransaction {
   id: string;
   status: UTransactionStatus;
-  createdBy: string; // used instead of `userId` because the trx creator might not be the owner of the account
+
+  // used instead of `userId` because the trx creator might not be the owner of the account
+  createdBy: string;
   type: UTransactionType;
   accountId: string;
+
+  // unless for transfers and journal entries, this is derived from the items
   amount: IMoney;
+
+  // unless for transfers and journal entries, this is derived from the items
+  functionalCurrencyAmount: IMoney;
   attachmentIds: string[];
-  items: ITransactionItem[] | null; // `null` for transfers and journals
+
+  // `null` for transfers and journals
+  items: ITransactionItem[] | null;
   date: Date;
-  recipientAccountId: string | null; // only used for transfers
+
+  // only used for transfers
+  recipientAccountId: string | null;
   exchangeRate: number;
   note: string | null;
   createdAt: Date;

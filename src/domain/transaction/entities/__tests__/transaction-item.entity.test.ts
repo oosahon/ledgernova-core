@@ -34,7 +34,8 @@ describe('Transaction Item Entity', () => {
     it('should create a valid transaction item with a provided name', () => {
       const payload = {
         name: 'Custom Item Name',
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: 2,
         unitPrice: moneyValue.make(50, currency, false),
         category: validCategory,
@@ -49,7 +50,7 @@ describe('Transaction Item Entity', () => {
 
       expect(item.id).toBeDefined();
       expect(item.name).toBe('Custom Item Name');
-      expect(item.price).toEqual(payload.price);
+      expect(item.amount).toEqual(payload.amount);
       expect(item.quantity).toBe(2);
       expect(item.unitPrice).toEqual(payload.unitPrice);
       expect(item.transactionId).toBe(transactionId);
@@ -66,7 +67,8 @@ describe('Transaction Item Entity', () => {
 
     it('should create a valid transaction item without a provided name (system generated)', () => {
       const payload = {
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: 2,
         unitPrice: moneyValue.make(50, currency, false),
         category: validCategory,
@@ -88,7 +90,8 @@ describe('Transaction Item Entity', () => {
 
     it('should create a valid transaction item when unitPrice is null', () => {
       const payload = {
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: 1,
         unitPrice: null,
         category: validCategory,
@@ -108,7 +111,8 @@ describe('Transaction Item Entity', () => {
     it('should throw an error if item name is invalid (empty string)', () => {
       const payload = {
         name: '   ',
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: 2,
         unitPrice: moneyValue.make(50, currency, false),
         category: validCategory,
@@ -123,7 +127,8 @@ describe('Transaction Item Entity', () => {
     it('should throw an error if item name is too long', () => {
       const payload = {
         name: 'a'.repeat(101),
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: 2,
         unitPrice: moneyValue.make(50, currency, false),
         category: validCategory,
@@ -138,7 +143,8 @@ describe('Transaction Item Entity', () => {
     it('should throw an error if item name is not a string', () => {
       const payload = {
         name: 123 as any,
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: 2,
         unitPrice: moneyValue.make(50, currency, false),
         category: validCategory,
@@ -153,7 +159,8 @@ describe('Transaction Item Entity', () => {
     it('should throw an error if price and unit price do not match', () => {
       const payload = {
         name: 'Item',
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: 2,
         unitPrice: moneyValue.make(60, currency, false), // 2 * 60 = 120 !== 100
         category: validCategory,
@@ -168,7 +175,8 @@ describe('Transaction Item Entity', () => {
     it('should throw an error if unitPrice is provided but invalid', () => {
       const payload = {
         name: 'Item',
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: 1,
         unitPrice: { invalid: 'object' } as any,
         category: validCategory,
@@ -183,7 +191,8 @@ describe('Transaction Item Entity', () => {
     it('should throw an error if quantity is negative', () => {
       const payload = {
         name: 'Item',
-        price: moneyValue.make(100, currency, false),
+        amount: moneyValue.make(100, currency, false),
+        functionalCurrencyAmount: moneyValue.make(100, currency, false),
         quantity: -2,
         unitPrice: moneyValue.make(50, currency, false),
         category: validCategory,
@@ -196,13 +205,57 @@ describe('Transaction Item Entity', () => {
     });
   });
 
+  describe('isExpense / isRevenue', () => {
+    it('should identify expense item', () => {
+      const expenseItem = {
+        ...validCategory,
+        taxKey: 'expense:other',
+        ledgerAccountType: ELedgerAccountType.Expense,
+      };
+      const [item] = transactionItemEntity.make(
+        transactionId,
+        transactionDate,
+        {
+          name: 'Item',
+          amount: moneyValue.make(100, currency, false),
+          functionalCurrencyAmount: moneyValue.make(100, currency, false),
+          quantity: 1,
+          unitPrice: moneyValue.make(100, currency, false),
+          category: expenseItem as any,
+          isSystemGenerated: false,
+        }
+      );
+      expect(transactionItemEntity.isExpense(item)).toBe(true);
+      expect(transactionItemEntity.isRevenue(item)).toBe(false);
+    });
+
+    it('should identify revenue item', () => {
+      const [item] = transactionItemEntity.make(
+        transactionId,
+        transactionDate,
+        {
+          name: 'Item',
+          amount: moneyValue.make(100, currency, false),
+          functionalCurrencyAmount: moneyValue.make(100, currency, false),
+          quantity: 1,
+          unitPrice: moneyValue.make(100, currency, false),
+          category: validCategory,
+          isSystemGenerated: false,
+        }
+      );
+      expect(transactionItemEntity.isRevenue(item)).toBe(true);
+      expect(transactionItemEntity.isExpense(item)).toBe(false);
+    });
+  });
+
   describe('validateItemsAmount', () => {
     it('should not throw if total items amount matches transaction amount', () => {
       const [item1] = transactionItemEntity.make(
         transactionId,
         transactionDate,
         {
-          price: moneyValue.make(100, currency, false),
+          amount: moneyValue.make(100, currency, false),
+          functionalCurrencyAmount: moneyValue.make(100, currency, false),
           quantity: 1,
           unitPrice: null,
           category: validCategory,
@@ -213,7 +266,8 @@ describe('Transaction Item Entity', () => {
         transactionId,
         transactionDate,
         {
-          price: moneyValue.make(50, currency, false),
+          amount: moneyValue.make(50, currency, false),
+          functionalCurrencyAmount: moneyValue.make(50, currency, false),
           quantity: 1,
           unitPrice: null,
           category: validCategory,
@@ -222,10 +276,10 @@ describe('Transaction Item Entity', () => {
       );
 
       expect(() =>
-        transactionItemEntity.validateItemsAmount(
-          [item1, item2],
-          moneyValue.make(150, currency, false)
-        )
+        transactionItemEntity.validateItemsAmount([item1, item2], {
+          amount: moneyValue.make(150, currency, false),
+          functionalCurrencyAmount: moneyValue.make(150, currency, false),
+        })
       ).not.toThrow();
     });
 
@@ -234,7 +288,8 @@ describe('Transaction Item Entity', () => {
         transactionId,
         transactionDate,
         {
-          price: moneyValue.make(100, currency, false),
+          amount: moneyValue.make(100, currency, false),
+          functionalCurrencyAmount: moneyValue.make(100, currency, false),
           quantity: 1,
           unitPrice: null,
           category: validCategory,
@@ -243,10 +298,10 @@ describe('Transaction Item Entity', () => {
       );
 
       expect(() =>
-        transactionItemEntity.validateItemsAmount(
-          [item1],
-          moneyValue.make(150, currency, false)
-        )
+        transactionItemEntity.validateItemsAmount([item1], {
+          amount: moneyValue.make(150, currency, false),
+          functionalCurrencyAmount: moneyValue.make(150, currency, false),
+        })
       ).toThrow(AppError);
     });
   });

@@ -36,7 +36,8 @@ describe('Transaction Entity', () => {
 
   const validItemPayload = {
     name: 'Item 1',
-    price: moneyValue.make(100, currency, false),
+    amount: moneyValue.make(100, currency, false),
+    functionalCurrencyAmount: moneyValue.make(100, currency, false),
     quantity: 1,
     unitPrice: moneyValue.make(100, currency, false),
     category: validCategory,
@@ -49,6 +50,7 @@ describe('Transaction Entity', () => {
     type: ETransactionType.Sale,
     accountId: 'acc-1',
     amount: moneyValue.make(100, currency, false),
+    functionalCurrencyAmount: moneyValue.make(100, currency, false),
     date: new Date('2024-01-01'),
     recipientAccountId: null,
     exchangeRate: 1,
@@ -83,7 +85,10 @@ describe('Transaction Entity', () => {
       expect(transaction.items?.length).toBe(1);
       const item = transaction.items![0];
       expect(item.name).toBe(validItemPayload.name);
-      expect(item.price).toEqual(validItemPayload.price);
+      expect(item.amount).toEqual(validItemPayload.amount);
+      expect(item.functionalCurrencyAmount).toEqual(
+        validItemPayload.functionalCurrencyAmount
+      );
       expect(item.transactionId).toBe(transaction.id); // Matches parent ID
 
       expect(events[0].event.type).toBe('domain:transaction:created');
@@ -302,6 +307,17 @@ describe('Transaction Entity', () => {
 
       expect(() =>
         transactionEntity.make(invalidAmountPayload, [validItemPayload])
+      ).toThrow(AppError);
+    });
+
+    it('should throw an error if functional currency amounts of items do not match transaction amount', () => {
+      const invalidFAmountPayload = {
+        ...validTransactionPayload,
+        functionalCurrencyAmount: moneyValue.make(200, currency, false), // Items total is 100
+      };
+
+      expect(() =>
+        transactionEntity.make(invalidFAmountPayload, [validItemPayload])
       ).toThrow(AppError);
     });
 

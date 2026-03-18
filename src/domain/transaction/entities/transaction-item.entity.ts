@@ -4,6 +4,7 @@ import numberUtils from '../../../shared/utils/number';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import accountEntity from '../../account/entities/account.entity';
+import { ELedgerAccountType } from '../../account/types/account.types';
 import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
 import { ITransactionItem } from '../types/transaction.types';
 import transactionItemEvents from './events/transaction-item.events';
@@ -33,7 +34,7 @@ function make(
   const safeQuantity = numberUtils.toNonNegativeNumber(payload.quantity);
 
   helpers.validatePriceAndUnitPrice(
-    payload.price,
+    payload.amount,
     safeQuantity,
     payload.unitPrice
   );
@@ -48,7 +49,8 @@ function make(
   const item = Object.freeze({
     id: generateUUID(),
     name: helpers.getName(payload.category, payload.name),
-    price: payload.price,
+    amount: payload.amount,
+    functionalCurrencyAmount: payload.functionalCurrencyAmount,
     quantity: safeQuantity,
     unitPrice: payload.unitPrice,
     transactionId,
@@ -63,8 +65,18 @@ function make(
   return [item, [event]];
 }
 
+function isExpense(item: ITransactionItem) {
+  return item.category.ledgerAccountType === ELedgerAccountType.Expense;
+}
+
+function isRevenue(item: ITransactionItem) {
+  return item.category.ledgerAccountType === ELedgerAccountType.Revenue;
+}
+
 const transactionItemEntity = Object.freeze({
   make,
+  isExpense,
+  isRevenue,
   ...helpers,
 });
 
