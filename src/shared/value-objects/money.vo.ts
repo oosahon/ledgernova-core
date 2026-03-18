@@ -179,6 +179,34 @@ function equals(money: IMoney, other: IMoney) {
   );
 }
 
+function min(...args: IMoney[]) {
+  if (!args.length) {
+    throw new AppError('Provide at least one parameter for minimum');
+  }
+
+  if (!isSameCurrency(...args)) {
+    throw new AppError('Please provide money objects with the same currency', {
+      cause: args,
+    });
+  }
+
+  return args.reduce((acc, param) => (acc.amount < param.amount ? acc : param));
+}
+
+function max(...args: IMoney[]) {
+  if (!args.length) {
+    throw new AppError('Provide at least one parameter for maximum');
+  }
+
+  if (!isSameCurrency(...args)) {
+    throw new AppError('Please provide money objects with the same currency', {
+      cause: args,
+    });
+  }
+
+  return args.reduce((acc, param) => (acc.amount > param.amount ? acc : param));
+}
+
 const moneyValue = Object.freeze({
   make,
   makeZeroAmount,
@@ -189,6 +217,8 @@ const moneyValue = Object.freeze({
   multiply,
   validate,
   equals,
+  min,
+  max,
 });
 
 export default moneyValue;

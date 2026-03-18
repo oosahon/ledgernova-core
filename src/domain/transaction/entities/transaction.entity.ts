@@ -32,6 +32,7 @@ function make(
   helpers.validateAccountId(payload.accountId);
   helpers.validateTransactionStatus(payload.status);
   moneyValue.validate(payload.amount);
+  moneyValue.validate(payload.functionalCurrencyAmount);
   dateUtils.validateDateIsNotInTheFuture(payload.date);
   helpers.validateRecipientAccountId(payload.type, payload.recipientAccountId);
   helpers.validateExchangeRate(payload.exchangeRate);
@@ -47,6 +48,7 @@ function make(
     amount: payload.amount,
     attachmentIds: [],
     date: payload.date,
+    functionalCurrencyAmount: payload.functionalCurrencyAmount,
     recipientAccountId: payload.recipientAccountId,
     exchangeRate: payload.exchangeRate,
     note: helpers.sanitizeNote(payload.note),
@@ -76,10 +78,10 @@ function make(
 
   const transactionItems = itemsWithEvents.map(([item]) => item);
 
-  transactionItemEntity.validateItemsAmount(
-    transactionItems,
-    transactionWithoutItems.amount
-  );
+  transactionItemEntity.validateItemsAmount(transactionItems, {
+    amount: transactionWithoutItems.amount,
+    functionalCurrencyAmount: transactionWithoutItems.functionalCurrencyAmount,
+  });
 
   const transactionItemEvents = itemsWithEvents.flatMap(
     ([_, events]) => events

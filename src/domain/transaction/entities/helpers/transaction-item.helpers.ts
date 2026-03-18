@@ -3,7 +3,7 @@ import numberUtils from '../../../../shared/utils/number';
 import { AppError } from '../../../../shared/value-objects/error';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import { ICategory } from '../../../category/types/category.types';
-import { ITransactionItem } from '../../types/transaction.types';
+import { ITransaction, ITransactionItem } from '../../types/transaction.types';
 
 /**
  * Returns a sanitized name of an item or uses the category name if no name is provided.
@@ -50,14 +50,39 @@ function validatePriceAndUnitPrice(
  */
 function validateItemsAmount(
   items: ITransactionItem[],
-  transactionAmount: IMoney
+  transaction: Pick<ITransaction, 'amount' | 'functionalCurrencyAmount'>
 ) {
-  const totalItemsAmount = moneyValue.add(...items.map((item) => item.price));
+  const { amount: trxAmount, functionalCurrencyAmount: trxFAmount } =
+    transaction;
 
-  if (!moneyValue.equals(totalItemsAmount, transactionAmount)) {
+  const totalItemsAmount = moneyValue.add(...items.map((item) => item.amount));
+
+  const isValidAmount = moneyValue.equals(totalItemsAmount, trxAmount);
+  if (!isValidAmount) {
     throw new AppError('Total items amount does not match transaction amount', {
-      cause: { totalItemsAmount, transactionAmount },
+      cause: { totalItemsAmount, transactionAmount: trxAmount },
     });
+  }
+
+  const totalItemsFunctionalCurrencyAmount = moneyValue.add(
+    ...items.map((item) => item.functionalCurrencyAmount)
+  );
+
+  const isValidFunctionalAmount = moneyValue.equals(
+    totalItemsFunctionalCurrencyAmount,
+    trxFAmount
+  );
+
+  if (!isValidFunctionalAmount) {
+    throw new AppError(
+      'Total items functional currency amount does not match transaction functional currency amount',
+      {
+        cause: {
+          totalItemsFunctionalCurrencyAmount,
+          transactionFunctionalCurrencyAmount: trxFAmount,
+        },
+      }
+    );
   }
 }
 

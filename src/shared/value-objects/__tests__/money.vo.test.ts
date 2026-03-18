@@ -210,4 +210,100 @@ describe('Money Value Object', () => {
       );
     });
   });
+
+  describe('validate', () => {
+    it('should not throw for a valid money object', () => {
+      const m = money.make(100, USD, true);
+      expect(() => money.validate(m)).not.toThrow();
+    });
+
+    it('should throw if amount is not a bigint', () => {
+      const m = { amount: 100, currency: USD } as any;
+      expect(() => money.validate(m)).toThrow(
+        new AppError('Invalid amount', { cause: 100 })
+      );
+    });
+
+    it('should throw if currency code is invalid', () => {
+      const fakeCurrency = { ...USD, code: 'FAKE' };
+      const m = { amount: BigInt(100), currency: fakeCurrency } as any;
+      expect(() => money.validate(m)).toThrow(
+        new AppError('Invalid currency code', { cause: 'FAKE' })
+      );
+    });
+  });
+
+  describe('equals', () => {
+    it('should return true for identical money objects', () => {
+      const m1 = money.make(100, USD, true);
+      const m2 = money.make(100, USD, true);
+      expect(money.equals(m1, m2)).toBe(true);
+    });
+
+    it('should return false if amounts differ', () => {
+      const m1 = money.make(100, USD, true);
+      const m2 = money.make(200, USD, true);
+      expect(money.equals(m1, m2)).toBe(false);
+    });
+
+    it('should return false if currencies differ', () => {
+      const m1 = money.make(100, USD, true);
+      const m2 = money.make(100, NGN, true);
+      expect(money.equals(m1, m2)).toBe(false);
+    });
+  });
+
+  describe('min', () => {
+    it('should return the money object with the minimum amount', () => {
+      const m1 = money.make(500, USD, true);
+      const m2 = money.make(150, USD, true);
+      const m3 = money.make(300, USD, true);
+
+      const result = money.min(m1, m2, m3);
+      expect(result.amount).toBe(BigInt(150));
+    });
+
+    it('should throw if no arguments are provided', () => {
+      expect(() => money.min()).toThrow(
+        new AppError('Provide at least one parameter for minimum')
+      );
+    });
+
+    it('should throw if mixed currencies are provided', () => {
+      const m1 = money.make(100, NGN, true);
+      const m2 = money.make(100, USD, true);
+      expect(() => money.min(m1, m2)).toThrow(
+        new AppError('Please provide money objects with the same currency', {
+          cause: [m1, m2],
+        })
+      );
+    });
+  });
+
+  describe('max', () => {
+    it('should return the money object with the maximum amount', () => {
+      const m1 = money.make(150, USD, true);
+      const m2 = money.make(500, USD, true);
+      const m3 = money.make(300, USD, true);
+
+      const result = money.max(m1, m2, m3);
+      expect(result.amount).toBe(BigInt(500));
+    });
+
+    it('should throw if no arguments are provided', () => {
+      expect(() => money.max()).toThrow(
+        new AppError('Provide at least one parameter for maximum')
+      );
+    });
+
+    it('should throw if mixed currencies are provided', () => {
+      const m1 = money.make(100, NGN, true);
+      const m2 = money.make(100, USD, true);
+      expect(() => money.max(m1, m2)).toThrow(
+        new AppError('Please provide money objects with the same currency', {
+          cause: [m1, m2],
+        })
+      );
+    });
+  });
 });
