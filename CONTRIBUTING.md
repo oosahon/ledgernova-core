@@ -95,11 +95,11 @@ To maintain a clean and organized codebase, please follow these strict git workf
 - **Source**: Every new branch must be created off the `development` branch.
 - **Target**: Every update must be submitted as a PR to the `development` branch.
 - **Naming Convention**:
-  - Branches should be named using the format: `<type>/<description-with-hyphens>-<optional-issue-id>`
+  - Branches should be named using the format: `<type>/<description-with-hyphens>/<optional-issue-id>`
   - **Types**: `feat`, `fix`, `chore`, `refactor`, `test`, `doc`
   - **Examples**:
-    - `feat/add-accounts-endpoint-49494`
-    - `fix/login-error`
+    - `feat/add-accounts-endpoint/49494`
+    - `fix/login-error/49494`
 
 ### Commit Messages & Pull Requests
 
