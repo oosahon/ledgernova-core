@@ -10,17 +10,51 @@ export type UTransactionDirection =
   (typeof ETransactionDirection)[keyof typeof ETransactionDirection];
 
 export const ETransactionType = {
+  /**
+   * denotes the sale of goods or services (cash or credit)
+   */
   Sale: 'sale',
-  SaleReturn: 'sale_return',
+
+  /**
+   * denotes the purchase of goods or services (inventory or non-inventory)
+   */
   Purchase: 'purchase',
-  PurchaseReturn: 'purchase_return',
-  Transfer: 'transfer',
+
+  /**
+   * issued to a customer to reduce or reverse a sale (e.g. returns, discounts)
+   */
+  CreditNote: 'credit_note',
+
+  /**
+   * issued to a supplier to reduce or reverse a purchase
+   */
+  DebitNote: 'debit_note',
+
+  /**
+   * denotes the recognition of a cost (may be cash or credit)
+   */
   Expense: 'expense',
+
+  /**
+   * denotes movement of funds between internal accounts
+   */
+  Transfer: 'transfer',
+
+  /**
+   * denotes any outgoing payment (cash/bank)
+   */
   Payment: 'payment',
+
+  /**
+   * denotes any incoming funds (cash/bank)
+   */
   Receipt: 'receipt',
-  Refund: 'refund',
+
+  /**
+   * denotes manual or adjusting journal entries
+   */
   Journal: 'journal',
-};
+} as const;
 
 export const ETransactionStatus = {
   Pending: 'pending',

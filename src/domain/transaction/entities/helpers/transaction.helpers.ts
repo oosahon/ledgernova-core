@@ -18,7 +18,9 @@ import {
 // ========= START: TRANSACTION VALIDATORS ==============
 
 function doesNotRequireItem(type: UTransactionType) {
-  return [ETransactionType.Transfer, ETransactionType.Journal].includes(type);
+  return (
+    [ETransactionType.Transfer, ETransactionType.Journal] as string[]
+  ).includes(type);
 }
 
 function validateItems(type: UTransactionType, itemsLength: number) {

@@ -25,6 +25,8 @@ export interface ICategory {
   id: string;
   name: string;
   ledgerAccountType: ULedgerAccountType;
+
+  // UX only
   flowType: UCategoryFlowType;
   taxKey: string;
   status: UCategoryStatus;
