@@ -1,3 +1,0 @@
----
-description: Creating contracts
----

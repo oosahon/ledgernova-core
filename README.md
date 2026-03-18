@@ -2,12 +2,12 @@
 
 # LedgerNova
 
-LedgerNova is a AI-powered, robost, auditable accounting software for comapnies, sole traders (business name owners) and individuals in Nigeria.\
-It's a software for accountants and non-accounts alike.
+LedgerNova is an AI-powered, robust, auditable accounting software for companies, sole traders (business name owners), and individuals in Nigeria.\
+It's a software for accountants and non-accountants alike.
 
-Accounting-savvy users who want to be in control of everything can create journal, charts of accounts, etc.
+Accounting-savvy users who want to be in control of everything can create journals, charts of accounts, etc.
 
-Users with no accounting background are not left out. They can also track their income, expenses and taxes. Under the hood, LedgerNova will use accounting standards to setup their ledgers.\
+Users with no accounting background are not left out. They can also track their income, expenses and taxes. Under the hood, LedgerNova will use accounting standards to set up their ledgers.\
 \
 LedgerNova was created with 💜 and distributed for free by [Osahon Oboite](https://osahon.dev)
 
@@ -27,15 +27,12 @@ This repo contains the core accounting module of LedgerNova.
 - Run `npm install`
 - Copy the environment variables from Doppler (dev) and save them in a `.env` file in the root directory. [Env URL](https://dashboard.doppler.com/workplace/b0fb8d6179aa66108eac/projects/purple-ledger-be/configs/dev)
 
-##
-
 ## Running the core app
 
-- Ensure
+- Ensure Docker is running in the background.
+- Setup databases (e.g., `npm run start:postgres` and `npm run start:redis`).
 - Run `npm run dev`
 - The app should now be running on `http://localhost:${PORT}`
-
-For database setup:
 
 ### Testing
 
@@ -48,6 +45,10 @@ npm test
 ### Linting and Formatting
 
 Format your code before submitting a PR:
+
+```bash
+npm run format:all
+```
 
 ## Contributing
 

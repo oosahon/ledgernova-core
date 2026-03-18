@@ -4,62 +4,59 @@ This document provides guidelines for contributing to this project to ensure a s
 
 ## Design Pattern
 
-- We implement Pragmatic Functional OOP.
-  - All functions/methods -- other than infrastructure services -- are pure (causing no side effect).
-  - All similar functions are grouped in an immutable object
-  - Function/Methods do not call external services directly. Dependencies are wired up in `app/use-cases/*`
-- For the folder structure, we have favored Domain Driven Design.
+### Pragmatic Functional OOP
 
+- All entities, services, repos, and use-cases are pure functions (causing no side effect).
+- All similar functions are grouped in an immutable object
+- Function/Methods do not call external services directly. Dependencies are wired up in `index.ts` of each sub-layer.\
+  for example, `app/use-cases/categories/index.ts` or `infra/services/index.ts`.
+
+### Event-Driven Pattern and Immutability
+
+- Domain entity creations or mutations MUST return both the new entity state and any corresponding domain events (e.g., `return [entity, events]`).
+- Domain publishing is done on the application layer.
+
+- **Strong Immutability**: All domain entities and state objects MUST be deeply frozen (e.g., using `deepFreeze()`) to prevent accidental mutations.\
+  See `src/domain/transaction/entities/transaction.entity.ts` for reference.
+
+### Folder Structure
+
+For the folder structure, we have favored Domain Driven Design.\
 Here are the top level folders you would find on the application:
 
 ```text
 
 src/
 ├─ app/                 # Application layer: orchestrates use-cases, handles commands, maps data between domain and external interfaces
+│  ├─ bootstrap/        # Application bootstrap logic and server initialization
 │  ├─ contracts/        # Defines infrastructure services interfaces (contracts) used in the application. (Only use-cases/* uses actual implementations)
-│  ├─ dto/              # Data Transfer Objects: definitions for data exchanged between layers (input/output)
-│  ├─ events/           # Application events: domain or feature events that trigger async behavior (e.g., newsletter subscription)
-│  ├─ handlers/         # Application event handlers.
-│  ├─ mappers/          # Mapping between domain entities and application interfaces (DTOs, API contracts)
-│  ├─ services/         # Application services are a set of functions that combine infrastructure services and domain entities to perform a specific task
+│  ├─ events/           # Application events: domain or feature events that trigger async behavior
+│  ├─ mappers/          # Mapping between domain entities and application interfaces
 │  └─ usecases/         # Usecases: concrete business operations, orchestrating domain entities, repos, and services.
 │
-├─ domains/             # Domain layer: core business logic, entities, repo interfaces and rules
+├─ domain/              # Domain layer: core business logic, entities, repo interfaces and rules
 │
-├─ http/                # API REST endpoints, SSE, route middlewares, etc
-|  ├─ controllers/      # HTTP controllers: handle HTTP requests and responses. Primarily used with tsoa for API documentation
-|  ├─ middlewares/      # HTTP middlewares: handle HTTP requests and responses
-|  └─ validations/      # HTTP request validations: validate HTTP requests
-│
-├─ infra/               # Technical layer: implementations of services, database, messaging, and infrastructure concerns
-│  ├─ ai/               # AI services: OpenAI, Claude, etc
-│  ├─ bootstrap/        # Setups up the data required for the application to run properly (e.g., system currencies, categories, and event bus)
-│  ├─ cache/            # Cache implementations: Redis connections and caching logic
+├─ infra/               # Technical layer: implementations of services, database, and infrastructure concerns
 │  ├─ config/           # Configuration files for app, environment variables, secrets, and third-party services
-│  ├─ db/               # Database-specific implementations
-│  │  ├─ enums          # Database-related enums
-│  │  ├─ repo           # Domain repo implementation: db queries
-│  │  └─ schema         # Database schemas
-│  ├─ email/            # Email services: email notification templates
-│  ├─ messaging/        # Event bus, message queues, pub/sub infrastructure
+│  ├─ db/               # Database-specific implementations (e.g., drizzle schemas and repo implementations)
 │  ├─ observability/    # Logging, metrics, monitoring, and tracing
 │  ├─ server/           # Express (or other HTTP) server setup and bootstrapping
-│  └─ services/         # External service clients (S3, email, AI providers, payment gateways)
+│  └─ services/         # External service clients (e.g., third-party API clients)
 │
-├─shared/              # Shared utilities and types used across multiple layers
-│  ├─ data/             # Shared constants and data
-│  ├─ entities/         # Shared value objects and entities that are not domain entities/value objects
-│  ├─ types/            # Global TypeScript types and interfaces
-│  └─ utils/            # Helper functions, constants, and reusable utilities
-└─ tests/
-  ├─ domain/            # Domain tests
-  ├─ events/            # Events tests
-  ├─ fixtures/          # Fixtures for tests
-  ├─ infra/             # Infrastructure tests
-  ├─ mocks/             # Mocks for tests
-  └─ unit/              # Unit tests
+├─ interface/           # Application entry points and external interfaces
+│  ├─ http/             # API REST endpoints, controllers, handlers, and middlewares
+│  └─ mcp/              # MCP (Model Context Protocol) endpoints
+│
+└─ shared/              # Shared utilities and types used across multiple layers
+   ├─ types/            # Global TypeScript types and interfaces
+   ├─ utils/            # Helper functions, constants, and reusable utilities
+   └─ value-objects/    # Shared value objects and related entities
 
 ```
+
+## Domain Documentation
+
+Contributors should see further documentations in the `__docs__` folder within the `domain` layer for the respective domains.
 
 ## Git Workflow
 
@@ -76,33 +73,40 @@ To maintain a clean and organized codebase, please follow these strict git workf
 - **Source**: Every new branch must be created off the `development` branch.
 - **Target**: Every update must be submitted as a PR to the `development` branch.
 - **Naming Convention**:
-  - Branches should be named using the format: `<type>/<ticket-id>/<short_description>`
+  - Branches should be named using the format: `<type>/<description-with-hyphens>-<optional-issue-id>`
   - **Types**: `feat`, `fix`, `chore`, `refactor`, `test`
   - **Examples**:
-    - `feat/49494/accounts`
-    - `fix/12345/login-error`
+    - `feat/add-accounts-endpoint-49494`
+    - `fix/login-error`
 
-### Commit Messages
+### Commit Messages & Pull Requests
 
 We enforce a specific commit message format to generate clean changelogs and track history effectively.
 
 - **Format**:
   ```text
-  <task_type>: [Title]
-  [description] (<ticket_id>)
+  <type>(<domain>): <short description> <optional-id>
   ```
 - **Rules**:
-  - If using the title and description format, the **Title** must be capitalized.
+  - Pull request titles should also have the commit message structure.
+  - PRs must be squashed and merged.
 - **Examples**:
-  - `feat: Add endpoint to create account (3442)`
-  - ```text
-    test: Smoke test
-    improves smoke test (32232)
-    ```
+  - `feat(accounts): add endpoint to create account 3442`
+  - `test(auth): improves smoke test`
+
+## Testing
+
+Our project follows these guidelines for testing:
+
+- **Test Proximity**: Test files should be kept near their test subjects.
+- **`__tests__` (`.test` files)**: Used for unit tests. Domain entity factories are never mocked and must use `__tests__` with `.test` files.
+- **`__specs__` (`.spec` files)**: Used for integration tests where dependency injection is important. Contributors should use `__specs__` with `.spec` files for these scenarios.
+- **End-to-End (E2E) Tests**: All E2E testing is handled in the frontend repository.
 
 ## Reporting Bugs
 
-If you find a bug, please create a ticket for it.
+If you find a bug, please create a ticket for it on our [GitHub Issues page](https://github.com/oosahon/ledgernova-core/issues).
+Before opening a new issue, please search existing issues to see if it has already been reported.
 
 - **Requirement**: Every bug report must have a corresponding ticket.
 - **Format**: The ticket must clearly specify:
