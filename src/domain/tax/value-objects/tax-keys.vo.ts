@@ -1,3 +1,16 @@
+/**
+ *  🚨 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+ *
+ *  ‼️ CAUTION ‼️
+ *
+ *  🚨 🚨🚨🚨🚨🚨🚨🚨🚨🚨 🚨🚨🚨🚨🚨🚨🚨🚨
+ *
+ * Tax keys are used to identify tax types and are used to generate tax receipts.
+ * They are also used to generate tax returns.
+ * Be careful when modifying this file, as it can have a significant impact on the tax system.
+ *
+ */
+
 import stringUtils from '../../../shared/utils/string';
 import { AppError } from '../../../shared/value-objects/error';
 import {
