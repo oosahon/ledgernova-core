@@ -2,6 +2,21 @@
 
 This document provides guidelines for contributing to this project to ensure a smooth workflow and high-quality code.
 
+## Table of Contents
+
+- [Design Pattern](#design-pattern)
+  - [Pragmatic Functional OOP](#pragmatic-functional-oop)
+  - [Event-Driven Pattern and Immutability](#event-driven-pattern-and-immutability)
+  - [Folder Structure](#folder-structure)
+- [Domain Documentation](#domain-documentation)
+- [Working with Money](#working-with-money)
+- [Git Workflow](#git-workflow)
+  - [Branching Strategy](#branching-strategy)
+  - [Feature Branches](#feature-branches)
+  - [Commit Messages & Pull Requests](#commit-messages--pull-requests)
+- [Testing](#testing)
+- [Reporting Bugs](#reporting-bugs)
+
 ## Design Pattern
 
 ### Pragmatic Functional OOP
@@ -57,6 +72,13 @@ src/
 ## Domain Documentation
 
 Contributors should see further documentations in the `__docs__` folder within the `domain` layer for the respective domains.
+
+## Working with Money
+
+- **Always use minor units**: Never use fractional values for money.
+- **Use the Value Object**: Always run calculations through `moneyValue` (`src/shared/value-objects/money.vo.ts`).
+
+For detailed documentation and examples on handling currency, see [`src/shared/__docs__/money.md`](src/shared/__docs__/money.md).
 
 ## Git Workflow
 

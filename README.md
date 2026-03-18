@@ -11,6 +11,16 @@ Users with no accounting background are not left out. They can also track their 
 \
 LedgerNova was created with 💜 and distributed for free by [Osahon Oboite](https://osahon.dev)
 
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Running the core app](#running-the-core-app)
+  - [Testing](#testing)
+  - [Linting and Formatting](#linting-and-formatting)
+- [Contributing](#contributing)
+
 ## Introduction
 
 This repo contains the core accounting module of LedgerNova.

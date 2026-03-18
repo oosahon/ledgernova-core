@@ -10,6 +10,7 @@ import moneyValue from '../../../../shared/value-objects/money.vo';
 import categoryEntity from '../../../category/entities/category.entity';
 import { AppError } from '../../../../shared/value-objects/error';
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
+import { EAccountingDomain } from '../../../accounting/types/accounting.types';
 
 describe('Transaction Entity', () => {
   const currency = {
@@ -27,6 +28,7 @@ describe('Transaction Entity', () => {
     parentId: null,
     description: 'Sales category',
     taxKey: 'revenue:sales',
+    accountingDomain: EAccountingDomain.Personal,
   });
 
   const validCategory = {
