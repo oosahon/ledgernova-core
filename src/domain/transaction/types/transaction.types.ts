@@ -11,16 +11,15 @@ export type UTransactionDirection =
 
 export const ETransactionType = {
   Sale: 'sale',
-  SaleReturn: 'sale_return',
   Purchase: 'purchase',
-  PurchaseReturn: 'purchase_return',
-  Transfer: 'transfer',
+  CreditNote: 'credit_note',
+  DebitNote: 'debit_note',
   Expense: 'expense',
+  Transfer: 'transfer',
   Payment: 'payment',
   Receipt: 'receipt',
-  Refund: 'refund',
   Journal: 'journal',
-};
+} as const;
 
 export const ETransactionStatus = {
   Pending: 'pending',

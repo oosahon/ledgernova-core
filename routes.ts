@@ -4,9 +4,9 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import { fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { CurrencyController } from './src/http/controllers/currency.controller';
+import { CurrencyController } from './src/interface/http/controllers/currency.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { CategoryController } from './src/http/controllers/category.controller';
+import { CategoryController } from './src/interface/http/controllers/category.controller';
 import type {
   Request as ExRequest,
   Response as ExResponse,
@@ -17,6 +17,19 @@ import type {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+  UAccountingDomain: {
+    dataType: 'refAlias',
+    type: {
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['corporate'] },
+        { dataType: 'enum', enums: ['sole_trader'] },
+        { dataType: 'enum', enums: ['personal'] },
+      ],
+      validators: {},
+    },
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   ULedgerAccountType: {
     dataType: 'refAlias',
     type: {
@@ -61,6 +74,7 @@ const models: TsoaRoute.Models = {
     properties: {
       id: { dataType: 'string', required: true },
       name: { dataType: 'string', required: true },
+      accountingDomain: { ref: 'UAccountingDomain', required: true },
       ledgerAccountType: { ref: 'ULedgerAccountType', required: true },
       flowType: { ref: 'UCategoryFlowType', required: true },
       taxKey: { dataType: 'string', required: true },

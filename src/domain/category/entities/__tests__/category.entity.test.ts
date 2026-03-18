@@ -5,6 +5,7 @@ import { ECategoryFlowType, ICategory } from '../../types/category.types';
 import { ELedgerAccountType } from '../../../account/types/account.types';
 import taxKeyValue from '../../../tax/value-objects/tax-keys.vo';
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
+import { EAccountingDomain } from '../../../accounting/types/accounting.types';
 
 type TMakePayload = TCreationOmits<ICategory, 'status'>;
 
@@ -23,6 +24,7 @@ describe('Category Entity', () => {
     it('should create a valid system category successfully', () => {
       const payload = {
         name: 'System Category',
+        accountingDomain: EAccountingDomain.Personal,
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
         description: 'System Description',
@@ -39,6 +41,7 @@ describe('Category Entity', () => {
 
       expect(_.omit(result, 'id')).toEqual({
         name: 'System Category',
+        accountingDomain: EAccountingDomain.Personal,
         taxKey: taxKeyValue.make(ELedgerAccountType.Revenue, null), // 'revenue' since userId is null
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
@@ -58,6 +61,7 @@ describe('Category Entity', () => {
       const validUserId = '987fcdeb-51a2-43d7-9012-3456789abcde';
       const payload: TCreationOmits<ICategory, 'status'> = {
         name: 'User Category',
+        accountingDomain: EAccountingDomain.Personal,
         ledgerAccountType: ELedgerAccountType.Expense,
         flowType: ECategoryFlowType.Out,
         description: 'User Description',
@@ -84,6 +88,7 @@ describe('Category Entity', () => {
       // So any provided taxKey is ignored/overwritten.
       const payload = {
         name: 'Custom Tax Category',
+        accountingDomain: EAccountingDomain.Personal,
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
         description: 'Uses taxKey explicitly',
@@ -107,6 +112,7 @@ describe('Category Entity', () => {
     it('should throw an error if a user category does not have a parentId', () => {
       const payload = {
         name: 'Invalid User Category',
+        accountingDomain: EAccountingDomain.Personal,
         ledgerAccountType: ELedgerAccountType.Expense,
         flowType: ECategoryFlowType.Out,
         description: 'No parent id',
@@ -123,6 +129,7 @@ describe('Category Entity', () => {
 
     describe('sanitizeName validations', () => {
       const basePayload = {
+        accountingDomain: EAccountingDomain.Personal,
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
         description: 'Desc',
@@ -204,6 +211,7 @@ describe('Category Entity', () => {
     beforeEach(() => {
       [existingCategory] = categoryEntity.make({
         name: 'Original Name',
+        accountingDomain: EAccountingDomain.Personal,
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
         description: 'Original Description',
@@ -317,6 +325,7 @@ describe('Category Entity', () => {
 
     beforeEach(() => {
       [activeCategory] = categoryEntity.make({
+        accountingDomain: EAccountingDomain.Personal,
         name: 'Active Category',
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
@@ -358,6 +367,7 @@ describe('Category Entity', () => {
     beforeEach(() => {
       const [activeCategory] = categoryEntity.make({
         name: 'Category To Archive',
+        accountingDomain: EAccountingDomain.Personal,
         ledgerAccountType: ELedgerAccountType.Revenue,
         flowType: ECategoryFlowType.In,
         description: 'Desc',

@@ -6,10 +6,10 @@ import { PORT } from '../config/vars.config';
 import logger from '../observability/logger';
 import swagger from './swagger';
 import rateLimiter from './rate-limiter';
-import middlewares from '../../http/middlewares';
+import middlewares from '../../interface/http/middlewares';
 import cors from './cors';
 
-function setupServer(setupEventListeners?: () => Promise<void>) {
+function setupServer(bootstrap?: () => Promise<void>) {
   const app = express();
 
   app.use(helmet());
@@ -31,7 +31,7 @@ function setupServer(setupEventListeners?: () => Promise<void>) {
   app.use(...swagger());
 
   app.listen(PORT, async () => {
-    await setupEventListeners?.();
+    await bootstrap?.();
     logger.info(`Server listening on port ${PORT}`);
   });
 }

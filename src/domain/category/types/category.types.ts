@@ -1,4 +1,5 @@
 import { ULedgerAccountType } from '../../account/types/account.types';
+import { UAccountingDomain } from '../../accounting/types/accounting.types';
 
 export const ECategoryStatus = {
   Active: 'active',
@@ -24,7 +25,12 @@ export type UCategoryFlowType =
 export interface ICategory {
   id: string;
   name: string;
+
+  accountingDomain: UAccountingDomain;
+
   ledgerAccountType: ULedgerAccountType;
+
+  // UX only
   flowType: UCategoryFlowType;
   taxKey: string;
   status: UCategoryStatus;

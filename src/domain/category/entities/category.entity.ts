@@ -3,6 +3,7 @@ import { TEntityWithEvents } from '../../../shared/types/event.types';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import accountEntity from '../../account/entities/account.entity';
+import accountingHelpers from '../../accounting/helpers/accounting.helpers';
 import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
 import categoryEvents from '../events/category.events';
 import { ECategoryStatus, ICategory } from '../types/category.types';
@@ -19,10 +20,12 @@ function make(
   accountEntity.validateType(payload.ledgerAccountType);
   helpers.validateUserAndParentId(payload);
   helpers.validateFlowType(payload.flowType);
+  accountingHelpers.validateDomain(payload.accountingDomain);
 
   const category = Object.freeze({
     id: generateUUID(),
     name: helpers.sanitizeName(payload.name),
+    accountingDomain: payload.accountingDomain,
     taxKey: taxKeyValue.make(payload.ledgerAccountType, payload.userId),
     ledgerAccountType: payload.ledgerAccountType,
     parentId: payload.parentId,

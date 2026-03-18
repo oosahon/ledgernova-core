@@ -4,6 +4,7 @@ import {
   ICategory,
 } from '../../../domain/category/types/category.types';
 import { ELedgerAccountType } from '../../../domain/account/types/account.types';
+import { EAccountingDomain } from '../../../domain/accounting/types/accounting.types';
 
 describe('Category Mapper', () => {
   const commonDomainDates = {
@@ -30,6 +31,7 @@ describe('Category Mapper', () => {
         parentId: 'parent-id',
         taxKey: 'tax-key',
         status: 'active' as const,
+        accountingDomain: EAccountingDomain.Personal,
         ...commonDomainDates,
       };
 
@@ -43,6 +45,7 @@ describe('Category Mapper', () => {
         parentId: 'parent-id',
         taxKey: 'tax-key',
         status: 'active' as const,
+        accountingDomain: EAccountingDomain.Personal,
         ...commonRepoDates,
       };
 
@@ -62,6 +65,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'sxa',
         userId: null,
+        accountingDomain: EAccountingDomain.Personal,
         ...commonDomainDates,
       };
 
@@ -89,6 +93,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'tax-key',
         status: 'active' as const,
+        accountingDomain: EAccountingDomain.Personal,
         ...commonRepoDates,
       };
 
@@ -102,6 +107,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'tax-key',
         status: 'active' as const,
+        accountingDomain: EAccountingDomain.Personal,
         ...commonDomainDates,
       };
 

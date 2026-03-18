@@ -4,6 +4,7 @@ import { ELedgerAccountType } from '../../../account/types/account.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import categoryEntity from '../../../category/entities/category.entity';
 import { AppError } from '../../../../shared/value-objects/error';
+import { EAccountingDomain } from '../../../accounting/types/accounting.types';
 
 describe('Transaction Item Entity', () => {
   const currency = {
@@ -13,6 +14,7 @@ describe('Transaction Item Entity', () => {
     name: 'US Dollar',
   };
   const [baseCategory] = categoryEntity.make({
+    accountingDomain: EAccountingDomain.Personal,
     name: 'Sales',
     ledgerAccountType: ELedgerAccountType.Revenue,
     flowType: ECategoryFlowType.In,

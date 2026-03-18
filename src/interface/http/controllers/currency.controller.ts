@@ -7,7 +7,7 @@ import {
   SuccessResponse,
   Tags,
 } from 'tsoa';
-import currencyUseCase from '../../app/usecases/currency';
+import currencyUseCase from '../../../app/usecases/currency';
 import middlewares from '../middlewares';
 
 export interface ICurrencyResponse {

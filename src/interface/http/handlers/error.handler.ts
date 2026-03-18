@@ -3,11 +3,11 @@ import { ValidateError } from 'tsoa';
 import {
   ErrorInternalServerError,
   ErrorUnprocessableEntity,
-} from '../../shared/value-objects/error';
+} from '../../../shared/value-objects/error';
 
-import { NODE_ENV } from '../../infra/config/vars.config';
-import ILogger from '../../app/contracts/infra-services/logger.contract';
-import IReporter from '../../app/contracts/infra-services/reporter.contract';
+import { NODE_ENV } from '../../../infra/config/vars.config';
+import ILogger from '../../../app/contracts/infra-services/logger.contract';
+import IReporter from '../../../app/contracts/infra-services/reporter.contract';
 
 function httpErrorHandler(logger: ILogger, reporter: IReporter) {
   return (req: Request, res: Response, error: any) => {

@@ -8,9 +8,9 @@ import {
   SuccessResponse,
   Tags,
 } from 'tsoa';
-import categoryUseCase from '../../app/usecases/category';
+import categoryUseCase from '../../../app/usecases/category';
 import middlewares from '../middlewares';
-import { UCategoryFlowType } from '../../domain/category/types/category.types';
+import { UCategoryFlowType } from '../../../domain/category/types/category.types';
 
 @Route('categories')
 @Tags('Category')

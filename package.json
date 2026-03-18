@@ -8,14 +8,14 @@
   "scripts": {
     "test": "jest",
     "test:ci": "bash bin/test-ci.sh",
-    "start": "npm run db:migrate && node ./dist/src/index.js",
+    "start": "node ./dist/src/app/bootstrap/index.js",
     "start:test": "bash bin/test.sh",
     "start:postgres": "bash bin/pg-setup.sh",
     "start:redis": "bash bin/redis-setup.sh",
     "dev": "bash bin/dev.sh",
     "format:all": "prettier --write \"src/**/*.{ts,js,json,md}\"",
     "format:changed": "prettier --write --cache .",
-    "build": "tsoa spec-and-routes && tsc && npm run sentry:sourcemaps",
+    "build": "tsoa spec-and-routes && tsc",
     "build:routes": "tsoa spec-and-routes ",
     "drizzle:pull": "drizzle-kit pull",
     "db:seed:generate": "node bin/generate-seed-file.js",
@@ -29,7 +29,7 @@
   },
   "keywords": [],
   "author": "Osahon Oboite",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "description": "This repo contains the server-side source code for Purple Ledger's bookkeeping and tax app.",
   "bin": {
     "purple-ledger-be": "bin/api-gen.js"
