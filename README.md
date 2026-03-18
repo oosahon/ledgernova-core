@@ -1,4 +1,5 @@
 ![Coverage Badge](https://file%2B.vscode-resource.vscode-cdn.net/Users/osahon/work/purple/ledgernova/ledgernova-core/badges/coverage.svg)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 # LedgerNova
 
@@ -73,3 +74,7 @@ Detailed documentation for core domain and shared modules:
 ## Contributing
 
 Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+
+## License
+
+This project is licensed under the [GNU Affero General Public License v3.0 (AGPLv3)](LICENSE).
