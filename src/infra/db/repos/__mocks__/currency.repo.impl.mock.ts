@@ -1,4 +1,4 @@
-import ICurrencyRepo from '../../../../domain/transaction/repos/currency.repo';
+import ICurrencyRepo from '../../../../domain/currency/repos/currency.repo';
 
 export const MockCurrencyRepo: jest.Mocked<ICurrencyRepo> = {
   save: jest.fn(),

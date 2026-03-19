@@ -7,7 +7,6 @@ const categoryMapper = {
   toRepo: (category: ICategory): InferSelectModel<typeof categoriesInCore> => {
     return {
       ...category,
-      ledgerAccountType: category.ledgerAccountType,
       taxKey: category.taxKey ?? null,
       userId: category.userId ?? null,
       parentId: category.parentId ?? null,
@@ -21,7 +20,7 @@ const categoryMapper = {
     return {
       ...category,
       ...fromCommonRepoDates(category),
-    } as ICategory;
+    } as unknown as ICategory; // TODO: remove unknown as ICategory after migration is run
   },
 };
 

@@ -1,12 +1,9 @@
 import repos from '../../../infra/db/repos';
-import getCategoriesByFlowTypeUseCase from './get-categories-by-flow-type.usecase';
+import getAllCategoriesUseCase from './get-all.usecase';
 import services from '../../../infra/services';
 
 const categoryUseCases = {
-  getAllByFlowType: getCategoriesByFlowTypeUseCase(
-    repos.category,
-    services.storage
-  ),
+  getAll: getAllCategoriesUseCase(repos.category, services.storage),
 };
 
 export default categoryUseCases;

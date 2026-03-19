@@ -1,10 +1,7 @@
 import categoryMapper from '../category.mapper';
-import {
-  ECategoryFlowType,
-  ICategory,
-} from '../../../domain/category/types/category.types';
-import { ELedgerAccountType } from '../../../domain/account/types/account.types';
+import { ICategory } from '../../../domain/category/types/category.types';
 import { EAccountingDomain } from '../../../domain/accounting/types/accounting.types';
+import { ETransactionType } from '../../../domain/transaction/types/transaction.types';
 
 describe('Category Mapper', () => {
   const commonDomainDates = {
@@ -25,13 +22,12 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
-        ledgerAccountType: ELedgerAccountType.Expense,
-        flowType: ECategoryFlowType.Out,
+        transactionType: ETransactionType.Expense,
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonDomainDates,
       };
 
@@ -39,13 +35,12 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
-        ledgerAccountType: ELedgerAccountType.Expense,
-        flowType: ECategoryFlowType.Out, // Spreads through object mapping
+        transactionType: ETransactionType.Expense,
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonRepoDates,
       };
 
@@ -59,19 +54,18 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'sas',
-        ledgerAccountType: ELedgerAccountType.Revenue,
-        flowType: ECategoryFlowType.In,
+        transactionType: ETransactionType.Receipt,
         status: 'active' as const,
         parentId: null,
         taxKey: 'sxa',
         userId: null,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonDomainDates,
       };
 
       const expectedRepoModel = {
         ...domainCategory,
-        ledgerAccountType: ELedgerAccountType.Revenue,
+        transactionType: ETransactionType.Receipt,
         ...commonRepoDates,
       };
 
@@ -87,13 +81,12 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
-        ledgerAccountType: ELedgerAccountType.Expense,
-        flowType: ECategoryFlowType.Out,
+        transactionType: ETransactionType.Expense,
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonRepoDates,
       };
 
@@ -101,13 +94,12 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
-        ledgerAccountType: ELedgerAccountType.Expense,
-        flowType: ECategoryFlowType.Out,
+        transactionType: ETransactionType.Expense,
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonDomainDates,
       };
 

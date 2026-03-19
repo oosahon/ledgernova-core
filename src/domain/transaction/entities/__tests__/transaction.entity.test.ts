@@ -1,6 +1,5 @@
 import transactionEntity from '../transaction.entity';
-import { ECategoryFlowType } from '../../../category/types/category.types';
-import { ELedgerAccountType } from '../../../account/types/account.types';
+import { ELedgerAccountType } from '../../../ledger-account/types/ledger-account.types';
 import {
   ETransactionStatus,
   ETransactionType,
@@ -22,18 +21,17 @@ describe('Transaction Entity', () => {
 
   const [baseCategory] = categoryEntity.make({
     name: 'Sales',
-    ledgerAccountType: ELedgerAccountType.Revenue,
-    flowType: ECategoryFlowType.In,
+    transactionType: ETransactionType.Receipt,
     userId: null,
     parentId: null,
     description: 'Sales category',
-    taxKey: 'revenue:sales',
-    accountingDomain: EAccountingDomain.Personal,
+    taxKey: 'sale:sales',
+    accountingDomain: EAccountingDomain.Individual,
   });
 
   const validCategory = {
     ...baseCategory,
-    taxKey: 'revenue:sales',
+    taxKey: 'sale:sales',
   };
 
   const validItemPayload = {
@@ -56,7 +54,7 @@ describe('Transaction Entity', () => {
     date: new Date('2024-01-01'),
     recipientAccountId: null,
     exchangeRate: 1,
-    note: 'Test note',
+    notes: 'Test notes',
     attachmentIds: [],
     items: [],
   };
@@ -81,7 +79,7 @@ describe('Transaction Entity', () => {
       expect(transaction.exchangeRate).toBe(
         validTransactionPayload.exchangeRate
       );
-      expect(transaction.note).toBe(validTransactionPayload.note);
+      expect(transaction.notes).toBe(validTransactionPayload.notes);
 
       expect(transaction.items).toBeDefined();
       expect(transaction.items?.length).toBe(1);
@@ -130,31 +128,31 @@ describe('Transaction Entity', () => {
       expect(events[0].event.type).toBe('domain:transaction:created');
     });
 
-    it('should assign memo/note correctly', () => {
+    it('should assign memo/notes correctly', () => {
       const payload = {
         ...validTransactionPayload,
-        note: '   A note   ',
+        notes: '   A notes   ',
       };
       const [transaction] = transactionEntity.make(payload, [validItemPayload]);
-      expect(transaction.note).toBe('   A note   ');
+      expect(transaction.notes).toBe('   A notes   ');
     });
 
-    it('should assign null to note if note is not provided or is empty', () => {
+    it('should assign null to notes if notes is not provided or is empty', () => {
       const payload = {
         ...validTransactionPayload,
-        note: '',
+        notes: '',
       };
       const [transaction] = transactionEntity.make(payload, [validItemPayload]);
-      expect(transaction.note).toBeNull();
+      expect(transaction.notes).toBeNull();
 
       const payloadNull = {
         ...validTransactionPayload,
-        note: null as any,
+        notes: null as any,
       };
       const [transactionNull] = transactionEntity.make(payloadNull, [
         validItemPayload,
       ]);
-      expect(transactionNull.note).toBeNull();
+      expect(transactionNull.notes).toBeNull();
     });
 
     it('should throw an error if items are provided for transfer transaction', () => {

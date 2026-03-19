@@ -34,29 +34,9 @@ const categoryRepo: ICategoryRepo = {
 
   delete: async (categoryId, userId, options) => {},
 
-  findAllByFlowType: async (flowType, options, userId) => {
-    const dbQuery = getDbQuery(options);
-
-    const conditions: (SQL<unknown> | undefined)[] = [
-      eq(categories.status, ECategoryStatus.Active),
-      eq(categories.flowType, flowType),
-    ];
-
-    if (userId) {
-      conditions.push(
-        or(eq(categories.userId, userId), isNull(categories.userId))
-      );
-    } else {
-      conditions.push(isNull(categories.userId));
-    }
-
-    const result = await dbQuery
-      .select()
-      .from(categories)
-      .where(and(...conditions))
-      .orderBy(asc(categories.name));
-
-    return result.map((category) => categoryMapper.toDomain(category));
+  findAll: async (params, options) => {
+    // TODO: implement
+    return Promise.resolve([]);
   },
 };
 

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { AppError } from '../../../../shared/value-objects/error';
 import categoryEntity from '../category.entity';
-import { ECategoryFlowType, ICategory } from '../../types/category.types';
-import { ELedgerAccountType } from '../../../account/types/account.types';
+import { ICategory } from '../../types/category.types';
+import { ETransactionType } from '../../../transaction/types/transaction.types';
 import taxKeyValue from '../../../tax/value-objects/tax-keys.vo';
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
 import { EAccountingDomain } from '../../../accounting/types/accounting.types';
@@ -24,16 +24,15 @@ describe('Category Entity', () => {
     it('should create a valid system category successfully', () => {
       const payload = {
         name: 'System Category',
-        accountingDomain: EAccountingDomain.Personal,
-        ledgerAccountType: ELedgerAccountType.Revenue,
-        flowType: ECategoryFlowType.In,
+        accountingDomain: EAccountingDomain.Individual,
+        transactionType: ETransactionType.Receipt,
         description: 'System Description',
         parentId: null,
         userId: null,
         taxKey: '',
       };
 
-      const [result, events] = categoryEntity.make(payload);
+      const [result, events] = categoryEntity.make(payload as any);
 
       expect(events).toHaveLength(1);
       expect(events[0].event.type).toBe('domain:category:created');
@@ -41,10 +40,9 @@ describe('Category Entity', () => {
 
       expect(_.omit(result, 'id')).toEqual({
         name: 'System Category',
-        accountingDomain: EAccountingDomain.Personal,
-        taxKey: taxKeyValue.make(ELedgerAccountType.Revenue, null), // 'revenue' since userId is null
-        ledgerAccountType: ELedgerAccountType.Revenue,
-        flowType: ECategoryFlowType.In,
+        accountingDomain: EAccountingDomain.Individual,
+        transactionType: ETransactionType.Receipt,
+        taxKey: taxKeyValue.make(ETransactionType.Receipt, null), // 'receipt:other' since userId is null
         parentId: null,
         description: 'System Description',
         userId: null,
@@ -61,16 +59,15 @@ describe('Category Entity', () => {
       const validUserId = '987fcdeb-51a2-43d7-9012-3456789abcde';
       const payload: TCreationOmits<ICategory, 'status'> = {
         name: 'User Category',
-        accountingDomain: EAccountingDomain.Personal,
-        ledgerAccountType: ELedgerAccountType.Expense,
-        flowType: ECategoryFlowType.Out,
+        accountingDomain: EAccountingDomain.Individual,
+        transactionType: ETransactionType.Expense,
         description: 'User Description',
         parentId: validParentId,
         userId: validUserId,
         taxKey: '',
       };
 
-      const [result, events] = categoryEntity.make(payload);
+      const [result, events] = categoryEntity.make(payload as any);
 
       expect(events).toHaveLength(1);
       expect(events[0].event.type).toBe('domain:category:created');
@@ -79,18 +76,17 @@ describe('Category Entity', () => {
       expect(result.userId).toBe(validUserId);
       expect(result.parentId).toBe(validParentId);
       expect(result.taxKey).toBe(
-        taxKeyValue.make(ELedgerAccountType.Expense, validUserId)
+        taxKeyValue.make(ETransactionType.Expense, validUserId)
       );
     });
 
     it('should create a category and use the provided taxKey instead of generating it if handled (wait, make now overrides taxKey but lets test generated one)', () => {
-      // The entity's make function now creates taxKey: taxKeyValue.make(payload.type, payload.userId).
+      // The entity's make function now creates taxKey: taxKeyValue.make(payload.transactionType, payload.userId).
       // So any provided taxKey is ignored/overwritten.
       const payload = {
         name: 'Custom Tax Category',
-        accountingDomain: EAccountingDomain.Personal,
-        ledgerAccountType: ELedgerAccountType.Revenue,
-        flowType: ECategoryFlowType.In,
+        accountingDomain: EAccountingDomain.Individual,
+        transactionType: ETransactionType.Receipt,
         description: 'Uses taxKey explicitly',
         parentId: null,
         userId: null,
@@ -103,18 +99,16 @@ describe('Category Entity', () => {
       expect(events[0].event.type).toBe('domain:category:created');
       expect(events[0].event.data).toEqual(result);
 
-      // It should actually be 'revenue' because taxKeyValue.make(Revenue, null) = 'revenue'
       expect(result.taxKey).toBe(
-        taxKeyValue.make(ELedgerAccountType.Revenue, null)
+        taxKeyValue.make(ETransactionType.Receipt, null)
       );
     });
 
     it('should throw an error if a user category does not have a parentId', () => {
       const payload = {
         name: 'Invalid User Category',
-        accountingDomain: EAccountingDomain.Personal,
-        ledgerAccountType: ELedgerAccountType.Expense,
-        flowType: ECategoryFlowType.Out,
+        accountingDomain: EAccountingDomain.Individual,
+        transactionType: ETransactionType.Expense,
         description: 'No parent id',
         parentId: null, // missing parent id
         userId: '987fcdeb-51a2-43d7-9012-3456789abcde',
@@ -129,9 +123,8 @@ describe('Category Entity', () => {
 
     describe('sanitizeName validations', () => {
       const basePayload = {
-        accountingDomain: EAccountingDomain.Personal,
-        ledgerAccountType: ELedgerAccountType.Revenue,
-        flowType: ECategoryFlowType.In,
+        accountingDomain: EAccountingDomain.Individual,
+        transactionType: ETransactionType.Receipt,
         description: 'Desc',
         parentId: null,
         userId: null,
@@ -175,7 +168,7 @@ describe('Category Entity', () => {
         const [result, events] = categoryEntity.make({
           ...basePayload,
           name: '    ',
-        });
+        } as any);
 
         expect(events).toHaveLength(1);
         expect(events[0].event.type).toBe('domain:category:created');
@@ -186,7 +179,7 @@ describe('Category Entity', () => {
       it('should throw an error if trimmed name length is > 100', () => {
         const longName = 'A'.repeat(101);
         expect(() =>
-          categoryEntity.make({ ...basePayload, name: longName })
+          categoryEntity.make({ ...basePayload, name: longName } as any)
         ).toThrow(AppError);
       });
 
@@ -195,7 +188,7 @@ describe('Category Entity', () => {
         const [result, events] = categoryEntity.make({
           ...basePayload,
           name: longName,
-        });
+        } as any);
 
         expect(events).toHaveLength(1);
         expect(events[0].event.type).toBe('domain:category:created');
@@ -211,14 +204,13 @@ describe('Category Entity', () => {
     beforeEach(() => {
       [existingCategory] = categoryEntity.make({
         name: 'Original Name',
-        accountingDomain: EAccountingDomain.Personal,
-        ledgerAccountType: ELedgerAccountType.Revenue,
-        flowType: ECategoryFlowType.In,
+        accountingDomain: EAccountingDomain.Individual,
+        transactionType: ETransactionType.Receipt,
         description: 'Original Description',
         parentId: null,
         userId: null,
         taxKey: '',
-      });
+      } as any);
 
       jest.advanceTimersByTime(1000);
     });
@@ -325,15 +317,14 @@ describe('Category Entity', () => {
 
     beforeEach(() => {
       [activeCategory] = categoryEntity.make({
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         name: 'Active Category',
-        ledgerAccountType: ELedgerAccountType.Revenue,
-        flowType: ECategoryFlowType.In,
+        transactionType: ETransactionType.Receipt,
         description: 'Desc',
         parentId: null,
         userId: null,
         taxKey: '',
-      });
+      } as any);
       jest.advanceTimersByTime(1000);
     });
 
@@ -367,14 +358,13 @@ describe('Category Entity', () => {
     beforeEach(() => {
       const [activeCategory] = categoryEntity.make({
         name: 'Category To Archive',
-        accountingDomain: EAccountingDomain.Personal,
-        ledgerAccountType: ELedgerAccountType.Revenue,
-        flowType: ECategoryFlowType.In,
+        accountingDomain: EAccountingDomain.Individual,
+        transactionType: ETransactionType.Receipt,
         description: 'Desc',
         parentId: null,
         userId: null,
         taxKey: '',
-      });
+      } as any);
       jest.advanceTimersByTime(1000);
       [archivedCategory] = categoryEntity.archive(activeCategory);
       jest.advanceTimersByTime(1000);

@@ -1,7 +1,7 @@
 export const EAccountingDomain = {
-  Corporate: 'corporate',
+  Organization: 'organization',
   SoleTrader: 'sole_trader',
-  Personal: 'personal',
+  Individual: 'individual',
 } as const;
 
 export type UAccountingDomain =

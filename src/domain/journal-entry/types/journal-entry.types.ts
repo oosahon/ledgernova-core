@@ -1,5 +1,5 @@
 import { IMoney } from '../../../shared/types/money.types';
-import { ULedgerAccountType } from '../../account/types/account.types';
+import { ULedgerAccountType } from '../../ledger-account/types/ledger-account.types';
 import { UTransactionDirection } from '../../transaction/types/transaction.types';
 
 export interface IJournalEntry {

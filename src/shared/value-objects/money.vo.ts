@@ -1,6 +1,7 @@
 import { AppError } from './error';
-import { ICurrency, IMoney } from '../types/money.types';
-import currencyValueObject from './currency.vo';
+import { IMoney } from '../types/money.types';
+import { ICurrency } from '../../domain/currency/types/currency.types';
+import currencyEntity from '../../domain/currency/entities/currency.entity';
 import { IFactor } from '../types/number.types';
 
 // TODO (i18n): translate error messages
@@ -42,7 +43,7 @@ function make(
   currency: ICurrency,
   isInMinorUnit: boolean
 ) {
-  const isValidCurrencyCode = currencyValueObject.isValidCode(currency.code);
+  const isValidCurrencyCode = currencyEntity.isValidCode(currency.code);
 
   if (!isValidCurrencyCode) {
     throw new AppError('Invalid currency code', { cause: currency.code });
@@ -168,7 +169,7 @@ function validate(money: IMoney) {
     throw new AppError('Invalid amount', { cause: money.amount });
   }
 
-  if (!currencyValueObject.isValidCode(money.currency.code)) {
+  if (!currencyEntity.isValidCode(money.currency.code)) {
     throw new AppError('Invalid currency code', { cause: money.currency.code });
   }
 }

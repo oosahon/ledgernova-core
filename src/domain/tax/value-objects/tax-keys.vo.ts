@@ -1,12 +1,22 @@
-// TODO: tax keys should be based on transaction types and not category ledger types
+/**
+ *  🚨 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+ *
+ *  ‼️ CAUTION ‼️
+ *
+ *  🚨 🚨🚨🚨🚨🚨🚨🚨🚨🚨 🚨🚨🚨🚨🚨🚨🚨🚨
+ *
+ * Tax keys are used to identify tax types and are used to generate tax receipts.
+ * They are also used to generate tax returns.
+ * Be careful when modifying this file, as it can have a significant impact on the tax system.
+ *
+ */
 
 import stringUtils from '../../../shared/utils/string';
 import { AppError } from '../../../shared/value-objects/error';
-import accountEntity from '../../account/entities/account.entity';
 import {
-  ELedgerAccountType,
-  ULedgerAccountType,
-} from '../../account/types/account.types';
+  ETransactionType,
+  UTransactionType,
+} from '../../transaction/types/transaction.types';
 
 const systemExpenseTaxKeys = {
   other: 'expense:other',
@@ -14,48 +24,42 @@ const systemExpenseTaxKeys = {
   lifeInsurance: 'expense:life_insurance',
   healthInsurance: 'expense:health_insurance',
   nhisContribution: 'expense:nhis_contribution',
-
   interestOnHouseLoan: 'expense:interest_on_house_loan',
   interestOnOwnerOccupiedHouseLoan:
     'expense:interest_on_owner_occupied_house_loan',
 };
 
-const systemAssetTaxKeys = {
-  pensionContribution: 'asset:pension_contribution',
-  nhfContribution: 'asset:nhf_contribution',
-  stocksPurchase: 'asset:stocks_purchase',
-  stocksReinvestment: 'asset:stocks_reinvestment',
-  other: 'asset:other',
+const systemPaymentTaxKeys = {
+  pensionContribution: 'payment:pension_contribution',
+  nhfContribution: 'payment:nhf_contribution',
+  stocksPurchase: 'payment:stocks_purchase',
+  stocksReinvestment: 'payment:stocks_reinvestment',
+  annuityPremium: 'payment:annuity_premium',
+  other: 'payment:other',
 };
 
-const systemRevenueTaxKeys = {
-  salary: 'revenue:salary',
-  sales: 'revenue:sales',
-  homeSale: 'revenue:home_sale',
-  salesPersonalEffect: 'revenue:sales_personal_effect',
-  salesPersonalVehicle: 'revenue:sales_personal_vehicles',
-  rebate: 'revenue:rebate',
-  // TODO: shares profit will be handled when the bookkeeping module is complete.
-  // SharesProfit = 'shares_profit',
-  // ServiceFee = 'Service Fee',
-  // Bonus = 'bonus',
-  // Compensation = 'compensation',
-  compensationLossOfEmployment: 'revenue:compensation_loss_of_employment',
-  // Business = 'business',
-  // Commissions = 'commissions',
-  royalties: 'revenue:royalties',
-  rental: 'revenue:rental',
-  dividends: 'revenue:dividends',
-  interest: 'revenue:interest',
-  // CapitalGains = 'capital_gains',
-  // Grants = 'grants',
-  // Sponsorships = 'sponsorships',
-  taxRefund: 'revenue:tax_refunds',
-  gift: 'revenue:gift',
-  lifeInsurance: 'revenue:life_insurance',
-  pensionPRA: 'revenue:pensions_rsa',
-  retirementBenefit: 'revenue:retirement_benefit',
-  other: 'revenue:other',
+const systemSaleTaxKeys = {
+  sales: 'sale:sales',
+  homeSale: 'sale:home_sale',
+  salesPersonalEffect: 'sale:sales_personal_effect',
+  salesPersonalVehicle: 'sale:sales_personal_vehicles',
+  other: 'sale:other',
+};
+
+const systemReceiptTaxKeys = {
+  salary: 'receipt:salary',
+  rebate: 'receipt:rebate',
+  compensationLossOfEmployment: 'receipt:compensation_loss_of_employment',
+  royalties: 'receipt:royalties',
+  rental: 'receipt:rental',
+  dividends: 'receipt:dividends',
+  interest: 'receipt:interest',
+  taxRefund: 'receipt:tax_refunds',
+  gift: 'receipt:gift',
+  lifeInsurance: 'receipt:life_insurance',
+  pensionPRA: 'receipt:pensions_rsa',
+  retirementBenefit: 'receipt:retirement_benefit',
+  other: 'receipt:other',
 };
 
 function appendUserId(taxKey: string, userId?: string | null) {
@@ -65,29 +69,30 @@ function appendUserId(taxKey: string, userId?: string | null) {
   return `${taxKey}::${userId}`;
 }
 
-function make(type: ULedgerAccountType, userId?: string | null) {
-  accountEntity.validateType(type);
+function make(type: UTransactionType, userId?: string | null) {
+  if (!Object.values(ETransactionType).includes(type)) {
+    throw new AppError('Invalid transaction type', { cause: type });
+  }
 
   if (userId) {
     stringUtils.validateUUID(userId);
   }
 
   switch (type) {
-    case ELedgerAccountType.Revenue:
-      return appendUserId(systemRevenueTaxKeys.other, userId);
-
-    case ELedgerAccountType.Expense:
+    case ETransactionType.Sale:
+      return appendUserId(systemSaleTaxKeys.other, userId);
+    case ETransactionType.Receipt:
+      return appendUserId(systemReceiptTaxKeys.other, userId);
+    case ETransactionType.Expense:
       return appendUserId(systemExpenseTaxKeys.other, userId);
-
-    case ELedgerAccountType.Asset:
-      return appendUserId(systemAssetTaxKeys.other, userId);
-
+    case ETransactionType.Payment:
+      return appendUserId(systemPaymentTaxKeys.other, userId);
     default:
       return appendUserId(type, userId);
   }
 }
 
-function isValid(taxKey: string, type: ULedgerAccountType) {
+function isValid(taxKey: string, type: UTransactionType) {
   if (!taxKey || typeof taxKey !== 'string') return false;
 
   const [baseTaxKey, userId] = taxKey.split('::');
@@ -97,22 +102,20 @@ function isValid(taxKey: string, type: ULedgerAccountType) {
   }
 
   switch (type) {
-    case ELedgerAccountType.Revenue:
-      return Object.values(systemRevenueTaxKeys).includes(baseTaxKey as any);
-    case ELedgerAccountType.Expense:
+    case ETransactionType.Sale:
+      return Object.values(systemSaleTaxKeys).includes(baseTaxKey as any);
+    case ETransactionType.Receipt:
+      return Object.values(systemReceiptTaxKeys).includes(baseTaxKey as any);
+    case ETransactionType.Expense:
       return Object.values(systemExpenseTaxKeys).includes(baseTaxKey as any);
-    case ELedgerAccountType.Liability:
-      return baseTaxKey === ELedgerAccountType.Liability;
-    case ELedgerAccountType.Asset:
-      return Object.values(systemAssetTaxKeys).includes(baseTaxKey as any);
-    case ELedgerAccountType.Equity:
-      return baseTaxKey === ELedgerAccountType.Equity;
+    case ETransactionType.Payment:
+      return Object.values(systemPaymentTaxKeys).includes(baseTaxKey as any);
     default:
-      return false;
+      return baseTaxKey === type;
   }
 }
 
-function validate(taxKey: string, type: ULedgerAccountType) {
+function validate(taxKey: string, type: UTransactionType) {
   if (!isValid(taxKey, type)) {
     throw new AppError('Invalid tax key', { cause: taxKey });
   }
@@ -127,9 +130,10 @@ const taxKeyValue = Object.freeze({
   isValid,
   getBaseTaxKey,
   validate,
-  revenue: Object.freeze(systemRevenueTaxKeys),
+  sale: Object.freeze(systemSaleTaxKeys),
+  receipt: Object.freeze(systemReceiptTaxKeys),
   expense: Object.freeze(systemExpenseTaxKeys),
-  asset: Object.freeze(systemAssetTaxKeys),
+  payment: Object.freeze(systemPaymentTaxKeys),
 });
 
 export default taxKeyValue;

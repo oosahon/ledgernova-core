@@ -1,8 +1,4 @@
-import {
-  ECategoryFlowType,
-  ICategory,
-  UCategoryFlowType,
-} from '../../types/category.types';
+import { ICategory } from '../../types/category.types';
 import { AppError } from '../../../../shared/value-objects/error';
 import stringUtils from '../../../../shared/utils/string';
 
@@ -34,16 +30,6 @@ function validateUserAndParentId(
   stringUtils.validateUUID(userId as string);
 }
 
-function isValidFlowType(flowType: UCategoryFlowType) {
-  return Object.values(ECategoryFlowType).includes(flowType);
-}
-
-function validateFlowType(flowType: UCategoryFlowType) {
-  if (!isValidFlowType(flowType)) {
-    throw new AppError('Invalid flow type', { cause: flowType });
-  }
-}
-
 function sanitizeDescription(description: string) {
   return stringUtils.sanitizeAndValidate(description, {
     min: 0,
@@ -54,9 +40,6 @@ function sanitizeDescription(description: string) {
 const categoryUtils = Object.freeze({
   sanitizeName,
   validateUserAndParentId,
-
-  isValidFlowType,
-  validateFlowType,
   sanitizeDescription,
 });
 

@@ -1,32 +1,41 @@
 import IRepoOptions from '../../../shared/types/repo-options.types';
-import { ULedgerAccountType } from '../../account/types/account.types';
-import { ICategory, UCategoryFlowType } from '../types/category.types';
+import { UAccountingDomain } from '../../accounting/types/accounting.types';
+import { UTransactionType } from '../../transaction/types/transaction.types';
+import { ICategory } from '../types/category.types';
+
+interface IFindAllParams {
+  domain: UAccountingDomain;
+  transactionTypes: UTransactionType[];
+  userId?: string;
+}
 
 export default interface ICategoryRepo {
-  save(category: ICategory, params: IRepoOptions): Promise<void>;
+  save(category: ICategory, options: IRepoOptions): Promise<void>;
 
-  update(category: ICategory, params: IRepoOptions): Promise<void>;
+  update(category: ICategory, options: IRepoOptions): Promise<void>;
 
-  findById(categoryId: string, params: IRepoOptions): Promise<ICategory | null>;
+  findById(
+    categoryId: string,
+    options: IRepoOptions
+  ): Promise<ICategory | null>;
 
-  findByTaxKey(taxKey: string, params: IRepoOptions): Promise<ICategory | null>;
+  findByTaxKey(
+    taxKey: string,
+    options: IRepoOptions
+  ): Promise<ICategory | null>;
 
   findByName(
     name: string,
-    type: ULedgerAccountType,
+    transactionType: UTransactionType,
     userId: string,
-    params: IRepoOptions
+    options: IRepoOptions
   ): Promise<ICategory | null>;
 
   delete(
     categoryId: string,
     userId: string,
-    params: IRepoOptions
+    options: IRepoOptions
   ): Promise<void>;
 
-  findAllByFlowType(
-    flowType: UCategoryFlowType,
-    params: IRepoOptions,
-    userId?: string
-  ): Promise<ICategory[]>;
+  findAll(params: IFindAllParams, options: IRepoOptions): Promise<ICategory[]>;
 }

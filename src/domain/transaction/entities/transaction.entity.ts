@@ -51,7 +51,7 @@ function make(
     functionalCurrencyAmount: payload.functionalCurrencyAmount,
     recipientAccountId: payload.recipientAccountId,
     exchangeRate: payload.exchangeRate,
-    note: helpers.sanitizeNote(payload.note),
+    notes: helpers.sanitizeNote(payload.notes),
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,
@@ -71,6 +71,7 @@ function make(
   const itemsWithEvents = itemsPayload.map((item) =>
     transactionItemEntity.make(
       transactionWithoutItems.id,
+      transactionWithoutItems.type,
       transactionWithoutItems.createdAt,
       item
     )

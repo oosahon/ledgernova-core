@@ -1,4 +1,4 @@
-import ICurrencyRepo from '../../../domain/transaction/repos/currency.repo';
+import ICurrencyRepo from '../../../domain/currency/repos/currency.repo';
 import IStorage from '../../contracts/storage/store.contract';
 
 export default function getCurrenciesUseCase(

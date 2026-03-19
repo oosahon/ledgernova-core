@@ -9,6 +9,7 @@ export const ETransactionDirection = {
 export type UTransactionDirection =
   (typeof ETransactionDirection)[keyof typeof ETransactionDirection];
 
+// TODO (db): add schema
 export const ETransactionType = {
   Sale: 'sale',
   Purchase: 'purchase',
@@ -21,6 +22,7 @@ export const ETransactionType = {
   Journal: 'journal',
 } as const;
 
+// TODO (db): add schema
 export const ETransactionStatus = {
   Pending: 'pending',
   Posted: 'posted',
@@ -34,6 +36,7 @@ export type UTransactionStatus =
 export type UTransactionType =
   (typeof ETransactionType)[keyof typeof ETransactionType];
 
+// TODO (db): add schema
 export interface ITransactionItem {
   id: string;
   name: string;
@@ -52,6 +55,7 @@ export interface ITransactionItem {
   deletedAt: Date | null;
 }
 
+// TODO (db): add schema
 export interface ITransaction {
   id: string;
   status: UTransactionStatus;
@@ -75,12 +79,13 @@ export interface ITransaction {
   // only used for transfers
   recipientAccountId: string | null;
   exchangeRate: number;
-  note: string | null;
+  notes: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
 }
 
+// TODO (db): add schema
 export interface ITransactionAttachment {
   // TODO: implement
 }

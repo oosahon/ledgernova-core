@@ -15,19 +15,17 @@
 
 In Ledgernova, a **Category** is more than just a visual tag for an income or expense transaction. It is a foundational component deeply intertwined with accounting principles and tax rules.
 
-While typical budgeting apps use categories solely for grouping transactions by name, Ledgernova categories act as the bridge between user-friendly labels (e.g., "Office Supplies") and the strict accounting parameters required to run a proper ledger (e.g., mapping to an Expense account under the Corporate domain with specific tax implications).
+While typical budgeting apps use categories solely for grouping transactions by name, Ledgernova categories act as the bridge between user-friendly labels (e.g., "Office Supplies") and the strict accounting parameters required to run a proper ledger (e.g., mapping to a receipt transaction to a liability account without the user explicitly doing this).
 
 Because Ledgernova supports fundamentally different types of accounting structures, each category is strongly linked to an **Accounting Domain** (`UAccountingDomain`) such as Corporate, SoleTrader, or Personal. Categories adapt to the legal and structural needs of their target domain.
 
-Furthermore, categorizing in Ledgernova is the primary driver for automated tax computations. The system dynamically generates a **`taxKey`** for every category based on its `ledgerAccountType` and the `userId`. This key groups similar categories together under strict tax reporting rules.
-
-Every category must anchor to a ledger account type (`Asset`, `Liability`, `Revenue`, `Expense`, `Equity`). This ensures that when a transaction is categorized, the system inherently knows its financial impact on the Chart of Accounts.
+Every category must anchor to a [transaction type](../../transaction/__docs__/transaction.md) . This ensures that when a transaction is categorized, the system inherently knows its financial impact on the Chart of Accounts.
 
 ## Core Operations
 
 The `category.entity.ts` module defines the pure business logic and lifecycle operations for a category:
 
-- **Creation (`make`)**: Initializes a new category with a generated UUID, assigns a dynamic `taxKey`, and sets the status to `Active`. It validates the `ledgerAccountType`, `accountingDomain`, flow type, and sanitizes both `name` and `description`. This operation yields the new category and a `category.created` event.
+- **Creation (`make`)**: Initializes a new category with a generated UUID, assigns a dynamic `taxKey`, and sets the status to `Active`. It validates the `transactiionType`, `accountingDomain`, and sanitizes both `name` and `description`. This operation yields the new category and a `category.created` event.
 - **Updates (`update`)**: Modifies the category's `name` or `description`. Includes sanitation ensuring descriptions are capped at 255 characters. Yields an updated category and a `category.updated` event.
 - **State Management (`archive` & `unarchive`)**: Idempotently transitions the category status between `Active` and `Archived`. Each successful transition yields its respective domain event (`category.archived` or `category.unarchived`). Note that archiving preserves the category's historical linkage to transactions without breaking older reports.
 
@@ -44,8 +42,7 @@ The primary data structure representing a financial category.
 - **`id`** (`string`): A uniquely generated UUID identifying the category globally.
 - **`name`** (`string`): The sanitized, user-friendly name of the category.
 - **`accountingDomain`** (`UAccountingDomain`): The legal accounting structure this category applies to (e.g., Corporate, Personal).
-- **`ledgerAccountType`** (`ULedgerAccountType`): The strict accounting classification used to define ledger behavior.
-- **`flowType`** (`UCategoryFlowType`): A UI/UX specific field (`in` vs. `out`) determining presentation, with no mathematical effect on core accounting.
+- **`transactionType`** (`UTransactionType`): The strict accounting classification used a transaction or its item.
 - **`taxKey`** (`string`): Dictates the underlying tax treatment and reporting rules governing any transaction placed in this category.
 - **`status`** (`UCategoryStatus`): The current operational state of the category. Defaults to `active`.
 - **`description`** (`string`): An optional, sanitized descriptive text allowing up to 255 characters.
