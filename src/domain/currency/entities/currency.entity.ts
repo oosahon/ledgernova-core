@@ -1,4 +1,4 @@
-import { AppError } from './error';
+import { AppError } from '../../../shared/value-objects/error';
 
 function isValidCurrencyCode(code: string): boolean {
   const isInvalidFormat =
@@ -31,10 +31,10 @@ function validateCurrencyCode(code: string) {
   }
 }
 
-const currencyValue = Object.freeze({
+const currencyEntity = Object.freeze({
   isValidCode: isValidCurrencyCode,
   isValidMinorUnit,
   validateCode: validateCurrencyCode,
 });
 
-export default currencyValue;
+export default currencyEntity;

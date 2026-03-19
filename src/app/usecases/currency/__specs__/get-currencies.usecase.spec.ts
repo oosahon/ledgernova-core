@@ -1,8 +1,8 @@
 import getCurrenciesUseCase from '../get-currencies.usecase';
-import ICurrencyRepo from '../../../../domain/transaction/repos/currency.repo';
+import ICurrencyRepo from '../../../../domain/currency/repos/currency.repo';
 import { MockStore } from '../../../contracts/storage/__mocks__/store.contract.mock';
 import { IStore } from '../../../../shared/types/store.types';
-import { ICurrency } from '../../../../shared/types/money.types';
+import { ICurrency } from '../../../../domain/currency/types/currency.types';
 
 describe('getCurrenciesUseCase', () => {
   let currencyRepo: jest.Mocked<ICurrencyRepo>;

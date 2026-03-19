@@ -1,5 +1,5 @@
 import transactionItemEntity from '../transaction-item.entity';
-import { ELedgerAccountType } from '../../../account/types/account.types';
+import { ELedgerAccountType } from '../../../ledger-account/types/ledger-account.types';
 import { ETransactionType } from '../../types/transaction.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import categoryEntity from '../../../category/entities/category.entity';
@@ -14,7 +14,7 @@ describe('Transaction Item Entity', () => {
     name: 'US Dollar',
   };
   const [baseCategory] = categoryEntity.make({
-    accountingDomain: EAccountingDomain.Personal,
+    accountingDomain: EAccountingDomain.Individual,
     name: 'Sales',
     transactionType: ETransactionType.Receipt,
     userId: null,

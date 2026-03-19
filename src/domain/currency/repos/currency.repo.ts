@@ -1,5 +1,5 @@
 import IRepoOptions from '../../../shared/types/repo-options.types';
-import { ICurrency } from '../../../shared/types/money.types';
+import { ICurrency } from '../types/currency.types';
 
 interface ICurrencyRepo {
   save(currency: ICurrency, option: IRepoOptions): Promise<ICurrency>;

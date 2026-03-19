@@ -2,7 +2,7 @@ import { AppError } from '../../../shared/value-objects/error';
 import {
   ELedgerAccountType,
   ULedgerAccountType,
-} from '../../account/types/account.types';
+} from '../../ledger-account/types/ledger-account.types';
 import { IPostingAdvisory } from '../types/posting-rule';
 
 function validateAccountType(accountType: ULedgerAccountType) {

@@ -2,7 +2,7 @@ import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import { AppError } from '../../../shared/value-objects/error';
 import { IMoney } from '../../../shared/types/money.types';
-import currencyValue from '../../../shared/value-objects/currency.vo';
+import currencyEntity from '../../currency/entities/currency.entity';
 import moneyValue from '../../../shared/value-objects/money.vo';
 import {
   EAccountStatus,
@@ -28,7 +28,7 @@ interface IGetBalanceParams {
 function make(
   payload: TCreationOmits<ILedgerAccount>
 ): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
-  currencyValue.validateCode(payload.currencyCode);
+  currencyEntity.validateCode(payload.currencyCode);
   helpers.validateType(payload.type);
 
   const timestamp = new Date();
@@ -77,7 +77,7 @@ function update(
   payload: Pick<ILedgerAccount, 'name' | 'subType' | 'currencyCode'>
 ): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
   if (payload.currencyCode) {
-    const isValidCode = currencyValue.isValidCode(payload.currencyCode);
+    const isValidCode = currencyEntity.isValidCode(payload.currencyCode);
 
     if (!isValidCode) {
       throw new AppError('Invalid currency code', {

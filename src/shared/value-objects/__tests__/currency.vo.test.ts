@@ -1,5 +1,5 @@
 import mockCurrencies from '../__mocks__/currencies.mock';
-import currency from '../currency.vo';
+import currency from '../../../domain/currency/entities/currency.entity';
 
 describe('Currency Value Object', () => {
   describe('isValidCode', () => {

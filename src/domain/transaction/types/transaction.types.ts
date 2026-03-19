@@ -79,7 +79,7 @@ export interface ITransaction {
   // only used for transfers
   recipientAccountId: string | null;
   exchangeRate: number;
-  note: string | null;
+  notes: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

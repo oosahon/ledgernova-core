@@ -1,4 +1,4 @@
-import { ICurrency } from '../../../shared/types/money.types';
+import { ICurrency } from '../../currency/types/currency.types';
 
 export const ELedgerAccountType = {
   Asset: 'asset',

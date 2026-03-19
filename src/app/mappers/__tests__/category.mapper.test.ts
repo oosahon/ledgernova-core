@@ -27,7 +27,7 @@ describe('Category Mapper', () => {
         parentId: 'parent-id',
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonDomainDates,
       };
 
@@ -40,7 +40,7 @@ describe('Category Mapper', () => {
         parentId: 'parent-id',
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonRepoDates,
       };
 
@@ -59,7 +59,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'sxa',
         userId: null,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonDomainDates,
       };
 
@@ -86,7 +86,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonRepoDates,
       };
 
@@ -99,7 +99,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         ...commonDomainDates,
       };
 

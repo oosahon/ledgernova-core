@@ -1,6 +1,6 @@
 import journalEntriesEntity from '../journal-entry.entity';
 import { ETransactionDirection } from '../../../transaction/types/transaction.types';
-import { ELedgerAccountType } from '../../../account/types/account.types';
+import { ELedgerAccountType } from '../../../ledger-account/types/ledger-account.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import { AppError } from '../../../../shared/value-objects/error';
 

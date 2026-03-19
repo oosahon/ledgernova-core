@@ -2,7 +2,6 @@ import _ from 'lodash';
 import { AppError } from '../../../../shared/value-objects/error';
 import categoryEntity from '../category.entity';
 import { ICategory } from '../../types/category.types';
-import { ELedgerAccountType } from '../../../account/types/account.types';
 import { ETransactionType } from '../../../transaction/types/transaction.types';
 import taxKeyValue from '../../../tax/value-objects/tax-keys.vo';
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
@@ -25,7 +24,7 @@ describe('Category Entity', () => {
     it('should create a valid system category successfully', () => {
       const payload = {
         name: 'System Category',
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         transactionType: ETransactionType.Receipt,
         description: 'System Description',
         parentId: null,
@@ -41,7 +40,7 @@ describe('Category Entity', () => {
 
       expect(_.omit(result, 'id')).toEqual({
         name: 'System Category',
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         transactionType: ETransactionType.Receipt,
         taxKey: taxKeyValue.make(ETransactionType.Receipt, null), // 'receipt:other' since userId is null
         parentId: null,
@@ -60,7 +59,7 @@ describe('Category Entity', () => {
       const validUserId = '987fcdeb-51a2-43d7-9012-3456789abcde';
       const payload: TCreationOmits<ICategory, 'status'> = {
         name: 'User Category',
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         transactionType: ETransactionType.Expense,
         description: 'User Description',
         parentId: validParentId,
@@ -86,7 +85,7 @@ describe('Category Entity', () => {
       // So any provided taxKey is ignored/overwritten.
       const payload = {
         name: 'Custom Tax Category',
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         transactionType: ETransactionType.Receipt,
         description: 'Uses taxKey explicitly',
         parentId: null,
@@ -108,7 +107,7 @@ describe('Category Entity', () => {
     it('should throw an error if a user category does not have a parentId', () => {
       const payload = {
         name: 'Invalid User Category',
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         transactionType: ETransactionType.Expense,
         description: 'No parent id',
         parentId: null, // missing parent id
@@ -124,7 +123,7 @@ describe('Category Entity', () => {
 
     describe('sanitizeName validations', () => {
       const basePayload = {
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         transactionType: ETransactionType.Receipt,
         description: 'Desc',
         parentId: null,
@@ -205,7 +204,7 @@ describe('Category Entity', () => {
     beforeEach(() => {
       [existingCategory] = categoryEntity.make({
         name: 'Original Name',
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         transactionType: ETransactionType.Receipt,
         description: 'Original Description',
         parentId: null,
@@ -318,7 +317,7 @@ describe('Category Entity', () => {
 
     beforeEach(() => {
       [activeCategory] = categoryEntity.make({
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         name: 'Active Category',
         transactionType: ETransactionType.Receipt,
         description: 'Desc',
@@ -359,7 +358,7 @@ describe('Category Entity', () => {
     beforeEach(() => {
       const [activeCategory] = categoryEntity.make({
         name: 'Category To Archive',
-        accountingDomain: EAccountingDomain.Personal,
+        accountingDomain: EAccountingDomain.Individual,
         transactionType: ETransactionType.Receipt,
         description: 'Desc',
         parentId: null,

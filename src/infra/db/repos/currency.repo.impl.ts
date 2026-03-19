@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import ICurrencyRepo from '../../../domain/transaction/repos/currency.repo';
+import ICurrencyRepo from '../../../domain/currency/repos/currency.repo';
 import { currenciesInCore as currencies } from '../drizzle/schema';
 import currencyMapper from '../../../app/mappers/currency.mapper';
 import getDbQuery from './query';

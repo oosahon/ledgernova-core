@@ -1,9 +1,4 @@
-export interface ICurrency {
-  code: string;
-  symbol: string;
-  name: string;
-  minorUnit: bigint;
-}
+import { ICurrency } from '../../domain/currency/types/currency.types';
 
 export interface IMoney {
   amount: bigint;

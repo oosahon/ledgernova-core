@@ -1,4 +1,3 @@
-import { ULedgerAccountType } from '../../account/types/account.types';
 import { UAccountingDomain } from '../../accounting/types/accounting.types';
 import { UTransactionType } from '../../transaction/types/transaction.types';
 

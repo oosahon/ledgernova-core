@@ -1,4 +1,4 @@
-import { ICurrency } from '../../types/money.types';
+import { ICurrency } from '../../../domain/currency/types/currency.types';
 
 const Naira: ICurrency = {
   code: 'NGN',

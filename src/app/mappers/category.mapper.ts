@@ -11,7 +11,7 @@ const categoryMapper = {
       userId: category.userId ?? null,
       parentId: category.parentId ?? null,
       ...toCommonRepoDates(category),
-    } as any; // TODO: remove any after migration is run
+    };
   },
 
   toDomain: (
