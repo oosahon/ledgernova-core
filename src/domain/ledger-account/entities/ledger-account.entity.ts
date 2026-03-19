@@ -39,6 +39,7 @@ function makeGeneralLedger(
     ledgerAccountType: payload.ledgerAccountType,
     currencyCode: payload.currencyCode,
     status: ELedgerAccountStatus.Active,
+    createdBy: 'createdBy' in payload ? payload.createdBy : null,
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,
@@ -57,7 +58,7 @@ function makeLedgerAccount(
   parentLedger: IGeneralLedgerAccount | ILedgerAccount,
   payload: Pick<
     ILedgerAccount,
-    'name' | 'subType' | 'currencyCode' | 'ledgerCode'
+    'name' | 'subType' | 'currencyCode' | 'ledgerCode' | 'createdBy'
   >
 ): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
   stringUtils.validateUUID(parentLedger.id);
@@ -97,6 +98,7 @@ function makeLedgerAccount(
     parentId: parentLedger.id,
     currencyCode,
     status: ELedgerAccountStatus.Active,
+    createdBy: payload.createdBy ?? null,
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,

@@ -22,7 +22,7 @@ describe('Transaction Entity', () => {
   const [baseCategory] = categoryEntity.make({
     name: 'Sales',
     type: ETransactionType.Receipt,
-    userId: null,
+    createdBy: null,
     parentId: null,
     description: 'Sales category',
     taxKey: 'sale:sales',

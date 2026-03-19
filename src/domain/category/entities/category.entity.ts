@@ -18,18 +18,18 @@ function make(
   const timestamps = new Date();
 
   transactionEntity.validateType(payload.type);
-  helpers.validateUserAndParentId(payload);
+  helpers.validateCreatorAndParentId(payload);
   accountingHelpers.validateDomain(payload.accountingDomain);
 
   const category = Object.freeze({
     id: generateUUID(),
     name: helpers.sanitizeName(payload.name),
     accountingDomain: payload.accountingDomain,
-    taxKey: taxKeyValue.make(payload.type, payload.userId),
+    taxKey: taxKeyValue.make(payload.type, payload.createdBy),
     type: payload.type,
     parentId: payload.parentId,
     description: helpers.sanitizeDescription(payload.description),
-    userId: payload.userId,
+    createdBy: payload.createdBy,
     status: ECategoryStatus.Active,
     createdAt: timestamps,
     updatedAt: timestamps,

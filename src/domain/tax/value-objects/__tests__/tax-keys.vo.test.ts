@@ -3,14 +3,14 @@ import taxKeyValue from '../tax-keys.vo';
 
 describe('taxKeyValue', () => {
   describe('make', () => {
-    it('should return system default when no userId is provided (receipt)', () => {
+    it('should return system default when no createdBy is provided (receipt)', () => {
       expect(taxKeyValue.make(ETransactionType.Receipt)).toBe('receipt:other');
       expect(taxKeyValue.make(ETransactionType.Receipt, null)).toBe(
         'receipt:other'
       );
     });
 
-    it('should return formatted key when userId is provided (receipt)', () => {
+    it('should return formatted key when createdBy is provided (receipt)', () => {
       expect(
         taxKeyValue.make(
           ETransactionType.Receipt,
@@ -19,14 +19,14 @@ describe('taxKeyValue', () => {
       ).toBe('receipt:other::987fcdeb-51a2-43d7-9012-3456789abcde');
     });
 
-    it('should return system default when no userId is provided (expense)', () => {
+    it('should return system default when no createdBy is provided (expense)', () => {
       expect(taxKeyValue.make(ETransactionType.Expense)).toBe('expense:other');
       expect(taxKeyValue.make(ETransactionType.Expense, null)).toBe(
         'expense:other'
       );
     });
 
-    it('should return formatted key when userId is provided (expense)', () => {
+    it('should return formatted key when createdBy is provided (expense)', () => {
       expect(
         taxKeyValue.make(
           ETransactionType.Expense,
@@ -35,14 +35,14 @@ describe('taxKeyValue', () => {
       ).toBe('expense:other::987fcdeb-51a2-43d7-9012-3456789abcde');
     });
 
-    it('should return system default when no userId is provided (payment)', () => {
+    it('should return system default when no createdBy is provided (payment)', () => {
       expect(taxKeyValue.make(ETransactionType.Payment)).toBe('payment:other');
       expect(taxKeyValue.make(ETransactionType.Payment, null)).toBe(
         'payment:other'
       );
     });
 
-    it('should return formatted key when userId is provided (payment)', () => {
+    it('should return formatted key when createdBy is provided (payment)', () => {
       expect(
         taxKeyValue.make(
           ETransactionType.Payment,
@@ -51,7 +51,7 @@ describe('taxKeyValue', () => {
       ).toBe('payment:other::987fcdeb-51a2-43d7-9012-3456789abcde');
     });
 
-    it('should return base when no userId is provided (sale)', () => {
+    it('should return base when no createdBy is provided (sale)', () => {
       expect(taxKeyValue.make(ETransactionType.Sale)).toBe('sale:other');
     });
   });

@@ -5,6 +5,7 @@ import {
   currenciesInCore,
   currencyExchangeRatesInCore,
   ledgerAccountsInCore,
+  userLedgerAccountsInCore,
   transactionsInCore,
   categoriesInCore,
 } from './schema';
@@ -22,6 +23,7 @@ export const userActivitiesInAuditRelations = relations(
 export const usersInCoreRelations = relations(usersInCore, ({ many }) => ({
   userActivitiesInAudits: many(userActivitiesInAudit),
   ledgerAccountsInCores: many(ledgerAccountsInCore),
+  userLedgerAccountsInCores: many(userLedgerAccountsInCore),
   transactionsInCores: many(transactionsInCore),
   categoriesInCores: many(categoriesInCore),
 }));
@@ -69,14 +71,23 @@ export const currenciesInCoreRelations = relations(
 export const ledgerAccountsInCoreRelations = relations(
   ledgerAccountsInCore,
   ({ one, many }) => ({
-    usersInCore: one(usersInCore, {
-      fields: [ledgerAccountsInCore.userId],
-      references: [usersInCore.id],
-    }),
     currenciesInCore: one(currenciesInCore, {
       fields: [ledgerAccountsInCore.currencyCode],
       references: [currenciesInCore.code],
     }),
+    ledgerAccountsInCore: one(ledgerAccountsInCore, {
+      fields: [ledgerAccountsInCore.parentId],
+      references: [ledgerAccountsInCore.id],
+      relationName: 'ledgerAccountsInCore_parentId_ledgerAccountsInCore_id',
+    }),
+    ledgerAccountsInCores: many(ledgerAccountsInCore, {
+      relationName: 'ledgerAccountsInCore_parentId_ledgerAccountsInCore_id',
+    }),
+    usersInCore: one(usersInCore, {
+      fields: [ledgerAccountsInCore.createdBy],
+      references: [usersInCore.id],
+    }),
+    userLedgerAccountsInCores: many(userLedgerAccountsInCore),
     transactionsInCores_ledgerAccountId: many(transactionsInCore, {
       relationName:
         'transactionsInCore_ledgerAccountId_ledgerAccountsInCore_id',
@@ -84,6 +95,20 @@ export const ledgerAccountsInCoreRelations = relations(
     transactionsInCores_recipientAccountId: many(transactionsInCore, {
       relationName:
         'transactionsInCore_recipientAccountId_ledgerAccountsInCore_id',
+    }),
+  })
+);
+
+export const userLedgerAccountsInCoreRelations = relations(
+  userLedgerAccountsInCore,
+  ({ one }) => ({
+    usersInCore: one(usersInCore, {
+      fields: [userLedgerAccountsInCore.userId],
+      references: [usersInCore.id],
+    }),
+    ledgerAccountsInCore: one(ledgerAccountsInCore, {
+      fields: [userLedgerAccountsInCore.ledgerAccountId],
+      references: [ledgerAccountsInCore.id],
     }),
   })
 );
@@ -126,7 +151,7 @@ export const categoriesInCoreRelations = relations(
       relationName: 'categoriesInCore_parentId_categoriesInCore_id',
     }),
     usersInCore: one(usersInCore, {
-      fields: [categoriesInCore.userId],
+      fields: [categoriesInCore.createdBy],
       references: [usersInCore.id],
     }),
   })

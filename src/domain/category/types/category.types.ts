@@ -28,7 +28,7 @@ export interface ICategory {
   status: UCategoryStatus;
   description: string;
   parentId: string | null;
-  userId: string | null;
+  createdBy: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

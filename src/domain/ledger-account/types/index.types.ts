@@ -24,6 +24,7 @@ export interface IGeneralLedgerAccount {
   name: string;
   currencyCode: string;
   status: ULedgerAccountStatus;
+  createdBy: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

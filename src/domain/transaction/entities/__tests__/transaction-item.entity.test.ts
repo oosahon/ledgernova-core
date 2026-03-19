@@ -17,7 +17,7 @@ describe('Transaction Item Entity', () => {
     accountingDomain: EAccountingDomain.Individual,
     name: 'Sales',
     type: ETransactionType.Receipt,
-    userId: null,
+    createdBy: null,
     parentId: null,
     description: 'Sales category',
     taxKey: 'sale:sales',

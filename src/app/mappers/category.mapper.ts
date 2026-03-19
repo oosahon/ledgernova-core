@@ -10,7 +10,7 @@ const categoryMapper = {
       ...categoryOmittedType,
       transactionType: category.type,
       taxKey: category.taxKey ?? null,
-      userId: category.userId ?? null,
+      createdBy: category.createdBy ?? null,
       parentId: category.parentId ?? null,
       ...toCommonRepoDates(category),
     } as any; // TODO: remove after migration
