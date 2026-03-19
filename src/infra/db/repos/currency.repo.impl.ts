@@ -8,13 +8,10 @@ const currencyRepo: ICurrencyRepo = {
   save: async (payload, options) => {
     const dbQuery = getDbQuery(options);
 
-    const [currency] = await dbQuery
+    await dbQuery
       .insert(currencies)
       .values(currencyMapper.toRepo(payload))
-      .returning()
       .onConflictDoNothing();
-
-    return currencyMapper.toDomain(currency);
   },
 
   findByCode: async (code, options) => {

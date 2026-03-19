@@ -23,8 +23,16 @@ const categoryRepo: ICategoryRepo = {
   },
 
   findByTaxKey: async (taxKey, options) => {
-    // TODO: implement
-    return {} as ICategory;
+    const query = getDbQuery(options);
+
+    const result = await query
+      .select()
+      .from(categories)
+      .where(eq(categories.taxKey, taxKey));
+
+    if (!result.length) return null;
+
+    return categoryMapper.toDomain(result[0]);
   },
 
   findByName: async (name, type, userId, options) => {

@@ -7,87 +7,13 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
-      "UAccountingDomain": {
-        "type": "string",
-        "enum": ["corporate", "sole_trader", "personal"]
-      },
-      "ULedgerAccountType": {
+      "ULedgerType": {
         "type": "string",
         "enum": ["asset", "liability", "revenue", "expense", "equity"]
       },
-      "UCategoryFlowType": {
+      "UJournalDirection": {
         "type": "string",
-        "enum": ["in", "out"]
-      },
-      "UCategoryStatus": {
-        "type": "string",
-        "enum": ["active", "archived"]
-      },
-      "ICategory": {
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "accountingDomain": {
-            "$ref": "#/components/schemas/UAccountingDomain"
-          },
-          "ledgerAccountType": {
-            "$ref": "#/components/schemas/ULedgerAccountType"
-          },
-          "flowType": {
-            "$ref": "#/components/schemas/UCategoryFlowType"
-          },
-          "taxKey": {
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/UCategoryStatus"
-          },
-          "description": {
-            "type": "string"
-          },
-          "parentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "userId": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deletedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "accountingDomain",
-          "ledgerAccountType",
-          "flowType",
-          "taxKey",
-          "status",
-          "description",
-          "parentId",
-          "userId",
-          "createdAt",
-          "updatedAt",
-          "deletedAt"
-        ],
-        "type": "object",
-        "additionalProperties": false
+        "enum": ["debit", "credit"]
       }
     },
     "securitySchemes": {}
@@ -149,17 +75,7 @@
         "operationId": "getCategories",
         "responses": {
           "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/ICategory"
-                  },
-                  "type": "array"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "description": "Get Categories",
@@ -168,10 +84,18 @@
         "parameters": [
           {
             "in": "query",
-            "name": "flowType",
+            "name": "ledgerAccountType",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UCategoryFlowType"
+              "$ref": "#/components/schemas/ULedgerType"
+            }
+          },
+          {
+            "in": "query",
+            "name": "transactionDirection",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UJournalDirection"
             }
           }
         ]
