@@ -1,15 +1,15 @@
-import accountEntity from './account.entity';
+import ledgerAccountEntity from '../ledger-account.entity';
 import {
   ELedgerAccountType,
   EAccountStatus,
-  IAccount,
-} from '../types/account.types';
-import { EAccountEvents } from '../events/account.events';
-import moneyValue from '../../../shared/value-objects/money.vo';
-import { AppError } from '../../../shared/value-objects/error';
-import mockCurrencies from '../../../shared/value-objects/__mocks__/currencies.mock';
+  ILedgerAccount,
+} from '../../types/ledger-account.types';
+import { EAccountEvents } from '../../events/ledger-account.events';
+import moneyValue from '../../../../shared/value-objects/money.vo';
+import { AppError } from '../../../../shared/value-objects/error';
+import mockCurrencies from '../../../../shared/value-objects/__mocks__/currencies.mock';
 
-describe('account.entity.ts', () => {
+describe('ledger-account.entity.ts', () => {
   const validUserId = 'test-user-id';
   const usdCurrency = mockCurrencies.USD;
 
@@ -27,7 +27,7 @@ describe('account.entity.ts', () => {
   describe('make', () => {
     it('should create an account with valid payload', () => {
       const payload = createValidPayload();
-      const [account, events] = accountEntity.make(payload);
+      const [account, events] = ledgerAccountEntity.make(payload);
 
       expect(account.id).toBeDefined();
       expect(typeof account.id).toBe('string');
@@ -50,7 +50,7 @@ describe('account.entity.ts', () => {
         type: ELedgerAccountType.Liability,
         subType: '  My SubType  ',
       });
-      const [account, events] = accountEntity.make(payload);
+      const [account, events] = ledgerAccountEntity.make(payload);
       expect(account.subType).toBe('My SubType');
       expect(events).toHaveLength(1);
       expect(events[0].event.type).toBe(EAccountEvents.Created);
@@ -61,7 +61,7 @@ describe('account.entity.ts', () => {
       const payload = createValidPayload({ currencyCode: 'INVALID' });
       let error: any;
       try {
-        accountEntity.make(payload);
+        ledgerAccountEntity.make(payload);
       } catch (err) {
         error = err;
       }
@@ -74,7 +74,7 @@ describe('account.entity.ts', () => {
       it('should throw if name is not a string', () => {
         let error: any;
         try {
-          accountEntity.make(createValidPayload({ name: 123 }));
+          ledgerAccountEntity.make(createValidPayload({ name: 123 }));
         } catch (err) {
           error = err;
         }
@@ -86,7 +86,7 @@ describe('account.entity.ts', () => {
       it('should throw if name is an empty string after trim', () => {
         let error: any;
         try {
-          accountEntity.make(createValidPayload({ name: '   ' }));
+          ledgerAccountEntity.make(createValidPayload({ name: '   ' }));
         } catch (err) {
           error = err;
         }
@@ -97,7 +97,7 @@ describe('account.entity.ts', () => {
         const longStr = 'A'.repeat(101);
         let error: any;
         try {
-          accountEntity.make(createValidPayload({ name: longStr }));
+          ledgerAccountEntity.make(createValidPayload({ name: longStr }));
         } catch (err) {
           error = err;
         }
@@ -109,7 +109,7 @@ describe('account.entity.ts', () => {
       it('should throw if subType is not a string (and not falsy)', () => {
         let error: any;
         try {
-          accountEntity.make(createValidPayload({ subType: 123 }));
+          ledgerAccountEntity.make(createValidPayload({ subType: 123 }));
         } catch (err) {
           error = err;
         }
@@ -121,7 +121,7 @@ describe('account.entity.ts', () => {
       it('should throw if subType is an empty string after trim', () => {
         let error: any;
         try {
-          accountEntity.make(createValidPayload({ subType: '   ' }));
+          ledgerAccountEntity.make(createValidPayload({ subType: '   ' }));
         } catch (err) {
           error = err;
         }
@@ -132,7 +132,7 @@ describe('account.entity.ts', () => {
         const longStr = 'B'.repeat(101);
         let error: any;
         try {
-          accountEntity.make(createValidPayload({ subType: longStr }));
+          ledgerAccountEntity.make(createValidPayload({ subType: longStr }));
         } catch (err) {
           error = err;
         }
@@ -143,7 +143,7 @@ describe('account.entity.ts', () => {
 
   describe('getBalance', () => {
     it('calculates Asset balance (debit - credit)', () => {
-      const balance = accountEntity.getBalance({
+      const balance = ledgerAccountEntity.getBalance({
         type: ELedgerAccountType.Asset,
         totalCredit: moneyValue.make(100, usdCurrency, false), // 100 USD = 10000 minorUnits
         totalDebit: moneyValue.make(300, usdCurrency, false), // 300 USD = 30000 minorUnits
@@ -153,7 +153,7 @@ describe('account.entity.ts', () => {
     });
 
     it('calculates Expense balance (debit - credit)', () => {
-      const balance = accountEntity.getBalance({
+      const balance = ledgerAccountEntity.getBalance({
         type: ELedgerAccountType.Expense,
         totalCredit: moneyValue.make(100, usdCurrency, false),
         totalDebit: moneyValue.make(400, usdCurrency, false),
@@ -162,7 +162,7 @@ describe('account.entity.ts', () => {
     });
 
     it('calculates Liability balance (credit - debit)', () => {
-      const balance = accountEntity.getBalance({
+      const balance = ledgerAccountEntity.getBalance({
         type: ELedgerAccountType.Liability,
         totalCredit: moneyValue.make(500, usdCurrency, false),
         totalDebit: moneyValue.make(200, usdCurrency, false),
@@ -172,7 +172,7 @@ describe('account.entity.ts', () => {
     });
 
     it('calculates Equity balance (credit - debit)', () => {
-      const balance = accountEntity.getBalance({
+      const balance = ledgerAccountEntity.getBalance({
         type: ELedgerAccountType.Equity,
         totalCredit: moneyValue.make(200, usdCurrency, false),
         totalDebit: moneyValue.make(500, usdCurrency, false),
@@ -181,7 +181,7 @@ describe('account.entity.ts', () => {
     });
 
     it('calculates Revenue balance (credit - debit)', () => {
-      const balance = accountEntity.getBalance({
+      const balance = ledgerAccountEntity.getBalance({
         type: ELedgerAccountType.Revenue,
         totalCredit: moneyValue.make(100, usdCurrency, false),
         totalDebit: moneyValue.make(0, usdCurrency, false),
@@ -191,10 +191,10 @@ describe('account.entity.ts', () => {
   });
 
   describe('update', () => {
-    let baseAccount: IAccount;
+    let baseAccount: ILedgerAccount;
 
     beforeEach(() => {
-      [baseAccount] = accountEntity.make(
+      [baseAccount] = ledgerAccountEntity.make(
         createValidPayload({ name: 'Original' })
       );
     });
@@ -211,7 +211,10 @@ describe('account.entity.ts', () => {
         currencyCode: 'EUR',
       };
 
-      const [updated, events] = accountEntity.update(baseAccount, payload);
+      const [updated, events] = ledgerAccountEntity.update(
+        baseAccount,
+        payload
+      );
 
       expect(updated.name).toBe('New Name');
       expect(updated.subType).toBe('New SubType');
@@ -227,11 +230,11 @@ describe('account.entity.ts', () => {
     });
 
     it('preserves existing properties if payload keys are missing/undefined', () => {
-      let [accWithSubtype] = accountEntity.make(
+      let [accWithSubtype] = ledgerAccountEntity.make(
         createValidPayload({ subType: 'Original SubType' })
       );
 
-      const [updated, events] = accountEntity.update(accWithSubtype, {
+      const [updated, events] = ledgerAccountEntity.update(accWithSubtype, {
         name: undefined as any,
         subType: undefined,
         currencyCode: undefined as any,
@@ -248,7 +251,9 @@ describe('account.entity.ts', () => {
     it('throws if invalid currency code is provided', () => {
       let error: any;
       try {
-        accountEntity.update(baseAccount, { currencyCode: 'INVALID' } as any);
+        ledgerAccountEntity.update(baseAccount, {
+          currencyCode: 'INVALID',
+        } as any);
       } catch (err) {
         error = err;
       }
@@ -259,14 +264,14 @@ describe('account.entity.ts', () => {
 
   describe('archive', () => {
     it('sets status to archived and updates timestamp', () => {
-      const [baseAccount] = accountEntity.make(
+      const [baseAccount] = ledgerAccountEntity.make(
         createValidPayload({ name: 'Original' })
       );
 
       jest.useFakeTimers();
       jest.setSystemTime(new Date(baseAccount.updatedAt.getTime() + 10000));
 
-      const [archived, events] = accountEntity.archive(baseAccount);
+      const [archived, events] = ledgerAccountEntity.archive(baseAccount);
 
       expect(archived.status).toBe(EAccountStatus.Archived);
       expect(archived.updatedAt.getTime()).toBeGreaterThan(
@@ -282,15 +287,15 @@ describe('account.entity.ts', () => {
 
   describe('unarchive', () => {
     it('sets status to active and updates timestamp', () => {
-      let [baseAccount] = accountEntity.make(
+      let [baseAccount] = ledgerAccountEntity.make(
         createValidPayload({ name: 'Original' })
       );
-      [baseAccount] = accountEntity.archive(baseAccount);
+      [baseAccount] = ledgerAccountEntity.archive(baseAccount);
 
       jest.useFakeTimers();
       jest.setSystemTime(new Date(baseAccount.updatedAt.getTime() + 10000));
 
-      const [unArchived, events] = accountEntity.unarchive(baseAccount);
+      const [unArchived, events] = ledgerAccountEntity.unarchive(baseAccount);
 
       expect(unArchived.status).toBe(EAccountStatus.Active);
       expect(unArchived.updatedAt.getTime()).toBeGreaterThan(

@@ -5,10 +5,10 @@
 - [Overview](#overview)
 - [Core Operations](#core-operations)
 - [Glossary](#glossary)
-  - [\`IAccount\` (Entity)](#iaccount-entity)
+  - [\`ILedgerAccount\` (Entity)](#ILedgerAccount-entity)
   - [\`EAccountStatus\` (Type)](#eaccountstatus-type)
   - [\`ELedgerAccountType\` (Type)](#eledgeraccounttype-type)
-  - [\`IAccountWithCurrency\` (Extended Type)](#iaccountwithcurrency-extended-type)
+  - [\`ILedgerAccountWithCurrency\` (Extended Type)](#ILedgerAccountwithcurrency-extended-type)
 
 ## Overview
 
@@ -31,7 +31,7 @@ The `account.entity.ts` module defines the pure business logic and lifecycle ope
 
 This section defines the key domain entities, types, and properties associated with the Account feature.
 
-### `IAccount` (Entity)
+### `ILedgerAccount` (Entity)
 
 The primary data structure representing a financial ledger account.
 
@@ -65,6 +65,6 @@ Enumeration of the fundamental pillars of double-entry accounting. These define 
 - **`Expense`** (`'expense'`): Costs incurred to generate revenue. (Normal balance: Debit)
 - **`Equity`** (`'equity'`): The owner's residual interest after deducting liabilities from assets. (Normal balance: Credit)
 
-### `IAccountWithCurrency` (Extended Type)
+### `ILedgerAccountWithCurrency` (Extended Type)
 
-An aggregation type used primarily on the read side. It extends the base `IAccount` to embed the fully resolved `ICurrency` object, rather than just retaining the `currencyCode`.
+An aggregation type used primarily on the read side. It extends the base `ILedgerAccount` to embed the fully resolved `ICurrency` object, rather than just retaining the `currencyCode`.

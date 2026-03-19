@@ -2,7 +2,7 @@ import { AppError } from '../../../../shared/value-objects/error';
 import {
   ELedgerAccountType,
   ULedgerAccountType,
-} from '../../types/account.types';
+} from '../../types/ledger-account.types';
 
 function validateType(type: ULedgerAccountType) {
   const isValid = [

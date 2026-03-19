@@ -1,5 +1,5 @@
 import eventValue from '../../../shared/value-objects/event.vo';
-import { IAccount } from '../types/account.types';
+import { ILedgerAccount } from '../types/ledger-account.types';
 
 export enum EAccountEvents {
   Created = 'domain:account:created',
@@ -8,39 +8,39 @@ export enum EAccountEvents {
   Unarchived = 'domain:account:unarchived',
 }
 
-const makeAccountCreatedEvent = (account: IAccount) => {
-  return eventValue.make<IAccount>({
+const makeAccountCreatedEvent = (account: ILedgerAccount) => {
+  return eventValue.make<ILedgerAccount>({
     type: EAccountEvents.Created,
     data: account,
   });
 };
 
-const makeAccountUpdatedEvent = (account: IAccount) => {
-  return eventValue.make<IAccount>({
+const makeAccountUpdatedEvent = (account: ILedgerAccount) => {
+  return eventValue.make<ILedgerAccount>({
     type: EAccountEvents.Updated,
     data: account,
   });
 };
 
-const makeAccountArchivedEvent = (account: IAccount) => {
-  return eventValue.make<IAccount>({
+const makeAccountArchivedEvent = (account: ILedgerAccount) => {
+  return eventValue.make<ILedgerAccount>({
     type: EAccountEvents.Archived,
     data: account,
   });
 };
 
-const makeAccountUnarchivedEvent = (account: IAccount) => {
-  return eventValue.make<IAccount>({
+const makeAccountUnarchivedEvent = (account: ILedgerAccount) => {
+  return eventValue.make<ILedgerAccount>({
     type: EAccountEvents.Unarchived,
     data: account,
   });
 };
 
-const accountEvents = Object.freeze({
+const ledgerAccountEvents = Object.freeze({
   created: makeAccountCreatedEvent,
   updated: makeAccountUpdatedEvent,
   archived: makeAccountArchivedEvent,
   unarchived: makeAccountUnarchivedEvent,
 });
 
-export default accountEvents;
+export default ledgerAccountEvents;

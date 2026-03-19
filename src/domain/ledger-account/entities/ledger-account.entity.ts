@@ -7,11 +7,11 @@ import moneyValue from '../../../shared/value-objects/money.vo';
 import {
   EAccountStatus,
   ELedgerAccountType,
-  IAccount,
+  ILedgerAccount,
   ULedgerAccountType,
-} from '../types/account.types';
-import helpers from './helpers/account.helpers';
-import accountEvents from '../events/account.events';
+} from '../types/ledger-account.types';
+import helpers from './helpers/ledger-account.helpers';
+import ledgerAccountEvents from '../events/ledger-account.events';
 import { TEntityWithEvents } from '../../../shared/types/event.types';
 
 interface IGetBalanceParams {
@@ -26,8 +26,8 @@ interface IGetBalanceParams {
  * @returns A tuple containing the account and the created event.
  */
 function make(
-  payload: TCreationOmits<IAccount>
-): TEntityWithEvents<IAccount, IAccount> {
+  payload: TCreationOmits<ILedgerAccount>
+): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
   currencyValue.validateCode(payload.currencyCode);
   helpers.validateType(payload.type);
 
@@ -46,7 +46,7 @@ function make(
     deletedAt: null,
   });
 
-  const event = accountEvents.created(account);
+  const event = ledgerAccountEvents.created(account);
   return [account, [event]];
 }
 
@@ -73,9 +73,9 @@ function getBalance({ type, totalDebit, totalCredit }: IGetBalanceParams) {
  * @returns A tuple containing the updated account and the updated event.
  */
 function update(
-  account: IAccount,
-  payload: Pick<IAccount, 'name' | 'subType' | 'currencyCode'>
-): TEntityWithEvents<IAccount, IAccount> {
+  account: ILedgerAccount,
+  payload: Pick<ILedgerAccount, 'name' | 'subType' | 'currencyCode'>
+): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
   if (payload.currencyCode) {
     const isValidCode = currencyValue.isValidCode(payload.currencyCode);
 
@@ -96,14 +96,16 @@ function update(
     updatedAt: new Date(),
   });
 
-  const event = accountEvents.updated(account);
+  const event = ledgerAccountEvents.updated(account);
   return [updatedAccount, [event]];
 }
 
 /**
  * Archives an account idempotently.
  */
-function archive(account: IAccount): TEntityWithEvents<IAccount, IAccount> {
+function archive(
+  account: ILedgerAccount
+): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
   if (account.status === EAccountStatus.Archived) {
     return [account, []];
   }
@@ -114,14 +116,16 @@ function archive(account: IAccount): TEntityWithEvents<IAccount, IAccount> {
     updatedAt: new Date(),
   });
 
-  const event = accountEvents.archived(archivedAccount);
+  const event = ledgerAccountEvents.archived(archivedAccount);
   return [archivedAccount, [event]];
 }
 
 /**
  * Unarchives an account idempotently.
  */
-function unarchive(account: IAccount): TEntityWithEvents<IAccount, IAccount> {
+function unarchive(
+  account: ILedgerAccount
+): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
   if (account.status === EAccountStatus.Active) {
     return [account, []];
   }
@@ -132,11 +136,11 @@ function unarchive(account: IAccount): TEntityWithEvents<IAccount, IAccount> {
     updatedAt: new Date(),
   });
 
-  const event = accountEvents.unarchived(unarchivedAccount);
+  const event = ledgerAccountEvents.unarchived(unarchivedAccount);
   return [unarchivedAccount, [event]];
 }
 
-const accountEntity = Object.freeze({
+const ledgerAccountEntity = Object.freeze({
   make,
   getBalance,
   update,
@@ -145,4 +149,4 @@ const accountEntity = Object.freeze({
   ...helpers,
 });
 
-export default accountEntity;
+export default ledgerAccountEntity;
