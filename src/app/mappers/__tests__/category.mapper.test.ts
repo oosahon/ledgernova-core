@@ -1,8 +1,5 @@
 import categoryMapper from '../category.mapper';
-import {
-  ECategoryFlowType,
-  ICategory,
-} from '../../../domain/category/types/category.types';
+import { ICategory } from '../../../domain/category/types/category.types';
 import { EAccountingDomain } from '../../../domain/accounting/types/accounting.types';
 import { ETransactionType } from '../../../domain/transaction/types/transaction.types';
 
@@ -26,7 +23,6 @@ describe('Category Mapper', () => {
         name: 'Test Category',
         description: 'Test Description',
         transactionType: ETransactionType.Expense,
-        flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
@@ -40,7 +36,6 @@ describe('Category Mapper', () => {
         name: 'Test Category',
         description: 'Test Description',
         transactionType: ETransactionType.Expense,
-        flowType: ECategoryFlowType.Out, // Spreads through object mapping
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
@@ -60,7 +55,6 @@ describe('Category Mapper', () => {
         name: 'Test Category',
         description: 'sas',
         transactionType: ETransactionType.Receipt,
-        flowType: ECategoryFlowType.In,
         status: 'active' as const,
         parentId: null,
         taxKey: 'sxa',
@@ -88,7 +82,6 @@ describe('Category Mapper', () => {
         name: 'Expense Category',
         description: 'Expense Description',
         transactionType: ETransactionType.Expense,
-        flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',
@@ -102,7 +95,6 @@ describe('Category Mapper', () => {
         name: 'Expense Category',
         description: 'Expense Description',
         transactionType: ETransactionType.Expense,
-        flowType: ECategoryFlowType.Out,
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',

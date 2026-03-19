@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { AppError } from '../../../../shared/value-objects/error';
 import categoryEntity from '../category.entity';
-import { ECategoryFlowType, ICategory } from '../../types/category.types';
+import { ICategory } from '../../types/category.types';
 import { ELedgerAccountType } from '../../../account/types/account.types';
 import { ETransactionType } from '../../../transaction/types/transaction.types';
 import taxKeyValue from '../../../tax/value-objects/tax-keys.vo';
@@ -27,7 +27,6 @@ describe('Category Entity', () => {
         name: 'System Category',
         accountingDomain: EAccountingDomain.Personal,
         transactionType: ETransactionType.Receipt,
-        flowType: ECategoryFlowType.In,
         description: 'System Description',
         parentId: null,
         userId: null,
@@ -45,7 +44,6 @@ describe('Category Entity', () => {
         accountingDomain: EAccountingDomain.Personal,
         transactionType: ETransactionType.Receipt,
         taxKey: taxKeyValue.make(ETransactionType.Receipt, null), // 'receipt:other' since userId is null
-        flowType: ECategoryFlowType.In,
         parentId: null,
         description: 'System Description',
         userId: null,
@@ -64,7 +62,6 @@ describe('Category Entity', () => {
         name: 'User Category',
         accountingDomain: EAccountingDomain.Personal,
         transactionType: ETransactionType.Expense,
-        flowType: ECategoryFlowType.Out,
         description: 'User Description',
         parentId: validParentId,
         userId: validUserId,
@@ -91,7 +88,6 @@ describe('Category Entity', () => {
         name: 'Custom Tax Category',
         accountingDomain: EAccountingDomain.Personal,
         transactionType: ETransactionType.Receipt,
-        flowType: ECategoryFlowType.In,
         description: 'Uses taxKey explicitly',
         parentId: null,
         userId: null,
@@ -114,7 +110,6 @@ describe('Category Entity', () => {
         name: 'Invalid User Category',
         accountingDomain: EAccountingDomain.Personal,
         transactionType: ETransactionType.Expense,
-        flowType: ECategoryFlowType.Out,
         description: 'No parent id',
         parentId: null, // missing parent id
         userId: '987fcdeb-51a2-43d7-9012-3456789abcde',
@@ -131,7 +126,6 @@ describe('Category Entity', () => {
       const basePayload = {
         accountingDomain: EAccountingDomain.Personal,
         transactionType: ETransactionType.Receipt,
-        flowType: ECategoryFlowType.In,
         description: 'Desc',
         parentId: null,
         userId: null,
@@ -213,7 +207,6 @@ describe('Category Entity', () => {
         name: 'Original Name',
         accountingDomain: EAccountingDomain.Personal,
         transactionType: ETransactionType.Receipt,
-        flowType: ECategoryFlowType.In,
         description: 'Original Description',
         parentId: null,
         userId: null,
@@ -328,7 +321,6 @@ describe('Category Entity', () => {
         accountingDomain: EAccountingDomain.Personal,
         name: 'Active Category',
         transactionType: ETransactionType.Receipt,
-        flowType: ECategoryFlowType.In,
         description: 'Desc',
         parentId: null,
         userId: null,
@@ -369,7 +361,6 @@ describe('Category Entity', () => {
         name: 'Category To Archive',
         accountingDomain: EAccountingDomain.Personal,
         transactionType: ETransactionType.Receipt,
-        flowType: ECategoryFlowType.In,
         description: 'Desc',
         parentId: null,
         userId: null,

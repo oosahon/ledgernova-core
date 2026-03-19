@@ -1,6 +1,8 @@
 import ICategoryRepo from '../../../domain/category/repos/category.repo';
-import { UCategoryFlowType } from '../../../domain/category/types/category.types';
 import IStorage from '../../contracts/storage/store.contract';
+
+// TODO: reimplement this usecase;
+type UCategoryFlowType = 'in' | 'out';
 
 export default function getCategoriesByFlowTypeUseCase(
   categoryRepo: ICategoryRepo,

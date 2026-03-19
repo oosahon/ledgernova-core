@@ -1,5 +1,4 @@
 import transactionItemEntity from '../transaction-item.entity';
-import { ECategoryFlowType } from '../../../category/types/category.types';
 import { ELedgerAccountType } from '../../../account/types/account.types';
 import { ETransactionType } from '../../types/transaction.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
@@ -18,7 +17,6 @@ describe('Transaction Item Entity', () => {
     accountingDomain: EAccountingDomain.Personal,
     name: 'Sales',
     transactionType: ETransactionType.Receipt,
-    flowType: ECategoryFlowType.In,
     userId: null,
     parentId: null,
     description: 'Sales category',
@@ -282,7 +280,6 @@ describe('Transaction Item Entity', () => {
           isSystemGenerated: false,
         }
       );
-      expect(item.category.flowType).toBe(ECategoryFlowType.In);
       expect(item.category.transactionType).toBe(ETransactionType.Receipt);
     });
   });

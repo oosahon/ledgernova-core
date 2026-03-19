@@ -1,5 +1,4 @@
 import transactionEntity from '../transaction.entity';
-import { ECategoryFlowType } from '../../../category/types/category.types';
 import { ELedgerAccountType } from '../../../account/types/account.types';
 import {
   ETransactionStatus,
@@ -23,7 +22,6 @@ describe('Transaction Entity', () => {
   const [baseCategory] = categoryEntity.make({
     name: 'Sales',
     transactionType: ETransactionType.Receipt,
-    flowType: ECategoryFlowType.In,
     userId: null,
     parentId: null,
     description: 'Sales category',

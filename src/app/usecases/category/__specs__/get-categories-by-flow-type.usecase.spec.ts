@@ -2,7 +2,9 @@ import getCategoriesByFlowTypeUseCase from '../get-categories-by-flow-type.useca
 import ICategoryRepo from '../../../../domain/category/repos/category.repo';
 import { MockStore } from '../../../contracts/storage/__mocks__/store.contract.mock';
 import { IStore } from '../../../../shared/types/store.types';
-import { UCategoryFlowType } from '../../../../domain/category/types/category.types';
+
+// TODO: reimplement this usecase;
+type UCategoryFlowType = 'in' | 'out';
 
 describe('getCategoriesByFlowTypeUseCase', () => {
   let categoryRepo: jest.Mocked<ICategoryRepo>;
