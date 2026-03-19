@@ -25,10 +25,10 @@ describe('Category Entity', () => {
       const payload = {
         name: 'System Category',
         accountingDomain: EAccountingDomain.Individual,
-        transactionType: ETransactionType.Receipt,
+        type: ETransactionType.Receipt,
         description: 'System Description',
         parentId: null,
-        userId: null,
+        createdBy: null,
         taxKey: '',
       };
 
@@ -41,11 +41,11 @@ describe('Category Entity', () => {
       expect(_.omit(result, 'id')).toEqual({
         name: 'System Category',
         accountingDomain: EAccountingDomain.Individual,
-        transactionType: ETransactionType.Receipt,
-        taxKey: taxKeyValue.make(ETransactionType.Receipt, null), // 'receipt:other' since userId is null
+        type: ETransactionType.Receipt,
+        taxKey: taxKeyValue.make(ETransactionType.Receipt, null), // 'receipt:other' since createdBy is null
         parentId: null,
         description: 'System Description',
-        userId: null,
+        createdBy: null,
         status: 'active',
         createdAt: new Date('2026-03-13T00:00:00.000Z'),
         updatedAt: new Date('2026-03-13T00:00:00.000Z'),
@@ -60,10 +60,10 @@ describe('Category Entity', () => {
       const payload: TCreationOmits<ICategory, 'status'> = {
         name: 'User Category',
         accountingDomain: EAccountingDomain.Individual,
-        transactionType: ETransactionType.Expense,
+        type: ETransactionType.Expense,
         description: 'User Description',
         parentId: validParentId,
-        userId: validUserId,
+        createdBy: validUserId,
         taxKey: '',
       };
 
@@ -73,7 +73,7 @@ describe('Category Entity', () => {
       expect(events[0].event.type).toBe('domain:category:created');
       expect(events[0].event.data).toEqual(result);
 
-      expect(result.userId).toBe(validUserId);
+      expect(result.createdBy).toBe(validUserId);
       expect(result.parentId).toBe(validParentId);
       expect(result.taxKey).toBe(
         taxKeyValue.make(ETransactionType.Expense, validUserId)
@@ -81,15 +81,15 @@ describe('Category Entity', () => {
     });
 
     it('should create a category and use the provided taxKey instead of generating it if handled (wait, make now overrides taxKey but lets test generated one)', () => {
-      // The entity's make function now creates taxKey: taxKeyValue.make(payload.transactionType, payload.userId).
+      // The entity's make function now creates taxKey: taxKeyValue.make(payload.transactionType, payload.createdBy).
       // So any provided taxKey is ignored/overwritten.
       const payload = {
         name: 'Custom Tax Category',
         accountingDomain: EAccountingDomain.Individual,
-        transactionType: ETransactionType.Receipt,
+        type: ETransactionType.Receipt,
         description: 'Uses taxKey explicitly',
         parentId: null,
-        userId: null,
+        createdBy: null,
         taxKey: 'some-custom-taxkey',
       };
 
@@ -108,10 +108,10 @@ describe('Category Entity', () => {
       const payload = {
         name: 'Invalid User Category',
         accountingDomain: EAccountingDomain.Individual,
-        transactionType: ETransactionType.Expense,
+        type: ETransactionType.Expense,
         description: 'No parent id',
         parentId: null, // missing parent id
-        userId: '987fcdeb-51a2-43d7-9012-3456789abcde',
+        createdBy: '987fcdeb-51a2-43d7-9012-3456789abcde',
         taxKey: '',
       } as unknown as TMakePayload;
 
@@ -124,10 +124,10 @@ describe('Category Entity', () => {
     describe('sanitizeName validations', () => {
       const basePayload = {
         accountingDomain: EAccountingDomain.Individual,
-        transactionType: ETransactionType.Receipt,
+        type: ETransactionType.Receipt,
         description: 'Desc',
         parentId: null,
-        userId: null,
+        createdBy: null,
         taxKey: '',
       };
 
@@ -205,10 +205,10 @@ describe('Category Entity', () => {
       [existingCategory] = categoryEntity.make({
         name: 'Original Name',
         accountingDomain: EAccountingDomain.Individual,
-        transactionType: ETransactionType.Receipt,
+        type: ETransactionType.Receipt,
         description: 'Original Description',
         parentId: null,
-        userId: null,
+        createdBy: null,
         taxKey: '',
       } as any);
 
@@ -319,10 +319,10 @@ describe('Category Entity', () => {
       [activeCategory] = categoryEntity.make({
         accountingDomain: EAccountingDomain.Individual,
         name: 'Active Category',
-        transactionType: ETransactionType.Receipt,
+        type: ETransactionType.Receipt,
         description: 'Desc',
         parentId: null,
-        userId: null,
+        createdBy: null,
         taxKey: '',
       } as any);
       jest.advanceTimersByTime(1000);
@@ -359,10 +359,10 @@ describe('Category Entity', () => {
       const [activeCategory] = categoryEntity.make({
         name: 'Category To Archive',
         accountingDomain: EAccountingDomain.Individual,
-        transactionType: ETransactionType.Receipt,
+        type: ETransactionType.Receipt,
         description: 'Desc',
         parentId: null,
-        userId: null,
+        createdBy: null,
         taxKey: '',
       } as any);
       jest.advanceTimersByTime(1000);

@@ -1,8 +1,7 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import ledgerAccountEntity from '../../ledger-account/entities/ledger-account.entity';
-import { IJournalEntry } from '../types/journal-entry.types';
-import { UTransactionDirection } from '../../transaction/types/transaction.types';
+import { IJournalEntry, UJournalDirection } from '../types/journal-entry.types';
 import helpers from './helpers/journal-entry.helpers';
 import moneyValue from '../../../shared/value-objects/money.vo';
 import stringUtils from '../../../shared/utils/string';
@@ -17,11 +16,11 @@ import journalEntryEvents from '../events/journal-entry.event';
  * - The direction payload has been separated for explicitness
  */
 function make(
-  direction: UTransactionDirection,
+  direction: UJournalDirection,
   payload: TCreationOmits<IJournalEntry, 'direction'>
 ): TEntityWithEvents<IJournalEntry, IJournalEntry> {
   helpers.validateDirection(direction);
-  ledgerAccountEntity.validateType(payload.ledgerAccountType);
+  ledgerAccountEntity.validateLedgerType(payload.ledgerAccountType);
   moneyValue.validate(payload.amount);
   moneyValue.validate(payload.functionalAmount);
   helpers.validatePostedAt(payload.postedAt);

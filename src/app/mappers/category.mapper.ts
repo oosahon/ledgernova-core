@@ -5,20 +5,24 @@ import { fromCommonRepoDates, toCommonRepoDates } from './date';
 
 const categoryMapper = {
   toRepo: (category: ICategory): InferSelectModel<typeof categoriesInCore> => {
+    const { type, ...categoryOmittedType } = category;
     return {
-      ...category,
+      ...categoryOmittedType,
+      transactionType: category.type,
       taxKey: category.taxKey ?? null,
-      userId: category.userId ?? null,
+      createdBy: category.createdBy ?? null,
       parentId: category.parentId ?? null,
       ...toCommonRepoDates(category),
-    };
+    } as any; // TODO: remove after migration
   },
 
   toDomain: (
     category: InferSelectModel<typeof categoriesInCore>
   ): ICategory => {
+    const { transactionType, ...categoryOmittedTxType } = category;
     return {
-      ...category,
+      ...categoryOmittedTxType,
+      type: category.transactionType,
       ...fromCommonRepoDates(category),
     } as unknown as ICategory; // TODO: remove unknown as ICategory after migration is run
   },

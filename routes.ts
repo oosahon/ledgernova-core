@@ -17,20 +17,7 @@ import type {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-  UAccountingDomain: {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['corporate'] },
-        { dataType: 'enum', enums: ['sole_trader'] },
-        { dataType: 'enum', enums: ['personal'] },
-      ],
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  ULedgerAccountType: {
+  ULedgerType: {
     dataType: 'refAlias',
     type: {
       dataType: 'union',
@@ -45,69 +32,16 @@ const models: TsoaRoute.Models = {
     },
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UCategoryFlowType: {
+  UJournalDirection: {
     dataType: 'refAlias',
     type: {
       dataType: 'union',
       subSchemas: [
-        { dataType: 'enum', enums: ['in'] },
-        { dataType: 'enum', enums: ['out'] },
+        { dataType: 'enum', enums: ['debit'] },
+        { dataType: 'enum', enums: ['credit'] },
       ],
       validators: {},
     },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UCategoryStatus: {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['active'] },
-        { dataType: 'enum', enums: ['archived'] },
-      ],
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  ICategory: {
-    dataType: 'refObject',
-    properties: {
-      id: { dataType: 'string', required: true },
-      name: { dataType: 'string', required: true },
-      accountingDomain: { ref: 'UAccountingDomain', required: true },
-      ledgerAccountType: { ref: 'ULedgerAccountType', required: true },
-      flowType: { ref: 'UCategoryFlowType', required: true },
-      taxKey: { dataType: 'string', required: true },
-      status: { ref: 'UCategoryStatus', required: true },
-      description: { dataType: 'string', required: true },
-      parentId: {
-        dataType: 'union',
-        subSchemas: [
-          { dataType: 'string' },
-          { dataType: 'enum', enums: [null] },
-        ],
-        required: true,
-      },
-      userId: {
-        dataType: 'union',
-        subSchemas: [
-          { dataType: 'string' },
-          { dataType: 'enum', enums: [null] },
-        ],
-        required: true,
-      },
-      createdAt: { dataType: 'datetime', required: true },
-      updatedAt: { dataType: 'datetime', required: true },
-      deletedAt: {
-        dataType: 'union',
-        subSchemas: [
-          { dataType: 'datetime' },
-          { dataType: 'enum', enums: [null] },
-        ],
-        required: true,
-      },
-    },
-    additionalProperties: false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -170,11 +104,17 @@ export function RegisterRoutes(app: Router) {
     string,
     TsoaRoute.ParameterSchema
   > = {
-    flowType: {
+    ledgerAccountType: {
       in: 'query',
-      name: 'flowType',
+      name: 'ledgerAccountType',
       required: true,
-      ref: 'UCategoryFlowType',
+      ref: 'ULedgerType',
+    },
+    transactionDirection: {
+      in: 'query',
+      name: 'transactionDirection',
+      required: true,
+      ref: 'UJournalDirection',
     },
   };
   app.get(

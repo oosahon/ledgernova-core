@@ -1,311 +1,140 @@
-import ledgerAccountEntity from '../ledger-account.entity';
 import {
-  ELedgerAccountType,
-  EAccountStatus,
+  ELedgerAccountStatus,
+  ELedgerType,
+  IGeneralLedgerAccount,
   ILedgerAccount,
-} from '../../types/ledger-account.types';
-import { EAccountEvents } from '../../events/ledger-account.events';
-import moneyValue from '../../../../shared/value-objects/money.vo';
-import { AppError } from '../../../../shared/value-objects/error';
-import mockCurrencies from '../../../../shared/value-objects/__mocks__/currencies.mock';
+} from '../../types/index.types';
+import {
+  EAssetAccountSubType,
+  EAssetAccountType,
+} from '../../types/asset-account.types';
+import { ELiabilityAccountType } from '../../types/liability-account.types';
+import ledgerAccountEntity from '../ledger-account.entity';
+import stringUtils from '../../../../shared/utils/string';
 
-describe('ledger-account.entity.ts', () => {
-  const validUserId = 'test-user-id';
-  const usdCurrency = mockCurrencies.USD;
-
-  function createValidPayload(overrides?: any) {
-    return {
-      userId: validUserId,
-      name: '  Valid Name  ',
-      type: ELedgerAccountType.Asset,
-      currencyCode: 'USD',
-      status: EAccountStatus.Active,
-      ...overrides,
-    };
-  }
-
-  describe('make', () => {
-    it('should create an account with valid payload', () => {
-      const payload = createValidPayload();
-      const [account, events] = ledgerAccountEntity.make(payload);
-
-      expect(account.id).toBeDefined();
-      expect(typeof account.id).toBe('string');
-      expect(account.userId).toBe(validUserId);
-      expect(account.name).toBe('Valid Name');
-      expect(account.type).toBe(ELedgerAccountType.Asset);
-      expect(account.subType).toBeNull();
-      expect(account.currencyCode).toBe('USD');
-      expect(account.status).toBe(EAccountStatus.Active);
-      expect(account.createdAt).toBeInstanceOf(Date);
-      expect(account.updatedAt).toBeInstanceOf(Date);
-      expect(account.deletedAt).toBeNull();
-      expect(events).toHaveLength(1);
-      expect(events[0].event.type).toBe(EAccountEvents.Created);
-      expect(events[0].event.data).toEqual(account);
-    });
-
-    it('should create an account with valid subType payload', () => {
-      const payload = createValidPayload({
-        type: ELedgerAccountType.Liability,
-        subType: '  My SubType  ',
-      });
-      const [account, events] = ledgerAccountEntity.make(payload);
-      expect(account.subType).toBe('My SubType');
-      expect(events).toHaveLength(1);
-      expect(events[0].event.type).toBe(EAccountEvents.Created);
-      expect(events[0].event.data).toEqual(account);
-    });
-
-    it('should throw "Invalid currency code" on invalid currency', () => {
-      const payload = createValidPayload({ currencyCode: 'INVALID' });
-      let error: any;
-      try {
-        ledgerAccountEntity.make(payload);
-      } catch (err) {
-        error = err;
-      }
-      expect(error).toBeInstanceOf(AppError);
-      expect(error.message).toBe('Invalid currency code');
-      expect(error.cause).toEqual({ cause: 'INVALID' });
-    });
-
-    describe('sanitizeName branches', () => {
-      it('should throw if name is not a string', () => {
-        let error: any;
-        try {
-          ledgerAccountEntity.make(createValidPayload({ name: 123 }));
-        } catch (err) {
-          error = err;
-        }
-        expect(error).toBeInstanceOf(AppError);
-        expect(error.message).toBe('Invalid account name');
-        expect(error.cause).toEqual({ cause: 123 });
-      });
-
-      it('should throw if name is an empty string after trim', () => {
-        let error: any;
-        try {
-          ledgerAccountEntity.make(createValidPayload({ name: '   ' }));
-        } catch (err) {
-          error = err;
-        }
-        expect(error.message).toBe('Invalid account name');
-      });
-
-      it('should throw if name length > 100', () => {
-        const longStr = 'A'.repeat(101);
-        let error: any;
-        try {
-          ledgerAccountEntity.make(createValidPayload({ name: longStr }));
-        } catch (err) {
-          error = err;
-        }
-        expect(error.message).toBe('Invalid account name');
-      });
-    });
-
-    describe('sanitizeSubType branches', () => {
-      it('should throw if subType is not a string (and not falsy)', () => {
-        let error: any;
-        try {
-          ledgerAccountEntity.make(createValidPayload({ subType: 123 }));
-        } catch (err) {
-          error = err;
-        }
-        expect(error).toBeInstanceOf(AppError);
-        expect(error.message).toBe('Invalid account sub type');
-        expect(error.cause).toEqual({ cause: 123 });
-      });
-
-      it('should throw if subType is an empty string after trim', () => {
-        let error: any;
-        try {
-          ledgerAccountEntity.make(createValidPayload({ subType: '   ' }));
-        } catch (err) {
-          error = err;
-        }
-        expect(error.message).toBe('Invalid account sub type');
-      });
-
-      it('should throw if subType is too long', () => {
-        const longStr = 'B'.repeat(101);
-        let error: any;
-        try {
-          ledgerAccountEntity.make(createValidPayload({ subType: longStr }));
-        } catch (err) {
-          error = err;
-        }
-        expect(error.message).toBe('Invalid account sub type');
-      });
-    });
+describe('ledger-account.entity', () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2026-03-14T10:00:00.000Z'));
   });
 
-  describe('getBalance', () => {
-    it('calculates Asset balance (debit - credit)', () => {
-      const balance = ledgerAccountEntity.getBalance({
-        type: ELedgerAccountType.Asset,
-        totalCredit: moneyValue.make(100, usdCurrency, false), // 100 USD = 10000 minorUnits
-        totalDebit: moneyValue.make(300, usdCurrency, false), // 300 USD = 30000 minorUnits
-      });
-      // 30000 - 10000 = 20000
-      expect(balance?.amount).toBe(20000n);
-    });
-
-    it('calculates Expense balance (debit - credit)', () => {
-      const balance = ledgerAccountEntity.getBalance({
-        type: ELedgerAccountType.Expense,
-        totalCredit: moneyValue.make(100, usdCurrency, false),
-        totalDebit: moneyValue.make(400, usdCurrency, false),
-      });
-      expect(balance?.amount).toBe(30000n);
-    });
-
-    it('calculates Liability balance (credit - debit)', () => {
-      const balance = ledgerAccountEntity.getBalance({
-        type: ELedgerAccountType.Liability,
-        totalCredit: moneyValue.make(500, usdCurrency, false),
-        totalDebit: moneyValue.make(200, usdCurrency, false),
-      });
-      // 50000 - 20000 = 30000
-      expect(balance?.amount).toBe(30000n);
-    });
-
-    it('calculates Equity balance (credit - debit)', () => {
-      const balance = ledgerAccountEntity.getBalance({
-        type: ELedgerAccountType.Equity,
-        totalCredit: moneyValue.make(200, usdCurrency, false),
-        totalDebit: moneyValue.make(500, usdCurrency, false),
-      });
-      expect(balance?.amount).toBe(-30000n);
-    });
-
-    it('calculates Revenue balance (credit - debit)', () => {
-      const balance = ledgerAccountEntity.getBalance({
-        type: ELedgerAccountType.Revenue,
-        totalCredit: moneyValue.make(100, usdCurrency, false),
-        totalDebit: moneyValue.make(0, usdCurrency, false),
-      });
-      expect(balance?.amount).toBe(10000n);
-    });
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
-  describe('update', () => {
-    let baseAccount: ILedgerAccount;
-
-    beforeEach(() => {
-      [baseAccount] = ledgerAccountEntity.make(
-        createValidPayload({ name: 'Original' })
-      );
-    });
-
-    it('updates properties and timestamps if payloads are valid', () => {
-      // Need fake timers to properly catch timestamp modifications
-      jest.useFakeTimers();
-      const newTime = new Date(baseAccount.updatedAt.getTime() + 10000);
-      jest.setSystemTime(newTime);
-
+  describe('makeGeneralLedger', () => {
+    it('should create a general ledger account with createdBy when provided', () => {
       const payload = {
-        name: ' New Name ',
-        subType: ' New SubType ',
+        name: 'Test GL',
+        ledgerCode: '11000',
+        ledgerType: ELedgerType.Asset,
+        ledgerAccountType: EAssetAccountType.Cash,
+        currencyCode: 'USD',
+        createdBy: 'user-1',
+      };
+
+      const [entity, events] = ledgerAccountEntity.makeGeneralLedger(
+        payload as any
+      );
+
+      // Verify the properties match
+      expect(typeof entity.id).toBe('string');
+      expect(stringUtils.validateUUID(entity.id)).toBeUndefined(); // validateUUID throws if invalid
+      expect(entity.name).toBe('Test GL');
+      expect(entity.ledgerCode).toBe('11000');
+      expect(entity.ledgerType).toBe(ELedgerType.Asset);
+      expect(entity.ledgerAccountType).toBe(EAssetAccountType.Cash);
+      expect(entity.currencyCode).toBe('USD');
+      expect(entity.status).toBe(ELedgerAccountStatus.Active);
+      expect(entity.createdBy).toBe('user-1');
+      expect(entity.createdAt).toEqual(new Date('2026-03-14T10:00:00.000Z'));
+      expect(entity.updatedAt).toEqual(new Date('2026-03-14T10:00:00.000Z'));
+      expect(entity.deletedAt).toBeNull();
+
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:ledger:general:created');
+      expect(events[0].event.data).toEqual(entity);
+    });
+
+    it('should create a general ledger account with null createdBy when not provided', () => {
+      const payload = {
+        name: 'Test GL No User',
+        ledgerCode: '21000',
+        ledgerType: ELedgerType.Liability,
+        ledgerAccountType: ELiabilityAccountType.Payable,
         currencyCode: 'EUR',
       };
 
-      const [updated, events] = ledgerAccountEntity.update(
-        baseAccount,
+      const [entity] = ledgerAccountEntity.makeGeneralLedger(payload as any);
+
+      expect(entity.createdBy).toBeNull();
+    });
+  });
+
+  describe('makeLedgerAccount', () => {
+    it('should create a ledger account when parent is an IGeneralLedgerAccount', () => {
+      const parentLedger = {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        ledgerType: ELedgerType.Asset,
+        ledgerAccountType: EAssetAccountType.Cash,
+        ledgerCode: '11000',
+      } as IGeneralLedgerAccount;
+
+      const payload = {
+        name: 'Test Child',
+        subType: EAssetAccountSubType.Cash,
+        currencyCode: 'GBP',
+        ledgerCode: '11100',
+        createdBy: 'user-2',
+      };
+
+      const [entity, events] = ledgerAccountEntity.makeLedgerAccount(
+        parentLedger,
         payload
       );
 
-      expect(updated.name).toBe('New Name');
-      expect(updated.subType).toBe('New SubType');
-      expect(updated.currencyCode).toBe('EUR');
-      expect(updated.updatedAt.getTime()).toBeGreaterThan(
-        baseAccount.updatedAt.getTime()
-      );
-      expect(events).toHaveLength(1);
-      expect(events[0].event.type).toBe(EAccountEvents.Updated);
-      expect(events[0].event.data).toEqual(baseAccount);
+      expect(typeof entity.id).toBe('string');
+      expect(entity.name).toBe('Test Child');
+      expect(entity.ledgerCode).toBe('11100');
+      expect(entity.ledgerType).toBe(ELedgerType.Asset);
+      expect(entity.ledgerAccountType).toBe(EAssetAccountType.Cash);
+      expect(entity.subType).toBe(EAssetAccountSubType.Cash);
+      expect(entity.parentId).toBe('123e4567-e89b-12d3-a456-426614174000');
+      expect(entity.currencyCode).toBe('GBP');
+      expect(entity.status).toBe(ELedgerAccountStatus.Active);
+      expect(entity.createdBy).toBe('user-2');
+      expect(entity.createdAt).toEqual(new Date('2026-03-14T10:00:00.000Z'));
 
-      jest.useRealTimers();
+      expect(events).toHaveLength(1);
+      expect(events[0].event.type).toBe('domain:ledger:account:created');
+      expect(events[0].event.data).toEqual(entity);
     });
 
-    it('preserves existing properties if payload keys are missing/undefined', () => {
-      let [accWithSubtype] = ledgerAccountEntity.make(
-        createValidPayload({ subType: 'Original SubType' })
+    it('should create a ledger account when parent is an ILedgerAccount, inheriting currencyCode and subType, with no createdBy', () => {
+      const parentLedger = {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        parentId: '123e4567-e89b-12d3-a456-426614174000',
+        ledgerType: ELedgerType.Asset,
+        ledgerAccountType: EAssetAccountType.Cash,
+        ledgerCode: '11100',
+        currencyCode: 'CAD',
+        subType: EAssetAccountSubType.Cash,
+      } as ILedgerAccount;
+
+      const payload = {
+        name: 'Test Grandchild',
+        subType: 'invalid_sub_type', // Should be ignored
+        currencyCode: 'invalid_currency', // Should be ignored
+        ledgerCode: '11110',
+      };
+
+      const [entity] = ledgerAccountEntity.makeLedgerAccount(
+        parentLedger,
+        payload as any
       );
 
-      const [updated, events] = ledgerAccountEntity.update(accWithSubtype, {
-        name: undefined as any,
-        subType: undefined,
-        currencyCode: undefined as any,
-      });
-
-      expect(updated.name).toBe(accWithSubtype.name);
-      expect(updated.subType).toBe('Original SubType');
-      expect(updated.currencyCode).toBe('USD');
-      expect(events).toHaveLength(1);
-      expect(events[0].event.type).toBe(EAccountEvents.Updated);
-      expect(events[0].event.data).toEqual(accWithSubtype);
-    });
-
-    it('throws if invalid currency code is provided', () => {
-      let error: any;
-      try {
-        ledgerAccountEntity.update(baseAccount, {
-          currencyCode: 'INVALID',
-        } as any);
-      } catch (err) {
-        error = err;
-      }
-      expect(error).toBeInstanceOf(AppError);
-      expect(error.message).toBe('Invalid currency code');
-    });
-  });
-
-  describe('archive', () => {
-    it('sets status to archived and updates timestamp', () => {
-      const [baseAccount] = ledgerAccountEntity.make(
-        createValidPayload({ name: 'Original' })
-      );
-
-      jest.useFakeTimers();
-      jest.setSystemTime(new Date(baseAccount.updatedAt.getTime() + 10000));
-
-      const [archived, events] = ledgerAccountEntity.archive(baseAccount);
-
-      expect(archived.status).toBe(EAccountStatus.Archived);
-      expect(archived.updatedAt.getTime()).toBeGreaterThan(
-        baseAccount.updatedAt.getTime()
-      );
-      expect(events).toHaveLength(1);
-      expect(events[0].event.type).toBe(EAccountEvents.Archived);
-      expect(events[0].event.data).toEqual(archived);
-
-      jest.useRealTimers();
-    });
-  });
-
-  describe('unarchive', () => {
-    it('sets status to active and updates timestamp', () => {
-      let [baseAccount] = ledgerAccountEntity.make(
-        createValidPayload({ name: 'Original' })
-      );
-      [baseAccount] = ledgerAccountEntity.archive(baseAccount);
-
-      jest.useFakeTimers();
-      jest.setSystemTime(new Date(baseAccount.updatedAt.getTime() + 10000));
-
-      const [unArchived, events] = ledgerAccountEntity.unarchive(baseAccount);
-
-      expect(unArchived.status).toBe(EAccountStatus.Active);
-      expect(unArchived.updatedAt.getTime()).toBeGreaterThan(
-        baseAccount.updatedAt.getTime()
-      );
-      expect(events).toHaveLength(1);
-      expect(events[0].event.type).toBe(EAccountEvents.Unarchived);
-      expect(events[0].event.data).toEqual(unArchived);
-
-      jest.useRealTimers();
+      expect(entity.currencyCode).toBe('CAD');
+      expect(entity.subType).toBe(EAssetAccountSubType.Cash);
+      expect(entity.createdBy).toBeNull();
     });
   });
 });

@@ -17,19 +17,19 @@ function make(
 ): TEntityWithEvents<ICategory, ICategory> {
   const timestamps = new Date();
 
-  transactionEntity.validateType(payload.transactionType);
-  helpers.validateUserAndParentId(payload);
+  transactionEntity.validateType(payload.type);
+  helpers.validateCreatorAndParentId(payload);
   accountingHelpers.validateDomain(payload.accountingDomain);
 
   const category = Object.freeze({
     id: generateUUID(),
     name: helpers.sanitizeName(payload.name),
     accountingDomain: payload.accountingDomain,
-    taxKey: taxKeyValue.make(payload.transactionType, payload.userId),
-    transactionType: payload.transactionType,
+    taxKey: taxKeyValue.make(payload.type, payload.createdBy),
+    type: payload.type,
     parentId: payload.parentId,
     description: helpers.sanitizeDescription(payload.description),
-    userId: payload.userId,
+    createdBy: payload.createdBy,
     status: ECategoryStatus.Active,
     createdAt: timestamps,
     updatedAt: timestamps,

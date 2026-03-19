@@ -30,6 +30,10 @@ export const categoryStatusInCore = core.enum('category_status', [
   'active',
   'archived',
 ]);
+export const ledgerAccountStatusInCore = core.enum('ledger_account_status', [
+  'active',
+  'archived',
+]);
 export const ledgerAccountTypeInCore = core.enum('ledger_account_type', [
   'asset',
   'liability',
@@ -174,11 +178,17 @@ export const ledgerAccountsInCore = core.table(
       .default(sql`uuid_generate_v4()`)
       .primaryKey()
       .notNull(),
-    userId: uuid('user_id').notNull(),
-    name: varchar({ length: 200 }).notNull(),
-    type: ledgerAccountTypeInCore().notNull(),
-    subType: varchar('sub_type', { length: 100 }),
+    ledgerCode: varchar('ledger_code', { length: 50 }).notNull(),
+    ledgerType: ledgerAccountTypeInCore('ledger_type').notNull(),
+    ledgerAccountType: varchar('ledger_account_type', {
+      length: 100,
+    }).notNull(),
+    name: varchar({ length: 100 }).notNull(),
     currencyCode: varchar('currency_code', { length: 3 }).notNull(),
+    status: ledgerAccountStatusInCore().default('active').notNull(),
+    parentId: uuid('parent_id'),
+    subType: varchar('sub_type', { length: 100 }),
+    createdBy: uuid('created_by'),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .defaultNow()
       .notNull(),
@@ -188,16 +198,62 @@ export const ledgerAccountsInCore = core.table(
     deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
   },
   (table) => [
-    foreignKey({
-      columns: [table.userId],
-      foreignColumns: [usersInCore.id],
-      name: 'ledger_accounts_user_id_fkey',
-    }).onDelete('cascade'),
+    index().using('btree', table.parentId.asc().nullsLast().op('uuid_ops')),
     foreignKey({
       columns: [table.currencyCode],
       foreignColumns: [currenciesInCore.code],
       name: 'ledger_accounts_currency_code_fkey',
     }),
+    foreignKey({
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+      name: 'ledger_accounts_parent_id_fkey',
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.createdBy],
+      foreignColumns: [usersInCore.id],
+      name: 'ledger_accounts_created_by_fkey',
+    }).onDelete('set null'),
+  ]
+);
+
+export const userLedgerAccountsInCore = core.table(
+  'user_ledger_accounts',
+  {
+    id: uuid()
+      .default(sql`uuid_generate_v4()`)
+      .primaryKey()
+      .notNull(),
+    userId: uuid('user_id').notNull(),
+    ledgerAccountId: uuid('ledger_account_id').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
+  },
+  (table) => [
+    index().using(
+      'btree',
+      table.ledgerAccountId.asc().nullsLast().op('uuid_ops')
+    ),
+    index().using('btree', table.userId.asc().nullsLast().op('uuid_ops')),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [usersInCore.id],
+      name: 'user_ledger_accounts_user_id_fkey',
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.ledgerAccountId],
+      foreignColumns: [ledgerAccountsInCore.id],
+      name: 'user_ledger_accounts_ledger_account_id_fkey',
+    }).onDelete('cascade'),
+    unique('unique_user_ledger_account').on(
+      table.userId,
+      table.ledgerAccountId
+    ),
   ]
 );
 
@@ -272,7 +328,7 @@ export const categoriesInCore = core.table(
     status: categoryStatusInCore().default('active').notNull(),
     description: varchar({ length: 200 }).notNull(),
     parentId: uuid('parent_id'),
-    userId: uuid('user_id'),
+    createdBy: uuid('created_by'),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .defaultNow()
       .notNull(),
@@ -282,18 +338,22 @@ export const categoriesInCore = core.table(
     deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
   },
   (table) => [
+    index().using('btree', table.createdBy.asc().nullsLast().op('uuid_ops')),
     index().using('btree', table.parentId.asc().nullsLast().op('uuid_ops')),
-    index().using('btree', table.userId.asc().nullsLast().op('uuid_ops')),
     foreignKey({
       columns: [table.parentId],
       foreignColumns: [table.id],
       name: 'categories_parent_id_fkey',
     }).onDelete('restrict'),
     foreignKey({
-      columns: [table.userId],
+      columns: [table.createdBy],
       foreignColumns: [usersInCore.id],
-      name: 'categories_user_id_fkey',
-    }).onDelete('cascade'),
-    unique('unique_user_tax_name').on(table.name, table.taxKey, table.userId),
+      name: 'categories_created_by_fkey',
+    }).onDelete('set null'),
+    unique('unique_creator_tax_name').on(
+      table.name,
+      table.taxKey,
+      table.createdBy
+    ),
   ]
 );

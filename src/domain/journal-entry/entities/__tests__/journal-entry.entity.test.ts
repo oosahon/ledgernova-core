@@ -1,6 +1,6 @@
 import journalEntriesEntity from '../journal-entry.entity';
-import { ETransactionDirection } from '../../../transaction/types/transaction.types';
-import { ELedgerAccountType } from '../../../ledger-account/types/ledger-account.types';
+import { EJournalDirection } from '../../types/journal-entry.types';
+import { ELedgerType } from '../../../ledger-account/types/index.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import { AppError } from '../../../../shared/value-objects/error';
 
@@ -29,7 +29,7 @@ describe('Journal Entry Entity', () => {
   describe('make', () => {
     it('should create a valid journal entry with description and postedAt', () => {
       const payload = {
-        ledgerAccountType: ELedgerAccountType.Asset,
+        ledgerAccountType: ELedgerType.Asset,
         accountId,
         transactionId,
         amount,
@@ -39,13 +39,13 @@ describe('Journal Entry Entity', () => {
       };
 
       const [journalEntry, [event]] = journalEntriesEntity.make(
-        ETransactionDirection.Debit,
+        EJournalDirection.Debit,
         payload
       );
 
       expect(journalEntry.id).toBeDefined();
-      expect(journalEntry.direction).toBe(ETransactionDirection.Debit);
-      expect(journalEntry.ledgerAccountType).toBe(ELedgerAccountType.Asset);
+      expect(journalEntry.direction).toBe(EJournalDirection.Debit);
+      expect(journalEntry.ledgerAccountType).toBe(ELedgerType.Asset);
       expect(journalEntry.accountId).toBe(accountId);
       expect(journalEntry.transactionId).toBe(transactionId);
       expect(journalEntry.amount).toEqual(amount);
@@ -61,7 +61,7 @@ describe('Journal Entry Entity', () => {
 
     it('should create a valid journal entry with empty description and without postedAt', () => {
       const payload = {
-        ledgerAccountType: ELedgerAccountType.Liability,
+        ledgerAccountType: ELedgerType.Liability,
         accountId,
         transactionId,
         amount,
@@ -71,7 +71,7 @@ describe('Journal Entry Entity', () => {
       };
 
       const [journalEntry, [event]] = journalEntriesEntity.make(
-        ETransactionDirection.Credit,
+        EJournalDirection.Credit,
         payload
       );
 
@@ -83,7 +83,7 @@ describe('Journal Entry Entity', () => {
 
     it('should throw an error for invalid direction', () => {
       const payload = {
-        ledgerAccountType: ELedgerAccountType.Asset,
+        ledgerAccountType: ELedgerType.Asset,
         accountId,
         transactionId,
         amount,
@@ -99,7 +99,7 @@ describe('Journal Entry Entity', () => {
 
     it('should throw an error if description is too long', () => {
       const payload = {
-        ledgerAccountType: ELedgerAccountType.Asset,
+        ledgerAccountType: ELedgerType.Asset,
         accountId,
         transactionId,
         amount,
@@ -109,7 +109,7 @@ describe('Journal Entry Entity', () => {
       };
 
       expect(() =>
-        journalEntriesEntity.make(ETransactionDirection.Debit, payload)
+        journalEntriesEntity.make(EJournalDirection.Debit, payload)
       ).toThrow(AppError);
     });
   });
@@ -117,10 +117,10 @@ describe('Journal Entry Entity', () => {
   describe('validateDirection', () => {
     it('should not throw for valid directions', () => {
       expect(() =>
-        journalEntriesEntity.validateDirection(ETransactionDirection.Debit)
+        journalEntriesEntity.validateDirection(EJournalDirection.Debit)
       ).not.toThrow();
       expect(() =>
-        journalEntriesEntity.validateDirection(ETransactionDirection.Credit)
+        journalEntriesEntity.validateDirection(EJournalDirection.Credit)
       ).not.toThrow();
     });
 

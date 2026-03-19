@@ -1,15 +1,22 @@
 import { IMoney } from '../../../shared/types/money.types';
-import { ULedgerAccountType } from '../../ledger-account/types/ledger-account.types';
-import { UTransactionDirection } from '../../transaction/types/transaction.types';
+import { ULedgerType } from '../../ledger-account/types/index.types';
+
+export const EJournalDirection = {
+  Debit: 'debit',
+  Credit: 'credit',
+} as const;
+
+export type UJournalDirection =
+  (typeof EJournalDirection)[keyof typeof EJournalDirection];
 
 export interface IJournalEntry {
   id: string;
-  ledgerAccountType: ULedgerAccountType;
+  ledgerAccountType: ULedgerType;
   accountId: string;
   transactionId: string;
   amount: IMoney;
   functionalAmount: IMoney;
-  direction: UTransactionDirection;
+  direction: UJournalDirection;
   description: string;
   postedAt: Date | null;
   createdAt: Date;

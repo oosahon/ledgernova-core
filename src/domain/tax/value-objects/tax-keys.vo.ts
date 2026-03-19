@@ -62,43 +62,43 @@ const systemReceiptTaxKeys = {
   other: 'receipt:other',
 };
 
-function appendUserId(taxKey: string, userId?: string | null) {
-  if (!userId) return taxKey;
+function appendCreatedBy(taxKey: string, createdBy?: string | null) {
+  if (!createdBy) return taxKey;
 
-  stringUtils.validateUUID(userId);
-  return `${taxKey}::${userId}`;
+  stringUtils.validateUUID(createdBy);
+  return `${taxKey}::${createdBy}`;
 }
 
-function make(type: UTransactionType, userId?: string | null) {
+function make(type: UTransactionType, createdBy?: string | null) {
   if (!Object.values(ETransactionType).includes(type)) {
     throw new AppError('Invalid transaction type', { cause: type });
   }
 
-  if (userId) {
-    stringUtils.validateUUID(userId);
+  if (createdBy) {
+    stringUtils.validateUUID(createdBy);
   }
 
   switch (type) {
     case ETransactionType.Sale:
-      return appendUserId(systemSaleTaxKeys.other, userId);
+      return appendCreatedBy(systemSaleTaxKeys.other, createdBy);
     case ETransactionType.Receipt:
-      return appendUserId(systemReceiptTaxKeys.other, userId);
+      return appendCreatedBy(systemReceiptTaxKeys.other, createdBy);
     case ETransactionType.Expense:
-      return appendUserId(systemExpenseTaxKeys.other, userId);
+      return appendCreatedBy(systemExpenseTaxKeys.other, createdBy);
     case ETransactionType.Payment:
-      return appendUserId(systemPaymentTaxKeys.other, userId);
+      return appendCreatedBy(systemPaymentTaxKeys.other, createdBy);
     default:
-      return appendUserId(type, userId);
+      return appendCreatedBy(type, createdBy);
   }
 }
 
 function isValid(taxKey: string, type: UTransactionType) {
   if (!taxKey || typeof taxKey !== 'string') return false;
 
-  const [baseTaxKey, userId] = taxKey.split('::');
+  const [baseTaxKey, createdBy] = taxKey.split('::');
 
-  if (userId) {
-    stringUtils.validateUUID(userId);
+  if (createdBy) {
+    stringUtils.validateUUID(createdBy);
   }
 
   switch (type) {

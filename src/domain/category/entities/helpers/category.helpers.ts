@@ -9,15 +9,16 @@ function sanitizeName(name: string): string {
   });
 }
 
-function validateUserAndParentId(
-  payload: Pick<ICategory, 'parentId' | 'userId'>
+function validateCreatorAndParentId(
+  payload: Pick<ICategory, 'parentId' | 'createdBy'>
 ) {
-  const { parentId, userId } = payload;
+  const { parentId, createdBy } = payload;
 
-  if (!parentId && !userId) {
+  if (!parentId && !createdBy) {
     return;
   }
-  const isWrongSubCategory = (!!userId && !parentId) || (!!parentId && !userId);
+  const isWrongSubCategory =
+    (!!createdBy && !parentId) || (!!parentId && !createdBy);
 
   if (isWrongSubCategory) {
     throw new AppError(
@@ -27,7 +28,7 @@ function validateUserAndParentId(
   }
 
   stringUtils.validateUUID(parentId as string);
-  stringUtils.validateUUID(userId as string);
+  stringUtils.validateUUID(createdBy as string);
 }
 
 function sanitizeDescription(description: string) {
@@ -39,7 +40,7 @@ function sanitizeDescription(description: string) {
 
 const categoryUtils = Object.freeze({
   sanitizeName,
-  validateUserAndParentId,
+  validateCreatorAndParentId,
   sanitizeDescription,
 });
 

@@ -1,46 +1,104 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
-import generateUUID from '../../../shared/utils/uuid-generator';
-import { AppError } from '../../../shared/value-objects/error';
-import { IMoney } from '../../../shared/types/money.types';
-import currencyEntity from '../../currency/entities/currency.entity';
-import moneyValue from '../../../shared/value-objects/money.vo';
-import {
-  EAccountStatus,
-  ELedgerAccountType,
-  ILedgerAccount,
-  ULedgerAccountType,
-} from '../types/ledger-account.types';
-import helpers from './helpers/ledger-account.helpers';
-import ledgerAccountEvents from '../events/ledger-account.events';
 import { TEntityWithEvents } from '../../../shared/types/event.types';
-
-interface IGetBalanceParams {
-  type: ULedgerAccountType;
-  totalDebit: IMoney;
-  totalCredit: IMoney;
-}
+import stringUtils from '../../../shared/utils/string';
+import generateUUID from '../../../shared/utils/uuid-generator';
+import accountingHelpers from '../../accounting/helpers/accounting.helpers';
+import currencyEntity from '../../currency/entities/currency.entity';
+import generalLedgerAccountEvents from '../events/gl-account.events';
+import ledgerAccountEvents from '../events/ledger-account.events';
+import {
+  ELedgerAccountStatus,
+  IGeneralLedgerAccount,
+  ILedgerAccount,
+} from '../types/index.types';
+import helpers from './helpers/ledger-account.helpers';
 
 /**
- * Creates a new account.
+ * Creates a general ledger account.
  * @param payload - The account payload.
  * @returns A tuple containing the account and the created event.
  */
-function make(
-  payload: TCreationOmits<ILedgerAccount>
-): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
+function makeGeneralLedger(
+  payload: TCreationOmits<IGeneralLedgerAccount>
+): TEntityWithEvents<IGeneralLedgerAccount, IGeneralLedgerAccount> {
   currencyEntity.validateCode(payload.currencyCode);
-  helpers.validateType(payload.type);
+  helpers.validateLedgerAccountType(
+    payload.ledgerType,
+    payload.ledgerAccountType
+  );
+  accountingHelpers.validateLedgerCode(payload.ledgerType, payload.ledgerCode);
 
   const timestamp = new Date();
 
-  const account = Object.freeze({
+  const generalLedger: IGeneralLedgerAccount = Object.freeze({
     id: generateUUID(),
-    userId: payload.userId,
-    name: helpers.sanitizeName(payload.name),
-    type: payload.type,
-    subType: helpers.sanitizeSubType(payload.subType),
+    name: stringUtils.sanitizeAndValidate(payload.name, { max: 100, min: 1 }),
+    // TODO: use accounting rule to generate ledger code
+    ledgerCode: payload.ledgerCode,
+    ledgerType: payload.ledgerType,
+    ledgerAccountType: payload.ledgerAccountType,
     currencyCode: payload.currencyCode,
-    status: EAccountStatus.Active,
+    status: ELedgerAccountStatus.Active,
+    createdBy: 'createdBy' in payload ? payload.createdBy : null,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+    deletedAt: null,
+  });
+
+  const event = generalLedgerAccountEvents.created(generalLedger);
+  return [generalLedger, [event]];
+}
+
+/**
+ * Creates a ledger account.
+ * @param payload - The account payload.
+ * @returns A tuple containing the account and the created event.
+ */
+function makeLedgerAccount(
+  parentLedger: IGeneralLedgerAccount | ILedgerAccount,
+  payload: Pick<
+    ILedgerAccount,
+    'name' | 'subType' | 'currencyCode' | 'ledgerCode' | 'createdBy'
+  >
+): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
+  stringUtils.validateUUID(parentLedger.id);
+  accountingHelpers.validateLedgerCode(
+    parentLedger.ledgerType,
+    parentLedger.ledgerCode
+  );
+
+  const isLedgerAccountParent = 'parentId' in parentLedger;
+
+  const currencyCode = isLedgerAccountParent
+    ? parentLedger.currencyCode
+    : payload.currencyCode;
+
+  currencyEntity.validateCode(currencyCode);
+
+  const subType = isLedgerAccountParent
+    ? parentLedger.subType
+    : payload.subType;
+
+  helpers.validateLedgerAccountSubType(
+    parentLedger.ledgerType,
+    parentLedger.ledgerAccountType,
+    subType
+  );
+
+  const timestamp = new Date();
+
+  const account: ILedgerAccount = Object.freeze({
+    id: generateUUID(),
+    name: stringUtils.sanitizeAndValidate(payload.name, { max: 100, min: 1 }),
+    // TODO: use accounting rule to generate ledger code
+    ledgerCode: payload.ledgerCode,
+    ledgerType: parentLedger.ledgerType,
+    ledgerAccountType: parentLedger.ledgerAccountType,
+    subType,
+    parentId: parentLedger.id,
+    currencyCode,
+    status: ELedgerAccountStatus.Active,
+    createdBy: payload.createdBy ?? null,
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,
@@ -50,102 +108,9 @@ function make(
   return [account, [event]];
 }
 
-/**
- * Gets the balance of an account.
- */
-function getBalance({ type, totalDebit, totalCredit }: IGetBalanceParams) {
-  switch (type) {
-    case ELedgerAccountType.Asset:
-    case ELedgerAccountType.Expense:
-      return moneyValue.subtract(totalDebit, totalCredit);
-
-    case ELedgerAccountType.Liability:
-    case ELedgerAccountType.Equity:
-    case ELedgerAccountType.Revenue:
-      return moneyValue.subtract(totalCredit, totalDebit);
-  }
-}
-
-/**
- * Updates an account.
- * @param account - The account to update.
- * @param payload - The account payload.
- * @returns A tuple containing the updated account and the updated event.
- */
-function update(
-  account: ILedgerAccount,
-  payload: Pick<ILedgerAccount, 'name' | 'subType' | 'currencyCode'>
-): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
-  if (payload.currencyCode) {
-    const isValidCode = currencyEntity.isValidCode(payload.currencyCode);
-
-    if (!isValidCode) {
-      throw new AppError('Invalid currency code', {
-        cause: payload,
-      });
-    }
-  }
-
-  const updatedAccount = Object.freeze({
-    ...account,
-    name: payload.name ? helpers.sanitizeName(payload.name) : account.name,
-    subType: payload.subType
-      ? helpers.sanitizeSubType(payload.subType)
-      : account.subType,
-    currencyCode: payload.currencyCode || account.currencyCode,
-    updatedAt: new Date(),
-  });
-
-  const event = ledgerAccountEvents.updated(account);
-  return [updatedAccount, [event]];
-}
-
-/**
- * Archives an account idempotently.
- */
-function archive(
-  account: ILedgerAccount
-): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
-  if (account.status === EAccountStatus.Archived) {
-    return [account, []];
-  }
-
-  const archivedAccount = Object.freeze({
-    ...account,
-    status: EAccountStatus.Archived,
-    updatedAt: new Date(),
-  });
-
-  const event = ledgerAccountEvents.archived(archivedAccount);
-  return [archivedAccount, [event]];
-}
-
-/**
- * Unarchives an account idempotently.
- */
-function unarchive(
-  account: ILedgerAccount
-): TEntityWithEvents<ILedgerAccount, ILedgerAccount> {
-  if (account.status === EAccountStatus.Active) {
-    return [account, []];
-  }
-
-  const unarchivedAccount = Object.freeze({
-    ...account,
-    status: EAccountStatus.Active,
-    updatedAt: new Date(),
-  });
-
-  const event = ledgerAccountEvents.unarchived(unarchivedAccount);
-  return [unarchivedAccount, [event]];
-}
-
 const ledgerAccountEntity = Object.freeze({
-  make,
-  getBalance,
-  update,
-  archive,
-  unarchive,
+  makeGeneralLedger,
+  makeLedgerAccount,
   ...helpers,
 });
 
