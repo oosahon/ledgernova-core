@@ -1,14 +1,14 @@
 import { AppError } from '../../../../shared/value-objects/error';
-import {
-  ETransactionDirection,
-  UTransactionDirection,
-} from '../../../transaction/types/transaction.types';
 import dateUtils from '../../../../shared/utils/date';
+import {
+  EJournalDirection,
+  UJournalDirection,
+} from '../../types/journal-entry.types';
 
-function validateDirection(direction: UTransactionDirection) {
+function validateDirection(direction: UJournalDirection) {
   const isInvalidDirection = ![
-    ETransactionDirection.Debit,
-    ETransactionDirection.Credit,
+    EJournalDirection.Debit,
+    EJournalDirection.Credit,
   ].includes(direction);
 
   if (isInvalidDirection) {

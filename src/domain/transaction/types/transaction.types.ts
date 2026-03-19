@@ -1,14 +1,6 @@
 import { IMoney } from '../../../shared/types/money.types';
 import { ICategory } from '../../category/types/category.types';
 
-export const ETransactionDirection = {
-  Debit: 'debit',
-  Credit: 'credit',
-} as const;
-
-export type UTransactionDirection =
-  (typeof ETransactionDirection)[keyof typeof ETransactionDirection];
-
 // TODO (db): add schema
 export const ETransactionType = {
   Sale: 'sale',

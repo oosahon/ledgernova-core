@@ -1,5 +1,5 @@
 import transactionItemEntity from '../transaction-item.entity';
-import { ELedgerAccountType } from '../../../ledger-account/types/ledger-account.types';
+import { ELedgerType } from '../../../ledger-account/types/index.types';
 import { ETransactionType } from '../../types/transaction.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import categoryEntity from '../../../category/entities/category.entity';
@@ -16,7 +16,7 @@ describe('Transaction Item Entity', () => {
   const [baseCategory] = categoryEntity.make({
     accountingDomain: EAccountingDomain.Individual,
     name: 'Sales',
-    transactionType: ETransactionType.Receipt,
+    type: ETransactionType.Receipt,
     userId: null,
     parentId: null,
     description: 'Sales category',
@@ -244,7 +244,7 @@ describe('Transaction Item Entity', () => {
       const expenseItem = {
         ...validCategory,
         taxKey: 'expense:other',
-        ledgerAccountType: ELedgerAccountType.Expense,
+        ledgerAccountType: ELedgerType.Expense,
       };
       const [item] = transactionItemEntity.make(
         transactionId,
@@ -280,7 +280,7 @@ describe('Transaction Item Entity', () => {
           isSystemGenerated: false,
         }
       );
-      expect(item.category.transactionType).toBe(ETransactionType.Receipt);
+      expect(item.category.type).toBe(ETransactionType.Receipt);
     });
   });
 

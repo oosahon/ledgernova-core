@@ -1,6 +1,6 @@
-import { ULedgerAccountType } from '../../ledger-account/types/ledger-account.types';
+import { ULedgerType } from '../../ledger-account/types/index.types';
 
 export interface IPostingAdvisory {
-  debit: ULedgerAccountType;
-  credit: ULedgerAccountType;
+  debit: ULedgerType;
+  credit: ULedgerType;
 }

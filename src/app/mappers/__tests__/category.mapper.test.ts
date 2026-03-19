@@ -22,7 +22,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
-        transactionType: ETransactionType.Expense,
+        type: ETransactionType.Expense,
         userId: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
@@ -54,7 +54,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'sas',
-        transactionType: ETransactionType.Receipt,
+        type: ETransactionType.Receipt,
         status: 'active' as const,
         parentId: null,
         taxKey: 'sxa',
@@ -63,8 +63,10 @@ describe('Category Mapper', () => {
         ...commonDomainDates,
       };
 
+      const { type, ...domainCategoryOmittedType } = domainCategory;
+
       const expectedRepoModel = {
-        ...domainCategory,
+        ...domainCategoryOmittedType,
         transactionType: ETransactionType.Receipt,
         ...commonRepoDates,
       };
@@ -94,7 +96,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
-        transactionType: ETransactionType.Expense,
+        type: ETransactionType.Expense,
         userId: 'user-id',
         parentId: null,
         taxKey: 'tax-key',

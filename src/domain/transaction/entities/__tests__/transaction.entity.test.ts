@@ -1,5 +1,5 @@
 import transactionEntity from '../transaction.entity';
-import { ELedgerAccountType } from '../../../ledger-account/types/ledger-account.types';
+import { ELedgerType } from '../../../ledger-account/types/index.types';
 import {
   ETransactionStatus,
   ETransactionType,
@@ -21,7 +21,7 @@ describe('Transaction Entity', () => {
 
   const [baseCategory] = categoryEntity.make({
     name: 'Sales',
-    transactionType: ETransactionType.Receipt,
+    type: ETransactionType.Receipt,
     userId: null,
     parentId: null,
     description: 'Sales category',

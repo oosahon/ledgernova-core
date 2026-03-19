@@ -1,37 +1,37 @@
 import eventValue from '../../../shared/value-objects/event.vo';
-import { ILedgerAccount } from '../types/ledger-account.types';
+import { ILedgerAccount } from '../types/index.types';
 
-export enum EAccountEvents {
-  Created = 'domain:account:created',
-  Updated = 'domain:account:updated',
-  Archived = 'domain:account:archived',
-  Unarchived = 'domain:account:unarchived',
+export enum ELedgerAccountEvents {
+  Created = 'domain:ledger:account:created',
+  Updated = 'domain:ledger:account:updated',
+  Archived = 'domain:ledger:account:archived',
+  Unarchived = 'domain:ledger:account:unarchived',
 }
 
 const makeAccountCreatedEvent = (account: ILedgerAccount) => {
   return eventValue.make<ILedgerAccount>({
-    type: EAccountEvents.Created,
+    type: ELedgerAccountEvents.Created,
     data: account,
   });
 };
 
 const makeAccountUpdatedEvent = (account: ILedgerAccount) => {
   return eventValue.make<ILedgerAccount>({
-    type: EAccountEvents.Updated,
+    type: ELedgerAccountEvents.Updated,
     data: account,
   });
 };
 
 const makeAccountArchivedEvent = (account: ILedgerAccount) => {
   return eventValue.make<ILedgerAccount>({
-    type: EAccountEvents.Archived,
+    type: ELedgerAccountEvents.Archived,
     data: account,
   });
 };
 
 const makeAccountUnarchivedEvent = (account: ILedgerAccount) => {
   return eventValue.make<ILedgerAccount>({
-    type: EAccountEvents.Unarchived,
+    type: ELedgerAccountEvents.Unarchived,
     data: account,
   });
 };

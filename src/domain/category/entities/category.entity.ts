@@ -17,7 +17,7 @@ function make(
 ): TEntityWithEvents<ICategory, ICategory> {
   const timestamps = new Date();
 
-  transactionEntity.validateType(payload.transactionType);
+  transactionEntity.validateType(payload.type);
   helpers.validateUserAndParentId(payload);
   accountingHelpers.validateDomain(payload.accountingDomain);
 
@@ -25,8 +25,8 @@ function make(
     id: generateUUID(),
     name: helpers.sanitizeName(payload.name),
     accountingDomain: payload.accountingDomain,
-    taxKey: taxKeyValue.make(payload.transactionType, payload.userId),
-    transactionType: payload.transactionType,
+    taxKey: taxKeyValue.make(payload.type, payload.userId),
+    type: payload.type,
     parentId: payload.parentId,
     description: helpers.sanitizeDescription(payload.description),
     userId: payload.userId,
