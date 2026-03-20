@@ -61,11 +61,11 @@ const EXEMPT_PARTLY = {
  * Transactions recorded in this category are subject to WHT
  */
 const WHT_APPLICABLE = {
-  // WHT is final tax: 10%
-  royalties: 'personal:receipt:wht:final:royalties',
-
   // WHT is not final tax: 10%
   rentalToOrganization: 'personal:receipt:wht:not_final:rental_to_organization',
+
+  // WHT is final tax: 10%
+  royalties: 'personal:receipt:wht:final:royalties',
 
   // WHT is final tax: 10%
   dividends: 'personal:receipt:wht:final:dividends',
