@@ -64,12 +64,7 @@ npm run format:all
 
 ## Documentation
 
-Detailed documentation for core domain and shared modules:
-
-- **[Account](src/domain/account/__docs__/account.md)**: Details the representation of a user's monetary store and its mapping to proper accounting ledger types.
-- **[Category](src/domain/category/__docs__/category.md)**: Explains how categories bridge user-friendly labels with strict accounting and tax parameters.
-- **[Transaction](src/domain/transaction/__docs__/transaction.docs.md)**: Covers the definitive source of truth for movements of value and financial events in the system.
-- **[Money & Currency](src/shared/__docs__/money.md)**: Outlines the strict rules for handling, calculating, and representing monetary values and currencies safely.
+**[Architecture Documentation (arc42)](docs/README.md)**: A comprehensive guide to the system's architecture, including technical constraints, domain models, and architectural decisions.
 
 ## Contributing
 
