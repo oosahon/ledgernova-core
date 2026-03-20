@@ -1,8 +1,5 @@
 import logger from '../observability/logger';
-import storageService from './storage.service';
 
-const services = {
-  storage: storageService(logger),
-};
+const services = {};
 
 export default services;

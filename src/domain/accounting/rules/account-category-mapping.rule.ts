@@ -92,6 +92,8 @@ export default function ledgerAccountCategoryMappingRule(
       return revenueCategories();
     case ELedgerType.Expense:
       return expenseCategories();
+    case ELedgerType.Equity:
+      return { debit: [], credit: [] };
     default:
       throw new Error('Invalid ledger account type');
   }

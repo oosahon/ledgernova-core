@@ -1,6 +1,4 @@
-import _ from 'lodash';
 import { UAccountingDomain } from '../../accounting/types/accounting.types';
-import { ETransactionType } from '../../transaction/types/transaction.types';
 
 export const ECategoryStatus = {
   Active: 'active',
@@ -10,8 +8,15 @@ export const ECategoryStatus = {
 export type UCategoryStatus =
   (typeof ECategoryStatus)[keyof typeof ECategoryStatus];
 
+// same as Omit<UTransactionType, 'Transfer' | 'Journal'>
 export const ECategoryType = {
-  ..._.omit(ETransactionType, ['Transfer', 'Journal']),
+  Sale: 'sale',
+  Purchase: 'purchase',
+  CreditNote: 'credit_note',
+  DebitNote: 'debit_note',
+  Expense: 'expense',
+  Payment: 'payment',
+  Receipt: 'receipt',
 } as const;
 
 export type UCategoryType = (typeof ECategoryType)[keyof typeof ECategoryType];

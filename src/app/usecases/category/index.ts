@@ -1,9 +1,9 @@
+import appContext from '../../context';
 import repos from '../../../infra/db/repos';
-import getAllCategoriesUseCase from './get-all.usecase';
-import services from '../../../infra/services';
+import getAllCategoriesUseCase from './get-all-categories.usecase';
 
-const categoryUseCases = {
-  getAll: getAllCategoriesUseCase(repos.category, services.storage),
-};
+const categoryUseCases = Object.freeze({
+  getAll: getAllCategoriesUseCase(repos.category, appContext.request),
+});
 
 export default categoryUseCases;

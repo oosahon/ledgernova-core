@@ -1,39 +1,40 @@
 import getCurrenciesUseCase from '../get-currencies.usecase';
-import ICurrencyRepo from '../../../../domain/currency/repos/currency.repo';
-import { MockStore } from '../../../contracts/storage/__mocks__/store.contract.mock';
-import { IStore } from '../../../../shared/types/store.types';
+import { MockCurrencyRepo } from '../../../../infra/db/repos/__mocks__/currency.repo.impl.mock';
+import MockRequestContext from '../../../contracts/storage/__mocks__/request-context.mock';
 import { ICurrency } from '../../../../domain/currency/types/currency.types';
+import IRequestContext from '../../../../shared/types/request-context.types';
 
+/**
+ * ========= USECASE TESTS =========
+ *
+ * DOMAIN: global
+ *
+ * This usecase is used to get all supported currencies
+ */
 describe('getCurrenciesUseCase', () => {
-  let currencyRepo: jest.Mocked<ICurrencyRepo>;
-
   beforeEach(() => {
-    currencyRepo = {
-      findAll: jest.fn(),
-    } as unknown as jest.Mocked<ICurrencyRepo>;
-
     jest.clearAllMocks();
   });
 
   it('should get all currencies successfully', async () => {
     const correlationId = 'test-corr-id';
 
-    MockStore.get.mockReturnValue({
+    MockRequestContext.get.mockReturnValue({
       correlationId,
-    } as IStore);
+    } as IRequestContext);
 
     const mockCurrencies = [
       { code: 'USD', symbol: '$', name: 'US Dollar', minorUnit: 2n },
       { code: 'EUR', symbol: '€', name: 'Euro', minorUnit: 2n },
     ] as ICurrency[];
 
-    currencyRepo.findAll.mockResolvedValue(mockCurrencies);
+    MockCurrencyRepo.findAll.mockResolvedValue(mockCurrencies);
 
-    const usecase = getCurrenciesUseCase(currencyRepo, MockStore);
+    const usecase = getCurrenciesUseCase(MockCurrencyRepo, MockRequestContext);
     const result = await usecase();
 
-    expect(MockStore.get).toHaveBeenCalledTimes(1);
-    expect(currencyRepo.findAll).toHaveBeenCalledWith({ correlationId });
+    expect(MockRequestContext.get).toHaveBeenCalledTimes(1);
+    expect(MockCurrencyRepo.findAll).toHaveBeenCalledWith({ correlationId });
     expect(result).toEqual(
       mockCurrencies.map((c) => ({
         ...c,

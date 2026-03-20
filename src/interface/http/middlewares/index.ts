@@ -1,8 +1,9 @@
+import appContext from '../../../app/context';
 import logger from '../../../infra/observability/logger';
 import reporter from '../../../infra/observability/reporter';
-import services from '../../../infra/services';
+
 import isOptionalAuthenticatedUserMiddleware from './is-optional-authenticated-user.middleware';
-import storageMiddleware from './storage.middleware';
+import requestContextMiddleware from './request-context.middleware';
 
 const middlewares = {
   isOptionalAuthenticatedUser: isOptionalAuthenticatedUserMiddleware(
@@ -10,7 +11,7 @@ const middlewares = {
     reporter
   ),
 
-  storage: storageMiddleware(services.storage),
+  requestContext: requestContextMiddleware(appContext.request),
 };
 
 export default middlewares;

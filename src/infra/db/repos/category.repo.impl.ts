@@ -43,8 +43,28 @@ const categoryRepo: ICategoryRepo = {
   delete: async (categoryId, userId, options) => {},
 
   findAll: async (params, options) => {
-    // TODO: implement
-    return Promise.resolve([]);
+    const where: SQL<unknown>[] = [
+      eq(categories.accountingDomain, params.accountingDomain),
+
+      eq(categories.status, ECategoryStatus.Active),
+      isNull(categories.deletedAt),
+    ];
+
+    if (params.types) {
+      where.push(inArray(categories.type, params.types));
+    }
+
+    if (params.userId) {
+      where.push(eq(categories.createdBy, params.userId));
+    }
+
+    const res = await getDbQuery(options)
+      .select()
+      .from(categories)
+      .where(and(...where))
+      .orderBy(asc(categories.name));
+
+    return res.map(categoryMapper.toDomain);
   },
 };
 

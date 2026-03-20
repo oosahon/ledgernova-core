@@ -7,6 +7,88 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
+      "UAccountingDomain": {
+        "type": "string",
+        "enum": ["organization", "sole_trader", "individual"]
+      },
+      "UCategoryType": {
+        "type": "string",
+        "enum": [
+          "expense",
+          "sale",
+          "purchase",
+          "credit_note",
+          "debit_note",
+          "payment",
+          "receipt"
+        ]
+      },
+      "UCategoryStatus": {
+        "type": "string",
+        "enum": ["active", "archived"]
+      },
+      "ICategory": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "accountingDomain": {
+            "$ref": "#/components/schemas/UAccountingDomain"
+          },
+          "type": {
+            "$ref": "#/components/schemas/UCategoryType"
+          },
+          "taxKey": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UCategoryStatus"
+          },
+          "description": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "accountingDomain",
+          "type",
+          "taxKey",
+          "status",
+          "description",
+          "parentId",
+          "createdBy",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "ULedgerType": {
         "type": "string",
         "enum": ["asset", "liability", "revenue", "expense", "equity"]
@@ -75,17 +157,35 @@
         "operationId": "getCategories",
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ICategory"
+                  },
+                  "type": "array"
+                }
+              }
+            }
           }
         },
-        "description": "Get Categories",
+        "description": "Gets the categories for an individual, sole trader or organization.",
         "tags": ["Category"],
         "security": [],
         "parameters": [
           {
-            "in": "query",
-            "name": "ledgerAccountType",
+            "in": "header",
+            "name": "x-accounting-domain",
             "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UAccountingDomain"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ledgerType",
+            "required": false,
             "schema": {
               "$ref": "#/components/schemas/ULedgerType"
             }
@@ -93,7 +193,7 @@
           {
             "in": "query",
             "name": "transactionDirection",
-            "required": true,
+            "required": false,
             "schema": {
               "$ref": "#/components/schemas/UJournalDirection"
             }

@@ -1,11 +1,11 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
-import IStorage from '../../app/contracts/storage/store.contract';
-import { IStore } from '../../shared/types/store.types';
+import IRequestContextData from '../../shared/types/request-context.types';
 import ILogger from '../../app/contracts/infra-services/logger.contract';
+import IRequestContext from '../../app/contracts/storage/request-context.contract';
 
-const asyncLocalStorage = new AsyncLocalStorage<IStore>();
+const asyncLocalStorage = new AsyncLocalStorage<IRequestContextData>();
 
-export default function storageService(logger: ILogger): IStorage {
+export default function storageService(logger: ILogger): IRequestContext {
   return {
     init(store, callback) {
       asyncLocalStorage.run(store, callback);

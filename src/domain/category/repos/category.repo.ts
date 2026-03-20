@@ -1,11 +1,11 @@
 import IRepoOptions from '../../../shared/types/repo-options.types';
 import { UAccountingDomain } from '../../accounting/types/accounting.types';
 import { UTransactionType } from '../../transaction/types/transaction.types';
-import { ICategory } from '../types/category.types';
+import { ICategory, UCategoryType } from '../types/category.types';
 
 interface IFindAllParams {
-  domain: UAccountingDomain;
-  transactionTypes: UTransactionType[];
+  accountingDomain: UAccountingDomain;
+  types?: UCategoryType[];
   userId?: string;
 }
 
