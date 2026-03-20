@@ -1,9 +1,6 @@
 import _ from 'lodash';
 import { UAccountingDomain } from '../../accounting/types/accounting.types';
-import {
-  ETransactionType,
-  UTransactionType,
-} from '../../transaction/types/transaction.types';
+import { ETransactionType } from '../../transaction/types/transaction.types';
 
 export const ECategoryStatus = {
   Active: 'active',

@@ -1,12 +1,19 @@
 /**
+ *  ⚠️ WARNING ⚠️
  * This policy covers personal income tax deductions under the Nigeria Tax Act (NTA) 2025.
  * See public/Nigeria-Tax-Act-2025.pdf for more information.
+ *
+ * Changes to this code must comply with the Nigeria Tax Act (NTA) 2025.
  */
 import { AppError } from '../../../shared/value-objects/error';
 import moneyValue from '../../../shared/value-objects/money.vo';
 import { ITransactionItemWithPITUserInput } from '../types/pit.types';
 import { IPITDeductionPolicy } from '../types/pit.types';
 import taxKeyValue from '../value-objects/tax-keys.vo';
+import {
+  SYSTEM_PERSONAL_TAX_KEYS,
+  SYSTEM_PERSONAL_TAX_KEYS_COMBINED,
+} from './category-keys/personal';
 
 /**
  * Filters transaction items to get the ones that are applicable to the tax policy
@@ -53,15 +60,9 @@ function fullyDeductible(
 ): IPITDeductionPolicy {
   validateTrxItemsLength(items);
 
-  const applicableTaxKeys = [
-    taxKeyValue.payment.pensionContribution,
-    taxKeyValue.payment.nhfContribution,
-    taxKeyValue.payment.annuityPremium,
-
-    taxKeyValue.expense.nhisContribution,
-    taxKeyValue.expense.lifeInsurance,
-    taxKeyValue.expense.healthInsurance,
-  ];
+  const applicableTaxKeys = Object.values(
+    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully
+  );
 
   const deductibleItems = getApplicable(applicableTaxKeys, items);
 
@@ -87,7 +88,7 @@ function rentPolicy(
 ): IPITDeductionPolicy {
   validateTrxItemsLength(items);
 
-  const applicableTaxKeys = [taxKeyValue.expense.rent];
+  const applicableTaxKeys = [SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent];
   const rentItems = getApplicable(applicableTaxKeys, items);
 
   const totalAmount = moneyValue.add(
@@ -124,7 +125,7 @@ function interestOnOwnerOccupiedHomePolicy(
   validateTrxItemsLength(items);
 
   const applicableTaxKeys = [
-    taxKeyValue.expense.interestOnOwnerOccupiedHouseLoan,
+    SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
   ];
   const interestItems = getApplicable(applicableTaxKeys, items);
 
