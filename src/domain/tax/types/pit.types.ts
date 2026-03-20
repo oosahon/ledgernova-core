@@ -6,7 +6,6 @@ export interface IPITDeductionPolicy {
   deductibleAmount: IMoney;
 }
 
-// TODO (migration): create db schema
 export interface IPITDeductionUserInput {
   id: string;
   userId: string;

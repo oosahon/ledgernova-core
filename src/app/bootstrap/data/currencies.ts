@@ -1,3 +1,16 @@
+/**
+ * ⚠️ WARNING: SYSTEM CRITICAL DATA ⚠️
+ *
+ * DO NOT MODIFY, DELETE, OR REORDER items in this file without
+ * explicit architectural approval.
+ *
+ * These records are bootstrapped into the production database.
+ * Changing existing keys, IDs, or values here will cause database
+ * sync issues, broken relationships, or application startup failures.
+ *
+ * If you need to add a new category or currency, carefully review
+ * the migration guidelines first.
+ */
 import { ICurrency } from '../../../domain/currency/types/currency.types';
 
 const NAIRA: ICurrency = {
@@ -56,4 +69,13 @@ const DIRHAM: ICurrency = {
   minorUnit: 2n,
 };
 
-export const SYSTEM_CURRENCIES = [NAIRA, USD, EUR, GBP, CAD, YEN, YUAN, DIRHAM];
+export const SYSTEM_CURRENCIES: readonly ICurrency[] = [
+  NAIRA,
+  USD,
+  EUR,
+  GBP,
+  CAD,
+  YEN,
+  YUAN,
+  DIRHAM,
+];

@@ -1,9 +1,11 @@
-import { AppError } from '../../../../shared/value-objects/error';
-import moneyValue from '../../../../shared/value-objects/money.vo';
-import { ITransactionItem } from '../../../transaction/types/transaction.types';
-import taxKeyValue from '../../value-objects/tax-keys.vo';
-import { ITransactionItemWithPITUserInput } from '../../types/pit.types';
-import policy from '../pit-deductions.policy';
+import { AppError } from '../../../../../shared/value-objects/error';
+import moneyValue from '../../../../../shared/value-objects/money.vo';
+import { ITransactionItemWithPITUserInput } from '../../../types/pit.types';
+import policy from '../deductions-policy';
+import {
+  SYSTEM_PERSONAL_TAX_KEYS,
+  SYSTEM_PERSONAL_TAX_KEYS_COMBINED,
+} from '../categorizations';
 
 describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
   const currency = {
@@ -37,17 +39,23 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
 
     it('should filter only applicable items and sum their total properly', () => {
       const pensionItem = createItem(
-        taxKeyValue.payment.pensionContribution,
+        SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.pensionContribution,
         1000
       );
-      const nhfItem = createItem(taxKeyValue.payment.nhfContribution, 1500);
-      const nhisItem = createItem(taxKeyValue.expense.nhisContribution, 2000);
+      const nhfItem = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.nhfContribution,
+        1500
+      );
+      const nhisItem = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.nhisContribution,
+        2000
+      );
       const lifeInsuranceItem = createItem(
-        taxKeyValue.expense.lifeInsurance,
+        SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.lifeInsurance,
         2500
       );
       const healthInsuranceItem = createItem(
-        taxKeyValue.expense.healthInsurance,
+        SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.healthInsurance,
         3000
       );
       const nonDeductibleItem = createItem('expense:other', 5000);
@@ -91,8 +99,14 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
     });
 
     it('should sum rent items properly when under 500k NG', () => {
-      const rentItem1 = createItem(taxKeyValue.expense.rent, 100000);
-      const rentItem2 = createItem(taxKeyValue.expense.rent, 350000);
+      const rentItem1 = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent,
+        100000
+      );
+      const rentItem2 = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent,
+        350000
+      );
       const nonDeductibleItem = createItem('expense:other', 100000);
 
       const items = [rentItem1, rentItem2, nonDeductibleItem];
@@ -110,8 +124,14 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
     });
 
     it('should cap rent deduction at 500k NGN even if 20% of rent items exceed 500k', () => {
-      const rentItem1 = createItem(taxKeyValue.expense.rent, 2000000);
-      const rentItem2 = createItem(taxKeyValue.expense.rent, 1000000); // sum: 3,000,000
+      const rentItem1 = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent,
+        2000000
+      );
+      const rentItem2 = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent,
+        1000000
+      ); // sum: 3,000,000
 
       const result = policy.rentPolicy([rentItem1, rentItem2]);
 
@@ -142,11 +162,11 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
 
     it('should include all interest items by default', () => {
       const interestItem1 = createItem(
-        taxKeyValue.expense.interestOnOwnerOccupiedHouseLoan,
+        SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
         150000
       );
       const interestItem2 = createItem(
-        taxKeyValue.expense.interestOnOwnerOccupiedHouseLoan,
+        SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
         200000
       );
       const nonDeductibleItem = createItem('expense:other', 100000);
@@ -167,11 +187,11 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
 
     it('should exclude items explicitly marked as not owner-occupied', () => {
       const includeItem = createItem(
-        taxKeyValue.expense.interestOnOwnerOccupiedHouseLoan,
+        SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
         150000
       );
       const excludeItem = createItem(
-        taxKeyValue.expense.interestOnOwnerOccupiedHouseLoan,
+        SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
         200000,
         { ownerOccupiedHome: false }
       );
@@ -191,12 +211,12 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
 
     it('should include items explicitly marked as owner-occupied or where userInput is missing', () => {
       const explicitYesItem = createItem(
-        taxKeyValue.expense.interestOnOwnerOccupiedHouseLoan,
+        SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
         150000,
         { ownerOccupiedHome: true }
       );
       const missingPropItem = createItem(
-        taxKeyValue.expense.interestOnOwnerOccupiedHouseLoan,
+        SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
         100000,
         {}
       );
@@ -215,7 +235,10 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
 
   describe('getApplicable (Internal)', () => {
     it('should throw an error if no tax keys are provided', () => {
-      const item = createItem(taxKeyValue.expense.rent, 100);
+      const item = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent,
+        100
+      );
       expect(() => policy.getApplicable([], [item])).toThrow(AppError);
       expect(() => policy.getApplicable([], [item])).toThrow(
         'Provide at least one tax key'
@@ -223,14 +246,20 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
     });
 
     it('should filter items based on applicable tax keys', () => {
-      const item1 = createItem(taxKeyValue.payment.pensionContribution, 1000);
-      const item2 = createItem(taxKeyValue.expense.rent, 2000);
+      const item1 = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.pensionContribution,
+        1000
+      );
+      const item2 = createItem(
+        SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent,
+        2000
+      );
       const item3 = createItem('expense:other', 3000);
 
       const items = [item1, item2, item3];
       const keys = [
-        taxKeyValue.payment.pensionContribution,
-        taxKeyValue.expense.rent,
+        SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.pensionContribution,
+        SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent,
       ];
 
       const result = policy.getApplicable(keys, items);
@@ -239,6 +268,20 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
       expect(result).toContain(item1);
       expect(result).toContain(item2);
       expect(result).not.toContain(item3);
+    });
+
+    it('should properly extract base tax key if there is a :: createdBy suffix', () => {
+      const item = createItem(
+        `${SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent}::uuid-user-123`,
+        2000
+      );
+      const items = [item];
+      const keys = [SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent];
+
+      const result = policy.getApplicable(keys, items);
+
+      expect(result).toHaveLength(1);
+      expect(result).toContain(item);
     });
   });
 });

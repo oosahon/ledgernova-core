@@ -35,7 +35,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Test Category',
         description: 'Test Description',
-        transactionType: ETransactionType.Expense,
+        type: ETransactionType.Expense,
         createdBy: 'user-id',
         parentId: 'parent-id',
         taxKey: 'tax-key',
@@ -67,7 +67,7 @@ describe('Category Mapper', () => {
 
       const expectedRepoModel = {
         ...domainCategoryOmittedType,
-        transactionType: ETransactionType.Receipt,
+        type: ETransactionType.Receipt,
         ...commonRepoDates,
       };
 
@@ -83,7 +83,7 @@ describe('Category Mapper', () => {
         id: 'category-id',
         name: 'Expense Category',
         description: 'Expense Description',
-        transactionType: ETransactionType.Expense,
+        type: ETransactionType.Expense,
         createdBy: 'user-id',
         parentId: null,
         taxKey: 'tax-key',

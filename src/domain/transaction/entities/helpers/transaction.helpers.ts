@@ -136,6 +136,16 @@ function sanitizeNote(note: string | null) {
 
 // ========= END: TRANSACTION VALIDATORS ==============
 
+function makeReference(): string {
+  return `ref-${Date.now()}`;
+}
+
+function validateReference(reference: string) {
+  if (typeof reference !== 'string' || !reference.startsWith('ref-')) {
+    throw new AppError('Invalid transaction reference', { cause: reference });
+  }
+}
+
 const transactionHelpers = Object.freeze({
   validateType,
   doesNotRequireItem,
@@ -146,6 +156,8 @@ const transactionHelpers = Object.freeze({
   validateExchangeRate,
   validateRecipientAccountId,
   validateTransactionStatus,
+  makeReference,
+  validateReference,
 });
 
 export default transactionHelpers;

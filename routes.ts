@@ -17,6 +17,88 @@ import type {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+  UAccountingDomain: {
+    dataType: 'refAlias',
+    type: {
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['organization'] },
+        { dataType: 'enum', enums: ['sole_trader'] },
+        { dataType: 'enum', enums: ['individual'] },
+      ],
+      validators: {},
+    },
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UCategoryType: {
+    dataType: 'refAlias',
+    type: {
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['expense'] },
+        { dataType: 'enum', enums: ['sale'] },
+        { dataType: 'enum', enums: ['purchase'] },
+        { dataType: 'enum', enums: ['credit_note'] },
+        { dataType: 'enum', enums: ['debit_note'] },
+        { dataType: 'enum', enums: ['payment'] },
+        { dataType: 'enum', enums: ['receipt'] },
+      ],
+      validators: {},
+    },
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  UCategoryStatus: {
+    dataType: 'refAlias',
+    type: {
+      dataType: 'union',
+      subSchemas: [
+        { dataType: 'enum', enums: ['active'] },
+        { dataType: 'enum', enums: ['archived'] },
+      ],
+      validators: {},
+    },
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  ICategory: {
+    dataType: 'refObject',
+    properties: {
+      id: { dataType: 'string', required: true },
+      name: { dataType: 'string', required: true },
+      accountingDomain: { ref: 'UAccountingDomain', required: true },
+      type: { ref: 'UCategoryType', required: true },
+      taxKey: { dataType: 'string', required: true },
+      status: { ref: 'UCategoryStatus', required: true },
+      description: { dataType: 'string', required: true },
+      parentId: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'string' },
+          { dataType: 'enum', enums: [null] },
+        ],
+        required: true,
+      },
+      createdBy: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'string' },
+          { dataType: 'enum', enums: [null] },
+        ],
+        required: true,
+      },
+      createdAt: { dataType: 'datetime', required: true },
+      updatedAt: { dataType: 'datetime', required: true },
+      deletedAt: {
+        dataType: 'union',
+        subSchemas: [
+          { dataType: 'datetime' },
+          { dataType: 'enum', enums: [null] },
+        ],
+        required: true,
+      },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   ULedgerType: {
     dataType: 'refAlias',
     type: {
@@ -104,16 +186,16 @@ export function RegisterRoutes(app: Router) {
     string,
     TsoaRoute.ParameterSchema
   > = {
-    ledgerAccountType: {
-      in: 'query',
-      name: 'ledgerAccountType',
+    _: {
+      in: 'header',
+      name: 'x-accounting-domain',
       required: true,
-      ref: 'ULedgerType',
+      ref: 'UAccountingDomain',
     },
+    ledgerType: { in: 'query', name: 'ledgerType', ref: 'ULedgerType' },
     transactionDirection: {
       in: 'query',
       name: 'transactionDirection',
-      required: true,
       ref: 'UJournalDirection',
     },
   };
