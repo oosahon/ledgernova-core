@@ -29,14 +29,4 @@ function getZeroAmount(items: ITransactionItem[]) {
 
 function fullExemptionPolicy(items: ITransactionItem[]) {
   validateTrxItemsLength(items);
-
-  const applicableTaxKeys = [
-    taxKeyValue.payment.pensionContribution,
-    taxKeyValue.payment.nhfContribution,
-    taxKeyValue.payment.annuityPremium,
-
-    taxKeyValue.receipt.taxRefund,
-  ];
-
-  const applicableItems = getApplicable(applicableTaxKeys, items);
 }

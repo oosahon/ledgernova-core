@@ -1,5 +1,4 @@
 import transactionEntity from '../transaction.entity';
-import { ELedgerType } from '../../../ledger-account/types/index.types';
 import {
   ETransactionStatus,
   ETransactionType,
@@ -44,7 +43,7 @@ describe('Transaction Entity', () => {
     isSystemGenerated: false,
   };
 
-  const validTransactionPayload: TCreationOmits<ITransaction> = {
+  const validTransactionPayload: TCreationOmits<ITransaction, 'reference'> = {
     status: ETransactionStatus.Pending,
     createdBy: 'user-1',
     type: ETransactionType.Sale,
@@ -330,6 +329,37 @@ describe('Transaction Entity', () => {
       expect(() =>
         transactionEntity.make(futureDatePayload, [validItemPayload])
       ).toThrow(AppError);
+    });
+  });
+
+  describe('makeReference', () => {
+    it('should generate a reference string starting with "ref-"', () => {
+      const reference = transactionEntity.makeReference();
+      expect(typeof reference).toBe('string');
+      expect(reference.startsWith('ref-')).toBe(true);
+      expect(reference.length).toBeGreaterThan(4);
+    });
+  });
+
+  describe('validateReference', () => {
+    it('should not throw for a valid reference', () => {
+      const reference = transactionEntity.makeReference();
+      expect(() =>
+        transactionEntity.validateReference(reference)
+      ).not.toThrow();
+    });
+
+    it('should throw an error for an invalid reference', () => {
+      expect(() => transactionEntity.validateReference('invalid-ref')).toThrow(
+        AppError
+      );
+      expect(() => transactionEntity.validateReference('')).toThrow(AppError);
+      expect(() => transactionEntity.validateReference(123 as any)).toThrow(
+        AppError
+      );
+      expect(() => transactionEntity.validateReference(null as any)).toThrow(
+        AppError
+      );
     });
   });
 });

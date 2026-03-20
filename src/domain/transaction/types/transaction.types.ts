@@ -50,6 +50,7 @@ export interface ITransactionItem {
 // TODO (db): add schema
 export interface ITransaction {
   id: string;
+  reference: string;
   status: UTransactionStatus;
 
   // used instead of `userId` because the trx creator might not be the owner of the account
