@@ -64,7 +64,7 @@ npm run format:all
 
 ## Documentation
 
-**[Architecture Documentation (arc42)](ARCHITECTURE.md)**: A comprehensive guide to the system's architecture, including technical constraints, domain models, and architectural decisions.
+**[Architecture Documentation (arc42)](docs/README.md)**: A comprehensive guide to the system's architecture, including technical constraints, domain models, and architectural decisions.
 
 ## Contributing
 
