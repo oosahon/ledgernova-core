@@ -64,6 +64,8 @@ npm run format:all
 
 ## Documentation
 
+**[Architecture Documentation (arc42)](docs/README.md)**: A comprehensive guide to the system's architecture, including technical constraints, domain models, and architectural decisions.
+
 Detailed documentation for core domain and shared modules:
 
 - **[Account](src/domain/account/__docs__/account.md)**: Details the representation of a user's monetary store and its mapping to proper accounting ledger types.
