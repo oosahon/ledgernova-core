@@ -1,11 +1,11 @@
-import { AppError } from '../../../../shared/value-objects/error';
-import moneyValue from '../../../../shared/value-objects/money.vo';
-import { ITransactionItemWithPITUserInput } from '../../types/pit.types';
-import policy from '../pit-deductions.policy';
+import { AppError } from '../../../../../shared/value-objects/error';
+import moneyValue from '../../../../../shared/value-objects/money.vo';
+import { ITransactionItemWithPITUserInput } from '../../../types/pit.types';
+import policy from '../deductions-policy';
 import {
   SYSTEM_PERSONAL_TAX_KEYS,
   SYSTEM_PERSONAL_TAX_KEYS_COMBINED,
-} from '../category-keys/personal';
+} from '../categorizations';
 
 describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
   const currency = {

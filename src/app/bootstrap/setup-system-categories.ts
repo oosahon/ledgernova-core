@@ -1,6 +1,6 @@
 import ICategoryRepo from '../../domain/category/repos/category.repo';
 import ILogger from '../contracts/infra-services/logger.contract';
-import { SYSTEM_CATEGORIES_INDIVIDUAL } from './data/individual-categories';
+import { SYSTEM_CATEGORIES_INDIVIDUAL } from './data/system-categories-individual';
 import generateUUID from '../../shared/utils/uuid-generator';
 
 export async function setupIndividualDomainCategories(

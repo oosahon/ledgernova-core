@@ -19,7 +19,7 @@
     "securitySchemes": {}
   },
   "info": {
-    "title": "purple-ledger-be",
+    "title": "ledgernova-core",
     "version": "1.0.0",
     "description": "This repo contains the server-side source code for Purple Ledger's bookkeeping and tax app.",
     "license": {

@@ -18,7 +18,7 @@ import {
   ICategory,
   UCategoryType,
 } from '../../../domain/category/types/category.types';
-import { SYSTEM_PERSONAL_TAX_KEYS } from '../../../domain/tax/policies/category-keys/personal';
+import { SYSTEM_PERSONAL_TAX_KEYS } from '../../../domain/tax/policies/personal-income-tax/categorizations';
 import taxKeyValue from '../../../domain/tax/value-objects/tax-keys.vo';
 
 interface IIndividualCategory extends ICategory {

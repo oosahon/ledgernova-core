@@ -1,7 +1,6 @@
 import { IMoney } from '../../../shared/types/money.types';
 import { ICategory } from '../../category/types/category.types';
 
-// TODO (db): add schema
 export const ETransactionType = {
   Sale: 'sale',
   Purchase: 'purchase',
@@ -14,7 +13,6 @@ export const ETransactionType = {
   Journal: 'journal',
 } as const;
 
-// TODO (db): add schema
 export const ETransactionStatus = {
   Pending: 'pending',
   Posted: 'posted',
@@ -28,7 +26,6 @@ export type UTransactionStatus =
 export type UTransactionType =
   (typeof ETransactionType)[keyof typeof ETransactionType];
 
-// TODO (db): add schema
 export interface ITransactionItem {
   id: string;
   name: string;
@@ -47,7 +44,6 @@ export interface ITransactionItem {
   deletedAt: Date | null;
 }
 
-// TODO (db): add schema
 export interface ITransaction {
   id: string;
   reference: string;
@@ -78,7 +74,6 @@ export interface ITransaction {
   deletedAt: Date | null;
 }
 
-// TODO (db): add schema
 export interface ITransactionAttachment {
   // TODO: implement
 }

@@ -5,15 +5,15 @@
  *
  * Changes to this code must comply with the Nigeria Tax Act (NTA) 2025.
  */
-import { AppError } from '../../../shared/value-objects/error';
-import moneyValue from '../../../shared/value-objects/money.vo';
-import { ITransactionItemWithPITUserInput } from '../types/pit.types';
-import { IPITDeductionPolicy } from '../types/pit.types';
-import taxKeyValue from '../value-objects/tax-keys.vo';
+import { AppError } from '../../../../shared/value-objects/error';
+import moneyValue from '../../../../shared/value-objects/money.vo';
+import { ITransactionItemWithPITUserInput } from '../../types/pit.types';
+import { IPITDeductionPolicy } from '../../types/pit.types';
+import taxKeyValue from '../../value-objects/tax-keys.vo';
 import {
   SYSTEM_PERSONAL_TAX_KEYS,
   SYSTEM_PERSONAL_TAX_KEYS_COMBINED,
-} from './category-keys/personal';
+} from './categorizations';
 
 /**
  * Filters transaction items to get the ones that are applicable to the tax policy

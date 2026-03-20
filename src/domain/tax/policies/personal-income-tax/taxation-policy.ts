@@ -1,7 +1,7 @@
-import { AppError } from '../../../shared/value-objects/error';
-import moneyValue from '../../../shared/value-objects/money.vo';
-import { ITransactionItem } from '../../transaction/types/transaction.types';
-import taxKeyValue from '../value-objects/tax-keys.vo';
+import { AppError } from '../../../../shared/value-objects/error';
+import moneyValue from '../../../../shared/value-objects/money.vo';
+import { ITransactionItem } from '../../../transaction/types/transaction.types';
+import taxKeyValue from '../../value-objects/tax-keys.vo';
 
 function getApplicable(taxKeys: string[], items: ITransactionItem[]) {
   if (!taxKeys.length) {
