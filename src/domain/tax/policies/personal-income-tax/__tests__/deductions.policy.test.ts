@@ -1,6 +1,6 @@
 import { AppError } from '../../../../../shared/value-objects/error';
 import moneyValue from '../../../../../shared/value-objects/money.vo';
-import { ITransactionItemWithPITUserInput } from '../../../types/pit.types';
+import { ITransactionItemWithPromptResponse } from '../../../types/personal-income-tax.types';
 import policy from '../deductions-policy';
 import {
   SYSTEM_PERSONAL_TAX_KEYS,
@@ -18,15 +18,15 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
   const createItem = (
     taxKey: string,
     amountValue: number,
-    userInput?: any
-  ): ITransactionItemWithPITUserInput => {
+    individualTaxPromptResponse?: any
+  ): ITransactionItemWithPromptResponse => {
     return {
       category: {
         taxKey,
       },
       functionalCurrencyAmount: moneyValue.make(amountValue, currency, false),
-      ...(userInput ? { userInput } : {}),
-    } as unknown as ITransactionItemWithPITUserInput;
+      ...(individualTaxPromptResponse ? { individualTaxPromptResponse } : {}),
+    } as unknown as ITransactionItemWithPromptResponse;
   };
 
   describe('fullyDeductible', () => {
@@ -209,7 +209,7 @@ describe('Nigeria Tax Act (NTA) 2025 Deductions Policy', () => {
       );
     });
 
-    it('should include items explicitly marked as owner-occupied or where userInput is missing', () => {
+    it('should include items explicitly marked as owner-occupied or where individualTaxPromptResponse is missing', () => {
       const explicitYesItem = createItem(
         SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
         150000,

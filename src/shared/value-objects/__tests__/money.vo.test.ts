@@ -306,4 +306,114 @@ describe('Money Value Object', () => {
       );
     });
   });
+
+  describe('isGreaterThan', () => {
+    it('should return true if first is greater than second', () => {
+      const m1 = money.make(500, USD, true);
+      const m2 = money.make(150, USD, true);
+      expect(money.isGreaterThan(m1, m2)).toBe(true);
+    });
+
+    it('should return false if first is less than or equal to second', () => {
+      const m1 = money.make(150, USD, true);
+      const m2 = money.make(500, USD, true);
+      const m3 = money.make(150, USD, true);
+      expect(money.isGreaterThan(m1, m2)).toBe(false);
+      expect(money.isGreaterThan(m1, m3)).toBe(false);
+    });
+
+    it('should throw if mixed currencies are provided', () => {
+      const m1 = money.make(100, NGN, true);
+      const m2 = money.make(100, USD, true);
+      expect(() => money.isGreaterThan(m1, m2)).toThrow(
+        new AppError('Please provide money objects with the same currency', {
+          cause: [m1, m2],
+        })
+      );
+    });
+  });
+
+  describe('isLessThan', () => {
+    it('should return true if first is less than second', () => {
+      const m1 = money.make(150, USD, true);
+      const m2 = money.make(500, USD, true);
+      expect(money.isLessThan(m1, m2)).toBe(true);
+    });
+
+    it('should return false if first is greater than or equal to second', () => {
+      const m1 = money.make(500, USD, true);
+      const m2 = money.make(150, USD, true);
+      const m3 = money.make(500, USD, true);
+      expect(money.isLessThan(m1, m2)).toBe(false);
+      expect(money.isLessThan(m1, m3)).toBe(false);
+    });
+
+    it('should throw if mixed currencies are provided', () => {
+      const m1 = money.make(100, NGN, true);
+      const m2 = money.make(100, USD, true);
+      expect(() => money.isLessThan(m1, m2)).toThrow(
+        new AppError('Please provide money objects with the same currency', {
+          cause: [m1, m2],
+        })
+      );
+    });
+  });
+
+  describe('sortDescending', () => {
+    it('should sort money objects in descending order', () => {
+      const m1 = money.make(150, USD, true);
+      const m2 = money.make(500, USD, true);
+      const m3 = money.make(300, USD, true);
+
+      const result = money.sortDescending(m1, m2, m3);
+      expect(result[0].amount).toBe(BigInt(500));
+      expect(result[1].amount).toBe(BigInt(300));
+      expect(result[2].amount).toBe(BigInt(150));
+    });
+
+    it('should throw if no arguments are provided', () => {
+      expect(() => money.sortDescending()).toThrow(
+        new AppError('Provide at least one parameter for sorting')
+      );
+    });
+
+    it('should throw if mixed currencies are provided', () => {
+      const m1 = money.make(100, NGN, true);
+      const m2 = money.make(100, USD, true);
+      expect(() => money.sortDescending(m1, m2)).toThrow(
+        new AppError('Please provide money objects with the same currency', {
+          cause: [m1, m2],
+        })
+      );
+    });
+  });
+
+  describe('sortAscending', () => {
+    it('should sort money objects in ascending order', () => {
+      const m1 = money.make(500, USD, true);
+      const m2 = money.make(150, USD, true);
+      const m3 = money.make(300, USD, true);
+
+      const result = money.sortAscending(m1, m2, m3);
+      expect(result[0].amount).toBe(BigInt(150));
+      expect(result[1].amount).toBe(BigInt(300));
+      expect(result[2].amount).toBe(BigInt(500));
+    });
+
+    it('should throw if no arguments are provided', () => {
+      expect(() => money.sortAscending()).toThrow(
+        new AppError('Provide at least one parameter for sorting')
+      );
+    });
+
+    it('should throw if mixed currencies are provided', () => {
+      const m1 = money.make(100, NGN, true);
+      const m2 = money.make(100, USD, true);
+      expect(() => money.sortAscending(m1, m2)).toThrow(
+        new AppError('Please provide money objects with the same currency', {
+          cause: [m1, m2],
+        })
+      );
+    });
+  });
 });

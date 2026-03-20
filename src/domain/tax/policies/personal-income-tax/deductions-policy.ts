@@ -7,20 +7,17 @@
  */
 import { AppError } from '../../../../shared/value-objects/error';
 import moneyValue from '../../../../shared/value-objects/money.vo';
-import { ITransactionItemWithPITUserInput } from '../../types/pit.types';
-import { IPITDeductionPolicy } from '../../types/pit.types';
+import { ITransactionItemWithPromptResponse } from '../../types/personal-income-tax.types';
+import { IPersonalIncomeDeductionPolicy } from '../../types/personal-income-tax.types';
 import taxKeyValue from '../../value-objects/tax-keys.vo';
-import {
-  SYSTEM_PERSONAL_TAX_KEYS,
-  SYSTEM_PERSONAL_TAX_KEYS_COMBINED,
-} from './categorizations';
+import { SYSTEM_PERSONAL_TAX_KEYS } from './categorizations';
 
 /**
  * Filters transaction items to get the ones that are applicable to the tax policy
  */
 function getApplicable(
   taxKeys: string[],
-  items: ITransactionItemWithPITUserInput[]
+  items: ITransactionItemWithPromptResponse[]
 ) {
   if (!taxKeys.length) {
     throw new AppError('Provide at least one tax key', {
@@ -33,11 +30,11 @@ function getApplicable(
   );
 }
 
-function getZeroAmount(items: ITransactionItemWithPITUserInput[]) {
+function getZeroAmount(items: ITransactionItemWithPromptResponse[]) {
   return moneyValue.makeZeroAmount(items[0].functionalCurrencyAmount.currency);
 }
 
-function validateTrxItemsLength(items: ITransactionItemWithPITUserInput[]) {
+function validateTrxItemsLength(items: ITransactionItemWithPromptResponse[]) {
   if (!items.length) {
     throw new AppError('Provide at least one transaction item', {
       cause: items,
@@ -56,23 +53,35 @@ function validateTrxItemsLength(items: ITransactionItemWithPITUserInput[]) {
  * See public/Nigeria-Tax-Act-2025.pdf for more information.
  */
 function fullyDeductible(
-  items: ITransactionItemWithPITUserInput[]
-): IPITDeductionPolicy {
+  items: ITransactionItemWithPromptResponse[]
+): IPersonalIncomeDeductionPolicy {
   validateTrxItemsLength(items);
+  const zeroAmount = getZeroAmount(items);
 
-  const applicableTaxKeys = Object.values(
-    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully
+  const applicableTaxKeys = [
+    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.pensionContribution,
+    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.nhfContribution,
+    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.nhisContribution,
+    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.annuityPremium,
+    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.healthInsurance,
+    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.lifeInsurance,
+  ];
+
+  const applicableItems = getApplicable(applicableTaxKeys, items);
+
+  const totalAmount = moneyValue.add(
+    zeroAmount,
+    ...applicableItems.map((item) => item.functionalCurrencyAmount)
   );
 
-  const deductibleItems = getApplicable(applicableTaxKeys, items);
-
   const deductibleAmount = moneyValue.add(
-    getZeroAmount(items),
-    ...deductibleItems.map((item) => item.functionalCurrencyAmount)
+    zeroAmount,
+    ...applicableItems.map((item) => item.functionalCurrencyAmount)
   );
 
   return Object.freeze({
-    transactionItems: deductibleItems,
+    transactionItems: applicableItems,
+    totalAmount,
     deductibleAmount,
   });
 }
@@ -84,16 +93,17 @@ function fullyDeductible(
  * See public/Nigeria-Tax-Act-2025.pdf for more information.
  */
 function rentPolicy(
-  items: ITransactionItemWithPITUserInput[]
-): IPITDeductionPolicy {
+  items: ITransactionItemWithPromptResponse[]
+): IPersonalIncomeDeductionPolicy {
   validateTrxItemsLength(items);
+  const zeroAmount = getZeroAmount(items);
 
   const applicableTaxKeys = [SYSTEM_PERSONAL_TAX_KEYS.deductiblePartly.rent];
-  const rentItems = getApplicable(applicableTaxKeys, items);
+  const applicableItems = getApplicable(applicableTaxKeys, items);
 
   const totalAmount = moneyValue.add(
-    getZeroAmount(items),
-    ...rentItems.map((item) => item.functionalCurrencyAmount)
+    zeroAmount,
+    ...applicableItems.map((item) => item.functionalCurrencyAmount)
   );
 
   const twentyPercent = moneyValue.multiply(totalAmount, {
@@ -106,7 +116,8 @@ function rentPolicy(
   const deductibleAmount = moneyValue.min(cap, twentyPercent);
 
   return Object.freeze({
-    transactionItems: rentItems,
+    transactionItems: applicableItems,
+    totalAmount,
     deductibleAmount,
   });
 }
@@ -120,26 +131,31 @@ function rentPolicy(
  * See public/Nigeria-Tax-Act-2025.pdf for more information.
  */
 function interestOnOwnerOccupiedHomePolicy(
-  items: ITransactionItemWithPITUserInput[]
-): IPITDeductionPolicy {
+  items: ITransactionItemWithPromptResponse[]
+): IPersonalIncomeDeductionPolicy {
   validateTrxItemsLength(items);
+  const zeroAmount = getZeroAmount(items);
 
   const applicableTaxKeys = [
-    SYSTEM_PERSONAL_TAX_KEYS_COMBINED.interestOnOwnerOccupiedHouseLoan,
+    SYSTEM_PERSONAL_TAX_KEYS.deductibleFully.interestOnOwnerOccupiedHouseLoan,
   ];
-  const interestItems = getApplicable(applicableTaxKeys, items);
+  const applicableItems = getApplicable(applicableTaxKeys, items);
 
-  const itemsWithoutExplicitNo = interestItems.filter(
-    (item) => item.userInput?.ownerOccupiedHome !== false
+  // We prompt the user to answer if the house is owner-occupied
+  // if the user explicitly states that the house is not owner-occupied,
+  // then the interest on owner-occupied home expenses are not deductible
+  const itemsWithoutExplicitNo = applicableItems.filter(
+    (item) => item.individualTaxPromptResponse?.ownerOccupiedHome !== false
   );
 
   const totalAmount = moneyValue.add(
-    getZeroAmount(items),
+    zeroAmount,
     ...itemsWithoutExplicitNo.map((item) => item.functionalCurrencyAmount)
   );
 
   return Object.freeze({
     transactionItems: itemsWithoutExplicitNo,
+    totalAmount,
     deductibleAmount: totalAmount,
   });
 }

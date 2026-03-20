@@ -208,6 +208,54 @@ function max(...args: IMoney[]) {
   return args.reduce((acc, param) => (acc.amount > param.amount ? acc : param));
 }
 
+function isGreaterThan(money: IMoney, other: IMoney) {
+  if (!isSameCurrency(money, other)) {
+    throw new AppError('Please provide money objects with the same currency', {
+      cause: [money, other],
+    });
+  }
+
+  return money.amount > other.amount;
+}
+
+function isLessThan(money: IMoney, other: IMoney) {
+  if (!isSameCurrency(money, other)) {
+    throw new AppError('Please provide money objects with the same currency', {
+      cause: [money, other],
+    });
+  }
+
+  return money.amount < other.amount;
+}
+
+function sortDescending(...args: IMoney[]) {
+  if (!args.length) {
+    throw new AppError('Provide at least one parameter for sorting');
+  }
+
+  if (!isSameCurrency(...args)) {
+    throw new AppError('Please provide money objects with the same currency', {
+      cause: args,
+    });
+  }
+
+  return args.sort((a, b) => Number(b.amount - a.amount));
+}
+
+function sortAscending(...args: IMoney[]) {
+  if (!args.length) {
+    throw new AppError('Provide at least one parameter for sorting');
+  }
+
+  if (!isSameCurrency(...args)) {
+    throw new AppError('Please provide money objects with the same currency', {
+      cause: args,
+    });
+  }
+
+  return args.sort((a, b) => Number(a.amount - b.amount));
+}
+
 const moneyValue = Object.freeze({
   make,
   makeZeroAmount,
@@ -220,6 +268,10 @@ const moneyValue = Object.freeze({
   equals,
   min,
   max,
+  isGreaterThan,
+  isLessThan,
+  sortDescending,
+  sortAscending,
 });
 
 export default moneyValue;

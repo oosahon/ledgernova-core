@@ -1,7 +1,7 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
-import { IPITDeductionUserInput } from '../types/pit.types';
+import { IIndividualTaxPromptResponse } from '../types/personal-income-tax.types';
 
-function make(payload: TCreationOmits<IPITDeductionUserInput>) {
+function makeIndividual(payload: TCreationOmits<IIndividualTaxPromptResponse>) {
   const timeStamp = Date.now();
 
   return Object.freeze({
