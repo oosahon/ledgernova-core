@@ -36,7 +36,10 @@ This document provides guidelines for contributing to this project to ensure a s
 
 ### Folder Structure
 
-For the folder structure, we have favored Domain Driven Design.\
+For the folder structure, we have favored Domain Driven Design.
+
+> For a deeper architectural understanding of how these layers interact and the dependency rules between them, please read **[Section 5: Building Block View](docs/05_building_block_view.md)**.
+
 Here are the top level folders you would find on the application:
 
 ```text
