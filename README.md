@@ -25,13 +25,15 @@ LedgerNova was created with 💜 and distributed for free by [Osahon Oboite](htt
 
 ## Introduction
 
-This repo contains the core accounting module of LedgerNova.
+This repo contains the core accounting module of LedgerNova. It encompasses the central double-entry accounting engine, the Nigeria Tax Act (NTA) computation and filing integrations (via FIRS Tax ProMax), open banking reconciliations (via Mono), and exposes its tools securely to autonomous AI agents via an integrated Model Context Protocol (MCP) server.
 
 ## Requirements
 
-- Docker
+- Docker (for local PostgreSQL and Redis databases)
 - Node.js (>=20.18.1 as specified in `package.json`)
 - npm
+- AWS account (or LocalStack) for S3 immutable blob storage
+- API credentials for 3rd party integrations (Paystack, Mono, ZeptoMail) managed securely via Doppler
 
 ## Installation
 

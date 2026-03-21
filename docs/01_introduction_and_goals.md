@@ -8,7 +8,9 @@ Users with accounting knowledge can create self-managed journals and define post
 ## 1.1 Requirements Overview
 
 - **Bookkeeping**: users should be able to record transactions and derive meaningful reports from these transactions
-- **Tax advisory**: the system will provide tax advisory in accordance to the Nigeria Tax Act (NTA) 2025 for individuals, sole traders and organisations
+- **Tax advisory and filing**: the system will provide tax advisory in accordance to the Nigeria Tax Act (NTA) 2025 for individuals, sole traders and organisations, and securely remit filings via FIRS Tax ProMax
+- **Automated Reconciliations**: the system will securely sync bank statements and feeds via Open Banking platforms (e.g., Mono)
+- **Automated Operations**: the system will manage pro subscriptions (via Paystack) and handle transactional email notifications (via ZeptoMail)
 
 ## 1.2 Quality Goals
 
@@ -18,8 +20,9 @@ Users with accounting knowledge can create self-managed journals and define post
 
 ## 1.3 Stakeholders
 
-| Role/Name         | Contact                             | Expectations                                                        |
-| ----------------- | ----------------------------------- | ------------------------------------------------------------------- |
-| Developers        | [Osahon Oboite](https://osahon.dev) | Clear bounded contexts, easy onboarding, fast reliable tests        |
-| Product Owner     | [Osahon Oboite](https://osahon.dev) | Fast feature delivery, correct accounting and tax rule calculations |
-| Auditors (Future) |                                     | Clean trails of financial data, reliable reporting                  |
+| Role/Name         | Contact                             | Expectations                                                         |
+| ----------------- | ----------------------------------- | -------------------------------------------------------------------- |
+| Developers        | [Osahon Oboite](https://osahon.dev) | Clear bounded contexts, easy onboarding, fast reliable tests         |
+| Product Owner     | [Osahon Oboite](https://osahon.dev) | Fast feature delivery, correct accounting and tax rule calculations  |
+| Auditors (Future) |                                     | Clean trails of financial data, reliable reporting                   |
+| 🤖 AI Agents      |                                     | Robust, secure, and clearly documented tool execution access via MCP |
