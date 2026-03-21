@@ -4,5 +4,5 @@
 # Protect tax keys from accidental changes
 /src/domain/tax/value-objects/tax-keys.vo.ts @oosahon
 
-# Protect ADRs from accidental changes
-/docs/adrs/ @oosahon
+# Protect docs from accidental changes
+/docs/ @oosahon
