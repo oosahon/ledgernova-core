@@ -1,4 +1,4 @@
-# Architecture Documentation (arc42)
+# Architecture Documentation
 
 Welcome to the architectural documentation for **ledgernova-core**.
 
