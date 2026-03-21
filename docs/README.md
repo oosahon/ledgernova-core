@@ -1,6 +1,6 @@
 # Architecture Documentation (arc42)
 
-Welcome to the architectural documentation for **ledgernova-core**. We follow the [arc42](https://arc42.org/) template to document our system's architecture, constraints, and decisions.
+Welcome to the architectural documentation for **ledgernova-core**.
 
 ## Table of Contents
 
