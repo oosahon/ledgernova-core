@@ -2,7 +2,7 @@
 
 ## 3.1 Business Context
 
-![Business scope](https://file%2B.vscode-resource.vscode-cdn.net/Users/osahon/work/purple/ledgernova/ledgernova-core/docs/assets/03.1-business-scope.mermaid.png)
+![Business scope](./assets/03.1-business-scope.mermaid.png)
 
 _Figure 1: View the mermaid sourcecode here:&#x20;_[_03.1-business-scope.mermaid_](./assets/03.1-business-scope.mermaid)
 
@@ -23,7 +23,7 @@ The following table describes the key actors and internal domain boundaries that
 
 ## 3.2 Technical Context
 
-![Technical scope](https://file%2B.vscode-resource.vscode-cdn.net/Users/osahon/work/purple/ledgernova/ledgernova-core/docs/assets/03.2-technical-scope.mermaid.png)
+![Technical scope](./assets/03.2-technical-scope.mermaid.png)
 
 _Figure 2: View the mermaid sourcecode here:&#x20;_[_03.2-technical-scope.mermaid_](./assets/03.2-technical-scope.mermaid)
 
