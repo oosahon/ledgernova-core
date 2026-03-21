@@ -6,9 +6,9 @@ The building block view shows the static decomposition of the system into buildi
 
 At the highest level, LedgerNova Core strictly adheres to a Domain-Driven Design (DDD) and Clean Architecture pattern. The system is divided into functional layers where outer layers depend on inner layers, with the `Domain` layer at the absolute center, isolated from all external concerns.
 
-<img src="./assets/05.1-level-1-system.mermaid.png" alt="Level 1: Overall System Layers" style="max-width: 500px;"/>
+![Level 1: Overall System Layers](./assets/05.1-level-1-system.mermaid.png)
 
-<i>Figure 1: View the mermaid sourcecode here: <a href="./assets/05.1-level-1-system.mermaid">05.1-level-1-system.mermaid</a></i>
+_Figure 1: View the mermaid sourcecode here:&#x20;_[_05.1-level-1-system.mermaid_](./assets/05.1-level-1-system.mermaid)
 
 ### Building Blocks - Level 1
 
