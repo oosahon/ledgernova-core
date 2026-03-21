@@ -20,7 +20,11 @@
     "drizzle:pull": "drizzle-kit pull",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org purpleledger --project node-express ./dist && sentry-cli sourcemaps upload --org purpleledger --project node-express ./dist",
     "prepare": "husky",
-    "email:build": "node bin/mjml-to-html.js"
+    "email:build": "node bin/mjml-to-html.js",
+    "adr:add": "tsx bin/add-adr.ts",
+    "adr:remove": "tsx bin/remove-adr.ts",
+    "adr:rename": "tsx bin/rename-adr.ts",
+    "adr:sync": "tsx bin/sync-adr.ts"
   },
   "lint-staged": {
     "*.{ts,js,json,md}": "prettier --write"
