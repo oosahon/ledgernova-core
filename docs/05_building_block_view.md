@@ -6,19 +6,19 @@ The building block view shows the static decomposition of the system into buildi
 
 At the highest level, LedgerNova Core strictly adheres to a Domain-Driven Design (DDD) and Clean Architecture pattern. The system is divided into functional layers where outer layers depend on inner layers, with the `Domain` layer at the absolute center, isolated from all external concerns.
 
-![Level 1: Overall System Layers](./assets/05.1-level-1-system.mermaid.png)
+![Level 1: Overall System Layers](https://file%2B.vscode-resource.vscode-cdn.net/Users/osahon/work/purple/ledgernova/ledgernova-core/docs/assets/05.1-level-1-system.mermaid.png)
 
 _Figure 1: View the mermaid sourcecode here:&#x20;_[_05.1-level-1-system.mermaid_](./assets/05.1-level-1-system.mermaid)
 
 ### Building Blocks - Level 1
 
 | Name                                   | Responsibility                                                                                                                                                                                                                                    |
-| :------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Interface Layer (`src/interface`)**  | The entry points to the application. It contains the HTTP REST controllers (generated via tsoa) and the Model Context Protocol (MCP) tool handlers for autonomous AI agents. It translates external requests into calls to the Application Layer. |
 | **Application Layer (`src/app`)**      | Contains application-specific business rules and Use Cases. It orchestrates the flow of data to and from the Domain entities, and directs those entities to use their core business logic to achieve the goals of the Use Case.                   |
 | **Domain Layer (`src/domain`)**        | The heart of the software. Contains pure enterprise-wide business rules, entities, policy logic (like the NTA tax formulas), and domain services. It has zero dependencies on any technical details like databases or frameworks.                 |
 | **Infrastructure Layer (`src/infra`)** | Contains technical capabilities that support the layers above. This includes the database adapters (Drizzle ORM for PostgreSQL), external API integrations (Paystack, FIRS, Mono, ZeptoMail), caching (Redis), and observability configuration.   |
-| **Shared Layer (`src/shared`)**        | Cross-cutting concerns, ubiquitous utility functions (e.g., safe math operations for financial data, Date formats), and shared domain types used across multiple boundaries.                                                                      |
+| **Shared Layer (`src/shared`)**        | Cross-cutting concerns, ubiquitous utility functions (e.g., string and date utilit), and shared domain types used across multiple boundaries.                                                                                                     |
 
 ---
 
@@ -33,7 +33,7 @@ _Figure 2: View the mermaid sourcecode here:&#x20;_[_05.2-level-2-domain.mermaid
 ### Building Blocks - Level 2 (Domain Modules)
 
 | Name               | Responsibility                                                                                                                                                                                                                                                       |
-| :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Accounting**     | The core grouping mechanism representing the legal entity whose books are being managed (Individual, Sole Trader, or Organization). All financial data is strictly partitioned by the Accounting block.                                                              |
 | **Transaction**    | The central aggregate that orchestrates the recording of a financial event. A Transaction is immutable once posted and is responsible for producing the corresponding `Journal Entry` records to balance the books, applying `Tax` rules, and converting `Currency`. |
 | **Journal Entry**  | Represents a single line item (debit or credit) within a `Transaction`. It directly mutates the balance of a specific `Ledger Account`.                                                                                                                              |
