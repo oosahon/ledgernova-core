@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 const ADRS_DIR = path.join(__dirname, '../docs/adrs');
 const INDEX_FILE = path.join(__dirname, '../docs/09_architecture_decisions.md');
@@ -104,6 +105,12 @@ async function main() {
       `Generated new table with ${rows.length} ADRs in docs/09_architecture_decisions.md`
     );
   }
+
+  console.log(`\nFormatting files with Prettier...`);
+  execSync(
+    'npx prettier --write "docs/adrs/*.md" "docs/09_architecture_decisions.md"',
+    { stdio: 'inherit', cwd: path.join(__dirname, '..') }
+  );
 }
 
 main().catch(console.error);

@@ -113,6 +113,12 @@ async function main() {
     fs.writeFileSync(INDEX_FILE, lines.join('\n'), 'utf8');
     console.log(`\nSuccessfully updated docs/09_architecture_decisions.md`);
   }
+
+  console.log(`\nFormatting files with Prettier...`);
+  execSync(
+    'npx prettier --write "docs/adrs/*.md" "docs/09_architecture_decisions.md"',
+    { stdio: 'inherit', cwd: path.join(__dirname, '..') }
+  );
 }
 
 main().catch((err) => {

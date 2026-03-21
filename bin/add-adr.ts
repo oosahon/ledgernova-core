@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 // Because we are likely running in a CommonJS env based on tsconfig/package,
 // __dirname is usually available natively. But if tsx treats it loosely, this approach works.
@@ -93,6 +94,12 @@ Proposed
   } else {
     console.warn(`Warning: Could not find ${INDEX_FILE} to update.`);
   }
+
+  console.log(`\nFormatting files with Prettier...`);
+  execSync(
+    'npx prettier --write "docs/adrs/*.md" "docs/09_architecture_decisions.md"',
+    { stdio: 'inherit', cwd: path.join(__dirname, '..') }
+  );
 }
 
 main().catch((err) => {
