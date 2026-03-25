@@ -61,6 +61,8 @@ export interface ITransaction {
   functionalCurrencyAmount: IMoney;
   attachmentIds: string[];
 
+  // TODO: add counterpartyId
+
   // `null` for transfers and journals
   items: ITransactionItem[] | null;
   date: Date;
