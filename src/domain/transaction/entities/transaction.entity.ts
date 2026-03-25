@@ -23,7 +23,7 @@ interface IMakeItemPayload extends TCreationOmits<
  *    To add an attachment, call the makeTransactionAttachments() function
  */
 function make(
-  payload: TCreationOmits<ITransaction, 'reference'>,
+  payload: TCreationOmits<ITransaction, 'reference' | 'items'>,
   itemsPayload: IMakeItemPayload[]
 ): TEntityWithEvents<ITransaction, ITransaction | ITransactionItem> {
   helpers.validateItems(payload.type, itemsPayload.length);
