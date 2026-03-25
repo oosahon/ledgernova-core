@@ -1,0 +1,136 @@
+flowchart LR
+    %%  =========================================== ASSETS ==================================================
+    Assets["Assets: 10000 - 19999"]
+
+    CAssets["Current Assets"]
+        Cash["Cash and Equivalents: Code 11000 - 11999"]
+        STInvestments["Short Term Investments: Code 12000 - 12999"]
+        Inventories["Inventories: Code 13000 - 13999"]
+        Receivables["Receivables: Code 14000 - 14999"]
+            subgraph ReceivablesTemplate ["Class Template (System Enforced)"]
+                %% The actual amount on the invoice
+                Standard["14xxx0 : Gross Receivable"]
+                
+                %% Extra charges like late interest or penalties
+                Adjunct["14xxx1-8 : Accrued Interest / Penalties"]
+                
+                %% The 'Safety Net' for expected losses
+                Contra["14xxx9 : Allowance for Doubtful Debts"]
+            end
+        Prepayments["Prepayments: Code 15000 - 15499"]
+        AccruedIncome["Accrued Income: Code 15500 - 15599"]
+        OtherCurrentAssets["Other Current Assets: Code 16000 - 16999"]
+
+
+    NCAssets["Non Current Assets"]
+        LTInvestments["Long Term Investments: Code 17000 - 17999"]
+        PPE["Property, Plant & Equipment: Code 18000 - 18999"]
+           subgraph PPETemplate ["Class Template (System Enforced)"]
+                %% The historical cost of purchasing the asset
+                Cost["18xxx0 : Cost"]
+
+                %% The cumulative change in value above cost
+                Adjunct["18xxx(1-8) : Revaluation"]
+
+                %% The cumulative change in value below cost
+                Contra["18xxx9 : Accumulated Depreciation"]
+            end
+        IntangibleAssets["Intangible Assets: Code 19000 - 19099"]
+        ROU["Right-of-Use (ROU) Assets: Code 19100 - 19199"]
+        Goodwill["Goodwill: Code 19200 - 19299"]
+        OtherNonCurrentAssets["Other Non Current Assets: Code 19300 - 19399"]
+
+
+
+
+    Assets --> CAssets & NCAssets
+    CAssets --> Cash & STInvestments & Inventories & Receivables & Prepayments & AccruedIncome & OtherCurrentAssets
+    Receivables --> ReceivablesTemplate
+    NCAssets --> LTInvestments & PPE & IntangibleAssets & ROU & Goodwill & OtherNonCurrentAssets
+    PPE --> PPETemplate
+
+
+    %%  =========================================== LIABILITIES ==================================================
+    Liabilities["Liabilities: 20000 - 29999"]
+
+    CLiabilities["Current Liabilities"]
+        TradePayables["Trade Payables: Code 21000 - 21999"]
+            subgraph PayablesTemplate ["Payables Template (System Enforced)"]
+                PStandard["21xxx0 : Gross Payable"]
+                PAdjunct["21xxx1-8 : Penalties / Late Fees"]
+                PContra["21xxx9 : Purchase Discounts"]
+            end
+
+        StatutoryPayables["Statutory Payables: Code 22000 - 22999"]
+            subgraph StatutoryTemplate ["Statutory Template (System Enforced)"]
+                %% Tax assessments
+                SStandard["22xxx0 : Original Assessment"]
+                %% Penalties and interest on tax assessments
+                SAdjunct["22xxx1-8 : Statutory Penalties / Interest"]
+                %% Tax waivers and conditional credits
+                SContra["22xxx9 : Tax Waivers / Conditional Credits"]
+            end
+
+        Accruals["Accrued Expenses: Code 23000 - 23499"]
+        DeferredRevenues["Deferred Revenues: Code 23500 - 23999"]
+
+        STDebts["Short Term Debts/Overdrafts: Code 24000 - 24999"]
+            subgraph STDebtTemplate ["ST Debt Template (System Enforced)"]
+                %% Initial
+                Principal["24xxx0 : ST Principal"]
+                %% Accrued interest and charges
+                Adjunct["24xxx1-8 : Accrued Interest / Bank Fees"]
+                %% Cost of loan, waivers and promotional credits
+                Contra["24xxx9 : Fee Waivers / Promotional Credits"]
+            end
+
+    NCLiabilities["Non-Current Liabilities"]
+        LTLoans["Long Term Loans: Code 25000 - 25999"]
+            subgraph LoanTemplate ["Loan Template (System Enforced)"]
+                %% Initial
+                Principal["25xxx0 : Loan Principal"]
+                %% Accrued interest and charges
+                LAdjunct["25xxx1-8 : Accrued Interest"]
+                %% Cost of loan, waivers and promotional credits
+                LContra["25xxx9 : Unamortized Loan Fees"]
+            end
+            
+        LeaseLiabilities["Lease Liabilities: Code 26000 - 26999"]
+            subgraph LeaseTemplate ["Lease Template"]
+                %% Initial
+                LePrincipal["26xxx0 : Lease Principal (NPV)"]
+                %% Accrued interest and charges
+                LeAdjunct["26xxx1-8 : Interest Expense / Unwinding"]
+                %% Cost of loan, waivers and promotional credits
+                LeContra["26xxx9 : Lease Incentives / Reductions"]
+            end
+        Provisions["Provisions: Code 27000 - 27999"]
+            subgraph ProvisionTemplate ["Provision Template"]
+                %% Initial
+                PrInitial["27xxx0 : Initial Estimate"]
+                %% Adjustments / Accretion
+                PrAdjunct["27xxx1-8 : Adjustments / Accretion"]
+                %% Reversals / Reductions
+                PrContra["27xxx9 : Reversals / Reductions"]
+            end
+        OtherNCL["Other Non-Current Liabilities: Code 28000 - 29999"]
+
+    Liabilities --> CLiabilities & NCLiabilities
+    CLiabilities --> TradePayables & StatutoryPayables & Accruals & DeferredRevenues & STDebts
+    NCLiabilities --> LTLoans & LeaseLiabilities & Provisions & OtherNCL
+    
+    %% Template Connections
+    TradePayables --> PayablesTemplate
+    StatutoryPayables --> StatutoryTemplate
+    STDebts --> STDebtTemplate
+    LTLoans --> LoanTemplate
+
+
+    LeaseLiabilities --> LeaseTemplate
+    Provisions --> ProvisionTemplate
+    
+
+    
+    
+
+    
