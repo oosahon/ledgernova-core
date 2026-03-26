@@ -1,27 +1,28 @@
 flowchart LR
     %% Power users (and accounts bootstraper for non-power users) will decide whether or not to apply contra templates to "Other*" liabilities
     subgraph AdjustmentTemplate["Liabilities Adjustment Template (System Enforced)"]
-        Basis["2xxxx0: Basis"]
-        Adjunct["2xxxx1-8 : Adjunct"]
-        Contra["2xxxx9: Contra"]
+        Basis["2xxxx(0): Basis"]
+        Adjunct["2xxxx(1) : Adjunct"]
+        Contra["2xxxx(9): Contra"]
     end
-    Liabilities["Liabilities: 20000 - 29999"]
+    Liabilities["Liabilities: 20000(0) - 29999(9)"]
 
+    SuspenseAccounts["Suspense Accounts: 20000(0) - 20499(0)"]
     CLiabilities["Current Liabilities"]
-        TradePayables["Trade Payables: 21000 - 21999"] --> AdjustmentTemplate
-        StatutoryPayables["Statutory Payables: 22000 - 22999"] --> AdjustmentTemplate
-        Accruals["Accrued Expenses: 23000 - 23499"] --> AdjustmentTemplate
-        DeferredRevenues["Deferred Revenues: 23500 - 23999"] --> AdjustmentTemplate
-        ShortTermDebts["Short Term Debts/Overdrafts: 24000 - 24999"] --> AdjustmentTemplate
-        OtherCurrentLiabilities["Other Current Liabilities: 25000 - 25999"]
+        TradePayables["Trade Payables: 20500(0) - 21499(9)"] --> AdjustmentTemplate
+        StatutoryPayables["Statutory Payables: 21500(0) - 21999(9)"] --> AdjustmentTemplate
+        Accruals["Accrued Expenses: 22000(0) - 22999(9)"] --> AdjustmentTemplate
+        DeferredRevenues["Deferred Revenues: 23000(0) - 23999(9)"] --> AdjustmentTemplate
+        ShortTermDebts["Short Term Debts/Overdrafts: 24000(0) - 24999(9)"] --> AdjustmentTemplate
+        OtherCurrentLiabilities["Other Current Liabilities: 25000(0) - 25999(9)"]
 
     NCLiabilities["Non-Current Liabilities"]
-        LongTermLoan["Long Term Loans: 26000 - 26999"] --> AdjustmentTemplate
-        LeaseLiabilities["Lease Liabilities: 27000 - 27999"] --> AdjustmentTemplate
-        Provisions["Provisions: 28000 - 28999"] --> AdjustmentTemplate
-        OtherNCL["Other Non-Current Liabilities: 29000 - 29999"]
+        LongTermLoan["Long Term Loans: 26000(0) - 26999(9)"] --> AdjustmentTemplate
+        LeaseLiabilities["Lease Liabilities: 27000(0) - 27999(9)"] --> AdjustmentTemplate
+        Provisions["Provisions: 28000(0) - 28999(9)"] --> AdjustmentTemplate
+        OtherNCL["Other Non-Current Liabilities: 29000(0) - 29999(9)"]
 
-    Liabilities --> CLiabilities & NCLiabilities
+    Liabilities --> CLiabilities & NCLiabilities & SuspenseAccounts
 
     CLiabilities --> TradePayables & StatutoryPayables & Accruals & DeferredRevenues & ShortTermDebts & OtherCurrentLiabilities
     NCLiabilities --> LongTermLoan & LeaseLiabilities & Provisions & OtherNCL

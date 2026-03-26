@@ -1,32 +1,34 @@
 flowchart LR
     %% Power users (and accounts bootstraper for non-power users) will decide whether or not to apply contra templates to "Other*" assets
     subgraph AssetAdjustmentTemplate["Assets Adjustment Template (System Enforced)"]
-        Basis["1xxxx0: Basis"]
-        Adjunct["1xxxx1-8 : Adjunct"]
-        Contra["1xxxx9: Contra"]
+        Basis["1xxxx(0): Basis"]
+        Adjunct["1xxxx(1) : Adjunct"]
+        Contra["1xxxx(9): Contra"]
     end
 
-    Assets["Assets: 10000 - 19999"]
+    Assets["Assets: 10000(0) - 19999(9)"]
 
+    SuspenseAccounts["Suspense Accounts: 10000(0) - 10499(0)"]
     CAssets["Current Assets"]
-        Cash["Cash and Equivalents: 11000 - 11999"] 
-        STInvestments["Short Term Investments: 12000 - 12999"] --> AssetAdjustmentTemplate
-        Inventories["Inventories: 13000 - 13999"] --> AssetAdjustmentTemplate
-        Receivables["Receivables: 14000 - 14999"] --> AssetAdjustmentTemplate
-        Prepayments["Prepayments: 15000 - 15499"] --> AssetAdjustmentTemplate
-        AccruedIncome["Accrued Income: 15500 - 15599"] --> AssetAdjustmentTemplate
-        OtherCurrentAssets["Other Current Assets: 16000 - 16999"]
+        Cash["Cash and Equivalents: 10500(0) - 11499(0)"] 
+        STInvestments["Short Term Investments: 11500(0) - 11999(9)"] --> AssetAdjustmentTemplate
+        Inventories["Inventories: 12000(0) - 12999(9)"] --> AssetAdjustmentTemplate
+        Receivables["Receivables: 13000(0) - 13999(9)"] --> AssetAdjustmentTemplate
+        StatutoryReceivables["Statutory Receivables: 14000(0) - 14499(9)"] --> AssetAdjustmentTemplate
+        Prepayments["Prepayments: 14500(0) - 14999(9)"] --> AssetAdjustmentTemplate
+        AccruedIncome["Accrued Income: 15000(0) - 15499(9)"] --> AssetAdjustmentTemplate
+        OtherCurrentAssets["Other Current Assets: 15500(0) - 15999(9)"]
         
 
     NCAssets["Non Current Assets"]
-        LTInvestments["Long Term Investments: 17000 - 17999"] --> AssetAdjustmentTemplate
-        PPE["Property, Plant & Equipment: 18000 - 18999"] --> AssetAdjustmentTemplate
-        IntangibleAssets["Intangible Assets: 19000 - 19099"] --> AssetAdjustmentTemplate
-        ROU["Right-of-Use (ROU) Assets: 19100 - 19199"] --> AssetAdjustmentTemplate
-        Goodwill["Goodwill: 19200 - 19299"] --> AssetAdjustmentTemplate
-        OtherNonCurrentAssets["Other Non Current Assets: 19300 - 19399"]
+        LTInvestments["Long Term Investments: 16000(0) - 16999(9)"] --> AssetAdjustmentTemplate
+        PPE["Property, Plant & Equipment: 17000(0) - 17999(9)"] --> AssetAdjustmentTemplate
+        IntangibleAssets["Intangible Assets: 18000(0) - 18499(9)"] --> AssetAdjustmentTemplate
+        ROU["Right-of-Use (ROU) Assets: 18500(0) - 18999(9)"] --> AssetAdjustmentTemplate
+        Goodwill["Goodwill: 19000(0) - 19499(9)"] --> AssetAdjustmentTemplate
+        OtherNonCurrentAssets["Other Non Current Assets: 19500(0) - 19999(9)"]
         
 
-    Assets --> CAssets & NCAssets
+    Assets --> SuspenseAccounts & CAssets & NCAssets
     CAssets --> Cash & STInvestments & Inventories & Receivables & Prepayments & AccruedIncome & OtherCurrentAssets
     NCAssets --> LTInvestments & PPE &  IntangibleAssets &  ROU & Goodwill & OtherNonCurrentAssets

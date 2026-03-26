@@ -1,24 +1,14 @@
 flowchart LR
-    %% Tracks value leaving the entity.
-    %% Basis: cash drawings
-    %% Adjuncts: non-cash drawings (inventory/asset)
-    %% Contra: drawings reversal
     subgraph AdjustmentTemplate["Equity Adjustment Template"]
-        EBasis["3xxxx0: Basis"]
-        EAdjunct["3xxxx1-8 : Adjunct"]
-        EContra["3xxxx9: Contra"]
+        EBasis["3xxxx(0): Basic"]
+        EAdjunct["3xxxx(1) : Adjunct"]
+        EContra["3xxxx(9): Contra"]
     end
 
-    Equity["Equity: 30000 - 39999"]
-    Capital["Owner/Share Capital: 31000 - 31999"] --> AdjustmentTemplate
-    Earnings["Retained Earnings: 32000 - 32999"] --> AdjustmentTemplate
-    Reserves["Revaluation Reserves: 33000 - 33999"] --> AdjustmentTemplate
-    Drawings["Drawings/Distributions: 34000 - 34999"] --> AdjustmentTemplate
-    OpeningBalanceEquity["Opening Balance Equity: 3900x"]
-        OBEAsset["Opening Balance Equity Asset: 39001"]
-        OBELiability["Opening Balance Equity Liability: 39002"]
-        OBEIncome["Opening Balance Equity Income: 39004"]
-        OBEExpense["Opening Balance Equity Expense: 39005"]
+    Equity["Equity: 30000(0) - 39999(9)"]
+    Capital["Owner/Share Capital: 30000(0) - 30999(9)"] --> AdjustmentTemplate
+    Earnings["Retained Earnings: 31000(0) - 31999(9)"] --> AdjustmentTemplate
+    Reserves["Revaluation Reserves: 32000(0) - 32999(9)"] --> AdjustmentTemplate
+    OtherEquity["Other Equity: 33000(0) - 39999(9)"] --> AdjustmentTemplate
 
-    Equity --> Capital & Earnings & Reserves & Drawings & OpeningBalanceEquity
-    OpeningBalanceEquity --> OBEAsset & OBELiability & OBEIncome & OBEExpense
+    Equity --> Capital & Earnings & Reserves & OtherEquity

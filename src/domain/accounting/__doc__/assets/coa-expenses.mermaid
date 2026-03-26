@@ -1,41 +1,42 @@
 flowchart LR
      %% Power users (and accounts bootstraper for non-power users) will decide whether or not to apply contra templates to "Other*" expenses
     subgraph ExpenseAdjustmentTemplate["Expense Adjustment Template (System Enforced)"]
-        Basis["5xxxx0: Basis"]
-        Adjunct["5xxxx1-8 : Adjunct"]
-        Contra["5xxxx9: Contra"]
+        Basis["5xxxx(0): Basis"]
+        Adjunct["5xxxx(1): Adjunct"]
+        Contra["5xxxx(9): Contra"]
     end
 
-    Expenses["Expenses: 50000 - 59999"]
+    Expenses["Expenses: 50000(0) - 59999(9)"]
 
-    DirectCosts["Cost of Sales (COGS): 51000 - 51999"] --> ExpenseAdjustmentTemplate
+    DirectCosts["Cost of Sales (COGS): 50000(0) - 50999(9)"] --> ExpenseAdjustmentTemplate
     
-    OperatingExpenses["Operating Expenses (OPEX): 52000 - 55999"]
+    OperatingExpenses["Operating Expenses (OPEX): 51000(0) - 55999(9)"]
         %% Categories with baked in functionalities (eg PAYEE for PayrollAndPersonnel), will be
         %% created for each subheader depending on the domain and usecase.
         %% For non-power users, these will be created during accounts bootstrap, while for
         %% power users, they will be represented as types when creating sub-ledgers.
-        PayrollAndPersonnel["Payroll & Personnel: 52000 - 52499"] --> ExpenseAdjustmentTemplate
-        RentUtilities["Rent & Utilities: 52500 - 52999"] --> ExpenseAdjustmentTemplate
-        AdminGeneral["Admin & General: 53000 - 53999"] --> ExpenseAdjustmentTemplate
-        MarketingSelling["Marketing & Selling: 54000 - 54499"] --> ExpenseAdjustmentTemplate
-        Depreciation["Depreciation & Amortization: 54500 - 54999"] --> ExpenseAdjustmentTemplate
+        PayrollAndPersonnel["Payroll & Personnel: 51000(0) - 51999(9)"] --> ExpenseAdjustmentTemplate
+        RentUtilities["Rent & Utilities: 52000(0) - 52999(9)"] --> ExpenseAdjustmentTemplate
+        AdminGeneral["Admin & General: 53000(0) - 53499(9)"] --> ExpenseAdjustmentTemplate
+        MarketingSelling["Marketing & Selling: 53500(0) - 53999(9)"] --> ExpenseAdjustmentTemplate
+        Depreciation["Depreciation & Amortization: 54000(0) - 54999(9)"] --> ExpenseAdjustmentTemplate
 
-        OtherOperatingExpenses["Other Operating Expenses: 55000 - 55999"]
+        OtherOperatingExpenses["Other Operating Expenses: 55000(0) - 55999(9)"]
             
-    NonOperatingExpenses["Non-Operating Expenses: 56000 - 58999"]
-        FinanceCosts["Interest & Finance Charges: 56000 - 56999"] --> ExpenseAdjustmentTemplate
-        TaxExpense["Tax Expense (CIT/PIT): 57000 - 57999"] --> ExpenseAdjustmentTemplate
-        OtherNonOperatingExpenses["Other Non-Operating Expenses: 58000 - 58999"]
+    NonOperatingExpenses["Non-Operating Expenses: 56000(0) - 57999(9)"]
+        FinanceCosts["Interest & Finance Charges: 56000(0) - 56999(9)"] --> ExpenseAdjustmentTemplate
+        OtherNonOperatingExpenses["Other Non-Operating Expenses: 57000(0) - 57999(9)"]
 
-    Losses["Losses & Adjustments: 59000 - 59999"]
-        UnrealizedLoss["Unrealized Loss: 59000 - 59499"] --> ExpenseAdjustmentTemplate
-        AssetDisposal["Loss on Asset Disposal: 59500 - 59899"] --> ExpenseAdjustmentTemplate
-        OtherLosses["Other Losses: 59900 - 59999"]
+    TaxExpense["Tax Expense (CIT): 58000(0) - 58999(9)"] --> ExpenseAdjustmentTemplate
 
-    Expenses --> DirectCosts & OperatingExpenses & NonOperatingExpenses & Losses
+    Losses["Losses & Adjustments: 59000(0) - 59999(9)"]
+        UnrealizedLoss["Unrealized Loss: 59000(0) - 59499(9)"] --> ExpenseAdjustmentTemplate
+        AssetDisposal["Loss on Asset Disposal: 59500(0) - 59899(9)"] --> ExpenseAdjustmentTemplate
+        OtherLosses["Other Losses: 59900(0) - 59999(9)"]
+
+    Expenses --> DirectCosts & OperatingExpenses & NonOperatingExpenses  & TaxExpense & Losses
     OperatingExpenses --> PayrollAndPersonnel & RentUtilities & AdminGeneral & MarketingSelling & Depreciation & OtherOperatingExpenses
-    NonOperatingExpenses --> FinanceCosts  & TaxExpense & OtherNonOperatingExpenses
+    NonOperatingExpenses --> FinanceCosts & OtherNonOperatingExpenses
     Losses --> UnrealizedLoss & AssetDisposal & OtherLosses
 
     
