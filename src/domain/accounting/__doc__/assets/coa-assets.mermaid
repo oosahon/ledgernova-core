@@ -1,0 +1,32 @@
+flowchart LR
+    %% Power users (and accounts bootstraper for non-power users) will decide whether or not to apply contra templates to "Other*" assets
+    subgraph AssetAdjustmentTemplate["Assets Adjustment Template (System Enforced)"]
+        Basis["1xxxx0: Basis"]
+        Adjunct["1xxxx1-8 : Adjunct"]
+        Contra["1xxxx9: Contra"]
+    end
+
+    Assets["Assets: 10000 - 19999"]
+
+    CAssets["Current Assets"]
+        Cash["Cash and Equivalents: 11000 - 11999"] 
+        STInvestments["Short Term Investments: 12000 - 12999"] --> AssetAdjustmentTemplate
+        Inventories["Inventories: 13000 - 13999"] --> AssetAdjustmentTemplate
+        Receivables["Receivables: 14000 - 14999"] --> AssetAdjustmentTemplate
+        Prepayments["Prepayments: 15000 - 15499"] --> AssetAdjustmentTemplate
+        AccruedIncome["Accrued Income: 15500 - 15599"] --> AssetAdjustmentTemplate
+        OtherCurrentAssets["Other Current Assets: 16000 - 16999"]
+        
+
+    NCAssets["Non Current Assets"]
+        LTInvestments["Long Term Investments: 17000 - 17999"] --> AssetAdjustmentTemplate
+        PPE["Property, Plant & Equipment: 18000 - 18999"] --> AssetAdjustmentTemplate
+        IntangibleAssets["Intangible Assets: 19000 - 19099"] --> AssetAdjustmentTemplate
+        ROU["Right-of-Use (ROU) Assets: 19100 - 19199"] --> AssetAdjustmentTemplate
+        Goodwill["Goodwill: 19200 - 19299"] --> AssetAdjustmentTemplate
+        OtherNonCurrentAssets["Other Non Current Assets: 19300 - 19399"]
+        
+
+    Assets --> CAssets & NCAssets
+    CAssets --> Cash & STInvestments & Inventories & Receivables & Prepayments & AccruedIncome & OtherCurrentAssets
+    NCAssets --> LTInvestments & PPE &  IntangibleAssets &  ROU & Goodwill & OtherNonCurrentAssets

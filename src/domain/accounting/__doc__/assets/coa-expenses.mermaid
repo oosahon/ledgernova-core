@@ -1,0 +1,42 @@
+flowchart LR
+     %% Power users (and accounts bootstraper for non-power users) will decide whether or not to apply contra templates to "Other*" expenses
+    subgraph ExpenseAdjustmentTemplate["Expense Adjustment Template (System Enforced)"]
+        Basis["5xxxx0: Basis"]
+        Adjunct["5xxxx1-8 : Adjunct"]
+        Contra["5xxxx9: Contra"]
+    end
+
+    Expenses["Expenses: 50000 - 59999"]
+
+    DirectCosts["Cost of Sales (COGS): 51000 - 51999"] --> ExpenseAdjustmentTemplate
+    
+    OperatingExpenses["Operating Expenses (OPEX): 52000 - 55999"]
+        %% Categories with baked in functionalities (eg PAYEE for PayrollAndPersonnel), will be
+        %% created for each subheader depending on the domain and usecase.
+        %% For non-power users, these will be created during accounts bootstrap, while for
+        %% power users, they will be represented as types when creating sub-ledgers.
+        PayrollAndPersonnel["Payroll & Personnel: 52000 - 52499"] --> ExpenseAdjustmentTemplate
+        RentUtilities["Rent & Utilities: 52500 - 52999"] --> ExpenseAdjustmentTemplate
+        AdminGeneral["Admin & General: 53000 - 53999"] --> ExpenseAdjustmentTemplate
+        MarketingSelling["Marketing & Selling: 54000 - 54499"] --> ExpenseAdjustmentTemplate
+        Depreciation["Depreciation & Amortization: 54500 - 54999"] --> ExpenseAdjustmentTemplate
+
+        OtherOperatingExpenses["Other Operating Expenses: 55000 - 55999"]
+            
+    NonOperatingExpenses["Non-Operating Expenses: 56000 - 58999"]
+        FinanceCosts["Interest & Finance Charges: 56000 - 56999"] --> ExpenseAdjustmentTemplate
+        TaxExpense["Tax Expense (CIT/PIT): 57000 - 57999"] --> ExpenseAdjustmentTemplate
+        OtherNonOperatingExpenses["Other Non-Operating Expenses: 58000 - 58999"]
+
+    Losses["Losses & Adjustments: 59000 - 59999"]
+        UnrealizedLoss["Unrealized Loss: 59000 - 59499"] --> ExpenseAdjustmentTemplate
+        AssetDisposal["Loss on Asset Disposal: 59500 - 59899"] --> ExpenseAdjustmentTemplate
+        OtherLosses["Other Losses: 59900 - 59999"]
+
+    Expenses --> DirectCosts & OperatingExpenses & NonOperatingExpenses & Losses
+    OperatingExpenses --> PayrollAndPersonnel & RentUtilities & AdminGeneral & MarketingSelling & Depreciation & OtherOperatingExpenses
+    NonOperatingExpenses --> FinanceCosts  & TaxExpense & OtherNonOperatingExpenses
+    Losses --> UnrealizedLoss & AssetDisposal & OtherLosses
+
+    
+    
