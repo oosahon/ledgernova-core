@@ -1,14 +1,8 @@
 flowchart LR
-    subgraph AdjustmentTemplate["Equity Adjustment Template"]
-        EBasis["3xxxx(0): Basic"]
-        EAdjunct["3xxxx(1) : Adjunct"]
-        EContra["3xxxx(9): Contra"]
-    end
-
-    Equity["Equity: 30000(0) - 39999(9)"]
-    Capital["Owner/Share Capital: 30000(0) - 30999(9)"] --> AdjustmentTemplate
-    Earnings["Retained Earnings: 31000(0) - 31999(9)"] --> AdjustmentTemplate
-    Reserves["Revaluation Reserves: 32000(0) - 32999(9)"] --> AdjustmentTemplate
-    OtherEquity["Other Equity: 33000(0) - 39999(9)"] --> AdjustmentTemplate
+    Equity["Equity: 3xxxxx"]
+    Capital["Owner/Share Capital: 300xxx"]
+    Earnings["Retained Earnings: 301xxx"]
+    Reserves["Revaluation Reserves: 302xxx"]
+    OtherEquity["Other Equity: 303xxx"]
 
     Equity --> Capital & Earnings & Reserves & OtherEquity

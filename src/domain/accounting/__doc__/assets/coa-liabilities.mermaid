@@ -1,29 +1,23 @@
 flowchart LR
-    %% Power users (and accounts bootstraper for non-power users) will decide whether or not to apply contra templates to "Other*" liabilities
-    subgraph AdjustmentTemplate["Liabilities Adjustment Template (System Enforced)"]
-        Basis["2xxxx(0): Basis"]
-        Adjunct["2xxxx(1) : Adjunct"]
-        Contra["2xxxx(9): Contra"]
-    end
-    Liabilities["Liabilities: 20000(0) - 29999(9)"]
-
-    SuspenseAccounts["Suspense Accounts: 20000(0) - 20499(0)"]
-    CLiabilities["Current Liabilities"]
-        TradePayables["Trade Payables: 20500(0) - 21499(9)"] --> AdjustmentTemplate
-        StatutoryPayables["Statutory Payables: 21500(0) - 21999(9)"] --> AdjustmentTemplate
-        Accruals["Accrued Expenses: 22000(0) - 22999(9)"] --> AdjustmentTemplate
-        DeferredRevenues["Deferred Revenues: 23000(0) - 23999(9)"] --> AdjustmentTemplate
-        ShortTermDebts["Short Term Debts/Overdrafts: 24000(0) - 24999(9)"] --> AdjustmentTemplate
-        OtherCurrentLiabilities["Other Current Liabilities: 25000(0) - 25999(9)"]
-
-    NCLiabilities["Non-Current Liabilities"]
-        LongTermLoan["Long Term Loans: 26000(0) - 26999(9)"] --> AdjustmentTemplate
-        LeaseLiabilities["Lease Liabilities: 27000(0) - 27999(9)"] --> AdjustmentTemplate
-        Provisions["Provisions: 28000(0) - 28999(9)"] --> AdjustmentTemplate
-        OtherNCL["Other Non-Current Liabilities: 29000(0) - 29999(9)"]
+    Liabilities["Liabilities: 2xxxxx"]
 
     Liabilities --> CLiabilities & NCLiabilities & SuspenseAccounts
 
-    CLiabilities --> TradePayables & StatutoryPayables & Accruals & DeferredRevenues & ShortTermDebts & OtherCurrentLiabilities
-    NCLiabilities --> LongTermLoan & LeaseLiabilities & Provisions & OtherNCL
-        
+    SuspenseAccounts["Suspense Accounts: 200xxx"]
+    CLiabilities["Current Liabilities"]
+        CLiabilities --> TradePayables["Trade Payables: 201xxx"]
+        CLiabilities --> StatutoryPayables["Statutory Payables: 202xxx"]
+        CLiabilities --> Accruals["Accrued Expenses: 203xxx"]
+        CLiabilities --> DeferredRevenues["Deferred Revenues: 204xxx"]
+        CLiabilities --> ShortTermDebts["Short Term Debts/Overdrafts: 205xxx"]
+        CLiabilities --> OtherCurrentLiabilities["Other Current Liabilities: 206xxx"]
+
+    NCLiabilities["Non-Current Liabilities"]
+        NCLiabilities --> LongTermLoan["Long Term Loans: 207xxx"]
+        NCLiabilities --> LeaseLiabilities["Lease Liabilities: 208xxx"]
+        NCLiabilities --> Provisions["Provisions: 209xxx"]
+        NCLiabilities --> OtherNCL["Other Non-Current Liabilities: 210xxx"]
+
+
+    %% For positioning
+    CLiabilities ~~~ SuspenseAccounts

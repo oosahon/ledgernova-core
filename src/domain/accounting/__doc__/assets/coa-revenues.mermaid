@@ -1,27 +1,16 @@
 flowchart LR
-    %% Template is enforced on all revenue accounts, including Other*
-    subgraph RevenueTemplate ["Revenue Template (System Enforced)"]
-        Standard["4xxxx(0) : Gross Revenue"]
-        Adjunct["4xxxx(1) : Revenue Adjustments"]
-        Contra["4xxxx(9) : Revenue Discounts"]
-    end
+    Revenues["Revenues: 4xxxxx"]
 
-    Revenues["Revenues: 40000(0) - 49999(9)"]
+    OperatingRevenues["Operating Revenues"]
+        Sales["Sales: 400xxx"]
+        Services["Services: 401xxx"]
+        Subscriptions["Subscriptions: 402xxx"]
+        OtherOperatingRevenues["Other Operating Revenues: 403xxx"]
+    NonOperatingRevenues["Non-Operating Revenues"]
+        InterestIncome["Interest Income: 404xxx"]
+        GainOnSale["Gain on Sale of Assets: 405xxx"]
+        OtherNonOperatingRevenues["Other Non-Operating Revenues: 406xxx"]
 
-    OperatingRevenues["Operating Revenues: 40000(0) - 43999(9)"]
-        Sales["Sales: 40000(0) - 40999(9)"]
-        Services["Services: 41000(0) - 41999(9)"]
-        Subscriptions["Subscriptions: 42000(0) - 42999(9)"]
-        OtherOperatingRevenues["Other Operating Revenues: 43000(0) - 43999(9)"]
-    NonOperatingRevenues["Non-Operating Revenues: 44000(0) - 49999(9)"]
-        InterestIncome["Interest Income: 44000(0) - 44999(9)"]
-        GainOnSale["Gain on Sale of Assets: 45000(0) - 45999(9)"]
-        OtherNonOperatingRevenues["Other Non-Operating Revenues: 46000(0) - 49999(9)"]
-
-
-    
     Revenues --> OperatingRevenues & NonOperatingRevenues
     OperatingRevenues --> Sales & Services & Subscriptions & OtherOperatingRevenues
     NonOperatingRevenues --> InterestIncome & GainOnSale & OtherNonOperatingRevenues
-
-    Sales & Services & Subscriptions & OtherOperatingRevenues & InterestIncome & GainOnSale & OtherNonOperatingRevenues --> RevenueTemplate

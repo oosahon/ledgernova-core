@@ -1,0 +1,207 @@
+---
+config:
+  layout: dagre
+---
+flowchart LR
+    Assets[Assets: 1xxxxx]
+    %% Assets --> SG_Suspense & CA & NCA
+
+    %% ==========================================
+    %% CURRENT ASSETS
+    %% ==========================================
+    CA[Current Assets]
+    CA --> SG_Cash & SG_STInvestments & SG_Inventories & SG_Receivables
+    CA --> SG_StatutoryReceivables & SG_Prepayments & SG_AccruedIncome & SG_OtherCurrent
+
+    subgraph SG_Cash ["Cash and Cash Equivalents: 101xxx"]
+        direction TB
+        subgraph CCEBehaviors ["Behaviors"]
+            CCEBv1[["Bank Account"]]:::behavior
+            CCEBv2[["Petty Cash"]]:::behavior
+            CCEBv3[["Cash in Hand"]]:::behavior
+        end
+        subgraph CCERules ["Rules"]
+            CCERl1[["Adjunct accounts prohibited"]]
+            CCERl2[["Contra accounts prohibited"]]
+        end
+    end
+
+    subgraph SG_STInvestments ["Short Term Investments: 102xxx"]
+        direction TB
+        subgraph STBehaviors ["Behaviors"]
+            STBv1[["Stocks behavior"]]:::behavior
+            STBv2[["Bonds behavior"]]:::behavior
+            STBv3[["Mutual Funds behavior"]]:::behavior
+        end
+        subgraph STRules ["Rules"]
+            STRl1[["Adjunct increments only"]]
+            STRl2[["Contra decrements only (Valuation)"]]
+            STRl3[["Mark-to-market allowed"]]
+        end
+    end
+
+    subgraph SG_Inventories ["Inventories: 103xxx"]
+        direction TB
+        subgraph InvBehaviors ["Behaviors"]
+            InvBv1[["Raw Materials"]]:::behavior
+            InvBv2[["Work in Progress"]]:::behavior
+            InvBv3[["Finished Goods"]]:::behavior
+        end
+        subgraph InvRules ["Rules"]
+            InvRl1[["FIFO / Weighted Avg Valuation"]]
+            InvRl2[["Contra allowed (Obsolescence Allowance)"]]
+        end
+    end
+
+    subgraph SG_Receivables ["Receivables: 104xxx"]
+        direction TB
+        subgraph RecBehaviors ["Behaviors"]
+            RecBv1[["Trade Receivables"]]:::behavior
+            RecBv2[["Notes Receivable"]]:::behavior
+        end
+        subgraph RecRules ["Rules"]
+            RecRl1[["Contra required (Doubtful Accounts)"]]
+            RecRl2[["Adjunct typically prohibited"]]
+        end
+    end
+
+    subgraph SG_StatutoryReceivables ["Statutory Receivables: 105xxx"]
+        direction TB
+        subgraph SRecBehaviors ["Behaviors"]
+            SRecBv1[["VAT / Sales Tax Receivable"]]:::behavior
+            SRecBv2[["Income Tax Refunds"]]:::behavior
+        end
+        subgraph SRecRules ["Rules"]
+            SRecRl1[["Contra accounts strictly prohibited"]]
+            SRecRl2[["Adjunct accounts strictly prohibited"]]
+        end
+    end
+
+    subgraph SG_Prepayments ["Prepayments: 106xxx"]
+        direction TB
+        subgraph PrepBehaviors ["Behaviors"]
+            PrepBv1[["Prepaid Rent"]]:::behavior
+            PrepBv2[["Prepaid Insurance"]]:::behavior
+        end
+        subgraph PrepRules ["Rules"]
+            PrepRl1[["Amortization schedule required"]]
+            PrepRl2[["Contra accounts allowed"]]
+        end
+    end
+
+    subgraph SG_AccruedIncome ["Accrued Income: 107xxx"]
+        direction TB
+        subgraph AccBehaviors ["Behaviors"]
+            AccBv1[["Unbilled Revenue"]]:::behavior
+            AccBv2[["Accrued Interest"]]:::behavior
+        end
+        subgraph AccRules ["Rules"]
+            AccRl1[["Requires reversal upon billing/receipt"]]
+        end
+    end
+
+    subgraph SG_OtherCurrent ["Other Current Assets: 1xxxxx"]
+        direction TB
+        subgraph OtherCBehaviors ["Behaviors"]
+            OtherCBv1[["Custom Asset Traits"]]:::behavior
+        end
+        subgraph OtherCRules ["Rules"]
+            OtherCRl1[["Flexible / Open validation"]]
+        end
+    end
+
+    %% ==========================================
+    %% NON CURRENT ASSETS
+    %% ==========================================
+    NCA[Non Current Assets]
+    NCA --> SG_LTInvestments & SG_PPE & SG_IntangibleAssets & SG_ROU & SG_Goodwill & SG_OtherNonCurrent
+
+    subgraph SG_LTInvestments ["Long Term Investments: 109xxx"]
+        direction TB
+        subgraph LTIBehaviors ["Behaviors"]
+            LTIBv1[["Equity Method Investments"]]:::behavior
+            LTIBv2[["Held-to-Maturity Bonds"]]:::behavior
+        end
+        subgraph LTIRules ["Rules"]
+            LTIRl1[["Annual impairment testing required"]]
+            LTIRl2[["Contra allowed (Valuation Allowance)"]]
+        end
+    end
+
+    subgraph SG_PPE ["Property, Plant & Equipment: 110xxx"]
+        direction TB
+        subgraph PPEBehaviors ["Behaviors"]
+            PPEBv1[["Land"]]:::behavior
+            PPEBv2[["Buildings"]]:::behavior
+            PPEBv3[["Equipment & Vehicles"]]:::behavior
+        end
+        subgraph PPERules ["Rules"]
+            PPERl1[["Straight-line depreciation"]]
+            PPERl2[["Double declining balance"]]
+            PPERl3[["Contra required (Accumulated Depr) except Land"]]
+            PPERl4[["Impairment testing"]]
+        end
+    end
+
+    subgraph SG_IntangibleAssets ["Intangible Assets: 111xxx"]
+        direction TB
+        subgraph IntBehaviors ["Behaviors"]
+            IntBv1[["Patents & Trademarks"]]:::behavior
+            IntBv2[["Capitalized Software"]]:::behavior
+        end
+        subgraph IntRules ["Rules"]
+            IntRl1[["Amortization schedule (straight-line)"]]
+            IntRl2[["Contra required (Accumulated Amortization)"]]
+            IntRl3[["Impairment testing"]]
+        end
+    end
+
+    subgraph SG_ROU ["Right-of-Use Assets: 112xxx"]
+        direction TB
+        subgraph ROUBehaviors ["Behaviors"]
+            ROUBv1[["Operating Leases"]]:::behavior
+            ROUBv2[["Capital / Finance Leases"]]:::behavior
+        end
+        subgraph ROURules ["Rules"]
+            ROURl1[["Lease Liability amortization split"]]
+            ROURl2[["Contra required (Accumulated Depr)"]]
+        end
+    end
+
+    subgraph SG_Goodwill ["Goodwill: 113xxx"]
+        direction TB
+        subgraph GWBehaviors ["Behaviors"]
+            GWBv1[["Acquired Goodwill"]]:::behavior
+        end
+        subgraph GWRules ["Rules"]
+            GWRl1[["Amortization strictly prohibited"]]
+            GWRl2[["Annual impairment testing exclusively"]]
+            GWRl3[["Contra allowed (Accumulated Impairment)"]]
+        end
+    end
+
+    subgraph SG_OtherNonCurrent ["Other Non Current Assets: 1xxxxx"]
+        direction TB
+        subgraph OtherNCBehaviors ["Behaviors"]
+            OtherNCBv1[["Custom Asset Traits"]]:::behavior
+        end
+        subgraph OtherNCRules ["Rules"]
+            OtherNCRl1[["Flexible / Open validation"]]
+        end
+    end
+
+    %% ==========================================
+    %% SUSPENSE
+    %% ==========================================
+    subgraph SG_Suspense ["Suspense Accounts: 100xxx"]
+        direction TB
+        subgraph SuspBehaviors ["Behaviors"]
+            SuspBv1[["Clearing Account"]]:::behavior
+        end
+        subgraph SuspRules ["Rules"]
+            SuspRl1[["Adjunct and contra adjustments only"]]
+            SuspRl2[["Balance must clear to zero periodically"]]
+        end
+    end
+
+    classDef behavior fill:navy,stroke:whitesmoke,stroke-width:2px,color:white
