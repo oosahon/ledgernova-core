@@ -18,7 +18,6 @@ flowchart LR
         subgraph CCEBehaviors ["Behaviors"]
             CCEBv1[["Bank Account"]]:::behavior
             CCEBv2[["Petty Cash"]]:::behavior
-            CCEBv3[["Cash in Hand"]]:::behavior
         end
         subgraph CCERules ["Rules"]
             CCERl1[["Adjunct accounts prohibited"]]
@@ -138,7 +137,7 @@ flowchart LR
         subgraph PPERules ["Rules"]
             PPERl1[["Straight-line depreciation"]]
             PPERl2[["Double declining balance"]]
-            PPERl3[["Contra required (Accumulated Depr) except Land"]]
+            PPERl3[["Contra required (Accumulated Depreciation)"]]
             PPERl4[["Impairment testing"]]
         end
     end
@@ -164,7 +163,7 @@ flowchart LR
         end
         subgraph ROURules ["Rules"]
             ROURl1[["Lease Liability amortization split"]]
-            ROURl2[["Contra required (Accumulated Depr)"]]
+            ROURl2[["Contra required"]]
         end
     end
 

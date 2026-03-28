@@ -5,21 +5,24 @@ flowchart LR
     CAssets["Current Assets"]  
         CAssets --> Cash["Cash and Equivalents: 101xxx"]
         CAssets --> STInvestments["Short Term Investments: 102xxx"]
-        CAssets --> Inventories["Inventories: 103xxx"]
-        CAssets --> Receivables["Receivables: 104xxx"]
-        CAssets --> StatutoryReceivables["Statutory Receivables: 105xxx"]
+        CAssets --> Receivables["Receivables: 103xxx"] 
+            Receivables --> TradeReceivables["Trade Receivables: 103xxx"]
+            Receivables --> StatutoryReceivables["Statutory Receivables: 103xxx"]
+            Receivables --> OtherReceivables["Other Receivables: 103xxx"]
+            
+        CAssets --> Inventories["Inventories: 104xxx"]
+        CAssets --> AccruedIncome["Accrued Income: 105xxx"]
         CAssets --> Prepayments["Prepayments: 106xxx"]
-        CAssets --> AccruedIncome["Accrued Income: 107xxx"]
-        CAssets --> OtherCurrentAssets["Other Current Assets: 108xxx"]
+
     CAssets ~~~ SuspenseAccounts
       
 
     NCAssets["Non Current Assets"]
-        NCAssets --> LTInvestments["Long Term Investments: 109xxx"]
-        NCAssets --> PPE["Property, Plant & Equipment: 110xxx"]
-        NCAssets --> IntangibleAssets["Intangible Assets: 111xxx"]
-        NCAssets --> ROU["Right-of-Use Assets: 112xxx"]
-        NCAssets --> Goodwill["Goodwill: 113xxx"]
-        NCAssets --> OtherNonCurrentAssets["Other Non Current Assets: 114xxx"]
+        NCAssets --> LTInvestments["Long Term Investments: 107xxx"]
+        NCAssets --> PPE["Property, Plant & Equipment: 108xxx"]
+        NCAssets --> IntangibleAssets["Intangible Assets: 109xxx"]
+        NCAssets --> ROU["Right-of-Use Assets: 110xxx"]
+        NCAssets --> Goodwill["Goodwill: 111xxx"]
+
 
 
