@@ -1,0 +1,23 @@
+flowchart LR
+    Liabilities["Liabilities: 2xxxxx"]
+
+    Liabilities --> CLiabilities & NCLiabilities & SuspenseAccounts
+
+    SuspenseAccounts["Suspense Accounts: 200xxx"]
+    CLiabilities["Current Liabilities"]
+        CLiabilities --> TradePayables["Trade Payables: 201xxx"]
+        CLiabilities --> StatutoryPayables["Statutory Payables: 202xxx"]
+        CLiabilities --> Accruals["Accrued Expenses: 203xxx"]
+        CLiabilities --> DeferredRevenues["Deferred Revenues: 204xxx"]
+        CLiabilities --> ShortTermDebts["Short Term Debts/Overdrafts: 205xxx"]
+        CLiabilities --> OtherCurrentLiabilities["Other Current Liabilities: 206xxx"]
+
+    NCLiabilities["Non-Current Liabilities"]
+        NCLiabilities --> LongTermLoan["Long Term Loans: 207xxx"]
+        NCLiabilities --> LeaseLiabilities["Lease Liabilities: 208xxx"]
+        NCLiabilities --> Provisions["Provisions: 209xxx"]
+        NCLiabilities --> OtherNCL["Other Non-Current Liabilities: 210xxx"]
+
+
+    %% For positioning
+    CLiabilities ~~~ SuspenseAccounts

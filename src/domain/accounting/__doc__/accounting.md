@@ -2,13 +2,13 @@
 
 ## Philosophy
 
-Our philosophy is to follow a reporting-first approach to accounting. This means that we will first determine the reporting requirements for each accounting domain and then create a set of ledger accounts that will allow us to generate the required reports. We will also create a set of behaviors that will be built into these ledger accounts and users will not be able to determine the behaviors of accounts.
+Our philosophy is to follow a reporting-first approach to accounting. This means that we will first determine the reporting requirements for each accounting domain and then create a set of ledger accounts that will allow us to generate the required reports. We will also create a set of behaviors that will be built into these ledger accounts. For non-power users, these accounts and behaviors will be bootstrapped while power users will have the ability to create accounts and associate behaviors available to the account class.
 
 ## Reporting Needs
 
 LedgerNova will support the following reporting for all three accounting domains:
 
-### Individuals
+#### Individuals
 
 - Personal Income Statement
 - Expense & Spending Analysis
@@ -23,7 +23,7 @@ LedgerNova will support the following reporting for all three accounting domains
 - Recurring Transactions & Subscription Audit
 - Financial Trends & Custom Analytics
 
-### Sole Traders
+#### Sole Traders
 
 - Statement of Profit or Loss (SoPL)
 - Statement of Financial Position (SoFP)
@@ -42,7 +42,7 @@ LedgerNova will support the following reporting for all three accounting domains
 - Break-even Analysis Report
 - Working Capital & Liquidity Report
 
-### Organizations
+#### Organizations
 
 - Statement of Profit or Loss (SoPL)
 - Statement of Financial Position (SoFP)
@@ -65,154 +65,71 @@ LedgerNova will support the following reporting for all three accounting domains
 - Intercompany Elimination Report
 - Break-even Analysis Report
 
-## Reporting Requirements
+> [!INFO]
+> For the MVP, we will only support the individual accounting domain.
+> Therefore, the following documentation will be scoped to the individual (power and non-power users).
+
+### Reporting Requirements
 
 For us to adequately generate the above reports, we need to ensure that our accounts are properly categorized. We also need to ship with meaningful transaction categories and ledger classes that will help the system with predefined behaviors.
 
-To achieve this, we have modeled our accounts thus:
+To achieve this, we have modeled our Charts of Accounts thus:
+
+## Charts of Accounts
+
+Our Chart of Accounts will follow a 5-digit (or up to 6-digit) hierarchical coding structure: **A-BB-CC...**. Where:
+
+- **A** (1 digit) represents the primary account class (1=Asset, 2=Liability, 3=Equity, 4=Revenue, 5=Expense)
+- **BB** (2 digits) represents the account group and sub-header (e.g. Cash and Cash Equivalents, Retained Earnings, etc.)
+- **CC** (2 digits) represents the control account or sub-ledger
+
+Codes will be allocated through **Sequential Slotting** to ensure natural grouping and extensibility.\
+Power users can set the display code for accounts, but the internal code will always follow the above structure.
+
+### Metadata-Driven Account Behavior
+
+Instead of hardcoding account behavior into the ledger strings (e.g. using a specific suffix digit for contra or adjunct accounts), LedgerNova uses a **metadata-driven** architecture.
+
+A ledger account's behavior and system constraints are defined dynamically by its properties in the database:
+
+- `behavior_type`: Enum (`BASIS`, `CONTRA`, `ADJUNCT`, `SUSPENSE`, `ELIMINATION`)
+- `target_basis_account_id`: A self-referential foreign key linking an adjustment account directly to its basis account.
+
+This enables a single basis account to have multiple contra accounts (e.g., Accumulated Depreciation AND Impairment Loss) without exhausting specific ledger code slots out-of-order, and allows the reporting engine to adapt seamlessly.
+
+For users who migrate from other systems to ours, we will preserve their ledger codes in the db level (`external_ledger_code`), but internally we will follow our strict nomenclature. Also, we will allow users to choose what code to display on the UI.
 
 > [!INFO]
 > A more contrived version will be displayed for non-accountant users in the individual accounting domain.
 > Nonetheless, under the hood, this will be the complete structure
 
+> [!WARNING]
+> Adjustment accounts (Contra/Adjunct) act as separate control accounts in the hierarchy but are logically linked to their basis counterparts. Sub-ledgers post directly to their logical control accounts naturally.
+
 > [!INFO]
-> LedgerNova manages account code allocation through **Sequential Slotting**.
-> Users trigger account creation; the system assigns the next available code within the appropriate block to ensure structural integrity.
+> We reserve specific blocks for system-controlled categories like Cash, but 'Other' categories are a free-for-all within the ledger block, driven purely by user-defined header accounts."
 
 ### Assets
 
-```@mermaid
-flowchart LR
-    Assets["Assets: 10000 - 19999"]
-
-    CAssets["Current Assets"]
-        Cash["Cash and Equivalents: Code 11000 - 11999"]
-        STInvestments["Short Term Investments: Code 12000 - 12999"]
-        Inventories["Inventories: Code 13000 - 13999"]
-        Receivables["Receivables: Code 14000 - 14999"]
-            subgraph ReceivablesTemplate ["Class Template (System Enforced)"]
-                %% The actual amount on the invoice
-                Standard["14xxx0 : Gross Receivable"]
-
-                %% Extra charges like late interest or penalties
-                Adjunct["14xxx1-8 : Accrued Interest / Penalties"]
-
-                %% The 'Safety Net' for expected losses
-                Contra["14xxx9 : Allowance for Doubtful Debts"]
-            end
-        Prepayments["Prepayments: Code 15000 - 15499"]
-        AccruedIncome["Accrued Income: Code 15500 - 15599"]
-        OtherCurrentAssets["Other Current Assets: Code 16000 - 16999"]
-
-
-    NCAssets["Non Current Assets"]
-        LTInvestments["Long Term Investments: Code 17000 - 17999"]
-        PPE["Property, Plant & Equipment: Code 18000 - 18999"]
-           subgraph PPETemplate ["Class Template (System Enforced)"]
-                %% The historical cost of purchasing the asset
-                Cost["18xxx0 : Cost"]
-
-                %% The cumulative change in value above cost
-                Adjunct["18xxx(1-8) : Revaluation"]
-
-                %% The cumulative change in value below cost
-                Contra["18xxx9 : Accumulated Depreciation"]
-            end
-        IntangibleAssets["Intangible Assets: Code 19000 - 19099"]
-        ROU["Right-of-Use (ROU) Assets: Code 19100 - 19199"]
-        Goodwill["Goodwill: Code 19200 - 19299"]
-        OtherNonCurrentAssets["Other Non Current Assets: Code 19300 - 19399"]
-
-
-
-
-    Assets --> CAssets & NCAssets
-    CAssets --> Cash & STInvestments & Inventories & Receivables & Prepayments & AccruedIncome & OtherCurrentAssets
-    Receivables --> ReceivablesTemplate
-    NCAssets --> LTInvestments & PPE & IntangibleAssets & ROU & Goodwill & OtherNonCurrentAssets
-    PPE --> PPETemplate
-
-```
+![Assets Chart of Accounts](./assets/coa-assets.svg)
+_Figure 1: View the mermaid sourcecode here:&#x20;_[_coa-assets.mermaid_](./assets/coa-assets.mermaid)
 
 ## Liabilities
 
-```@mermaid
-flowchart LR
-    Liabilities["Liabilities: 20000 - 29999"]
+![Liabilities Chart of Accounts](./assets/coa-liabilities.svg)
+_Figure 2: View the mermaid sourcecode here:&#x20;_[_coa-liabilities.mermaid_](./assets/coa-liabilities.mermaid)
 
-    CLiabilities["Current Liabilities"]
-        TradePayables["Trade Payables: Code 21000 - 21999"]
-            subgraph PayablesTemplate ["Payables Template (System Enforced)"]
-                PStandard["21xxx0 : Gross Payable"]
-                PAdjunct["21xxx1-8 : Penalties / Late Fees"]
-                PContra["21xxx9 : Purchase Discounts"]
-            end
+### Equities
 
-        StatutoryPayables["Statutory Payables: Code 22000 - 22999"]
-            subgraph StatutoryTemplate ["Statutory Template (System Enforced)"]
-                %% Tax assessments
-                SStandard["22xxx0 : Original Assessment"]
-                %% Penalties and interest on tax assessments
-                SAdjunct["22xxx1-8 : Statutory Penalties / Interest"]
-                %% Tax waivers and conditional credits
-                SContra["22xxx9 : Tax Waivers / Conditional Credits"]
-            end
+![Equities Chart of Accounts](./assets/coa-equities.svg)
+_Figure 3: View the mermaid sourcecode here:&#x20;_[_coa-equities.mermaid_](./assets/coa-equities.mermaid)
 
-        Accruals["Accrued Expenses: Code 23000 - 23499"]
-        DeferredRevenues["Deferred Revenues: Code 23500 - 23999"]
+### Revenues
 
-        STDebts["Short Term Debts/Overdrafts: Code 24000 - 24999"]
-            subgraph STDebtTemplate ["ST Debt Template (System Enforced)"]
-                %% Initial
-                Principal["24xxx0 : ST Principal"]
-                %% Accrued interest and charges
-                Adjunct["24xxx1-8 : Accrued Interest / Bank Fees"]
-                %% Cost of loan, waivers and promotional credits
-                Contra["24xxx9 : Fee Waivers / Promotional Credits"]
-            end
+![Revenues Chart of Accounts](./assets/coa-revenues.svg)
+_Figure 4: View the mermaid sourcecode here:&#x20;_[_coa-revenues.mermaid_](./assets/coa-revenues.mermaid)
 
-    NCLiabilities["Non-Current Liabilities"]
-        LTLoans["Long Term Loans: Code 25000 - 25999"]
-            subgraph LoanTemplate ["Loan Template (System Enforced)"]
-                %% Initial
-                Principal["25xxx0 : Loan Principal"]
-                %% Accrued interest and charges
-                LAdjunct["25xxx1-8 : Accrued Interest"]
-                %% Cost of loan, waivers and promotional credits
-                LContra["25xxx9 : Unamortized Loan Fees"]
-            end
+### Expenses
 
-        LeaseLiabilities["Lease Liabilities: Code 26000 - 26999"]
-            subgraph LeaseTemplate ["Lease Template"]
-                %% Initial
-                LePrincipal["26xxx0 : Lease Principal (NPV)"]
-                %% Accrued interest and charges
-                LeAdjunct["26xxx1-8 : Interest Expense / Unwinding"]
-                %% Cost of loan, waivers and promotional credits
-                LeContra["26xxx9 : Lease Incentives / Reductions"]
-            end
-        Provisions["Provisions: Code 27000 - 27999"]
-            subgraph ProvisionTemplate ["Provision Template"]
-                %% Initial
-                PrInitial["27xxx0 : Initial Estimate"]
-                %% Adjustments / Accretion
-                PrAdjunct["27xxx1-8 : Adjustments / Accretion"]
-                %% Reversals / Reductions
-                PrContra["27xxx9 : Reversals / Reductions"]
-            end
-        OtherNCL["Other Non-Current Liabilities: Code 28000 - 29999"]
-
-    Liabilities --> CLiabilities & NCLiabilities
-    CLiabilities --> TradePayables & StatutoryPayables & Accruals & DeferredRevenues & STDebts
-    NCLiabilities --> LTLoans & LeaseLiabilities & Provisions & OtherNCL
-
-    %% Template Connections
-    TradePayables --> PayablesTemplate
-    StatutoryPayables --> StatutoryTemplate
-    STDebts --> STDebtTemplate
-    LTLoans --> LoanTemplate
-
-
-    LeaseLiabilities --> LeaseTemplate
-    Provisions --> ProvisionTemplate
-```
+![Expenses Chart of Accounts](./assets/coa-expenses.svg)
+_Figure 5: View the mermaid sourcecode here:&#x20;_[_coa-expenses.mermaid_](./assets/coa-expenses.mermaid)
