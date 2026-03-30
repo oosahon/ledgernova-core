@@ -11,7 +11,7 @@
  * If you need to add a new category or currency, carefully review
  * the migration guidelines first.
  */
-import { EAccountingDomain } from '../../../domain/accounting/types/accounting.types';
+import { EAccountingEntityType } from '../../../domain/accounting/types/accounting.types';
 import {
   ECategoryStatus,
   ECategoryType,
@@ -22,7 +22,7 @@ import { SYSTEM_PERSONAL_TAX_KEYS } from '../../../domain/tax/policies/personal-
 import taxKeyValue from '../../../domain/tax/value-objects/tax-keys.vo';
 
 interface IIndividualCategory extends ICategory {
-  accountingDomain: 'individual';
+  accountingEntityType: 'individual';
   status: 'active';
   createdBy: null;
   deletedAt: null;
@@ -43,7 +43,7 @@ function createCategory(
     description,
     type,
     taxKey,
-    accountingDomain: EAccountingDomain.Individual,
+    accountingEntityType: EAccountingEntityType.Individual,
     status: ECategoryStatus.Active,
     parentId: null,
     createdBy: null,

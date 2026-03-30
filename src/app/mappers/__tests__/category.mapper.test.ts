@@ -1,6 +1,6 @@
 import categoryMapper from '../category.mapper';
 import { ICategory } from '../../../domain/category/types/category.types';
-import { EAccountingDomain } from '../../../domain/accounting/types/accounting.types';
+import { EAccountingEntityType } from '../../../domain/accounting/types/accounting.types';
 import { ETransactionType } from '../../../domain/transaction/types/transaction.types';
 
 describe('Category Mapper', () => {
@@ -27,7 +27,7 @@ describe('Category Mapper', () => {
         parentId: 'parent-id',
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Individual,
+        accountingEntityType: EAccountingEntityType.Individual,
         ...commonDomainDates,
       };
 
@@ -40,7 +40,7 @@ describe('Category Mapper', () => {
         parentId: 'parent-id',
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Individual,
+        accountingEntityType: EAccountingEntityType.Individual,
         ...commonRepoDates,
       };
 
@@ -59,7 +59,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'sxa',
         createdBy: null,
-        accountingDomain: EAccountingDomain.Individual,
+        accountingEntityType: EAccountingEntityType.Individual,
         ...commonDomainDates,
       };
 
@@ -88,7 +88,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Individual,
+        accountingEntityType: EAccountingEntityType.Individual,
         ...commonRepoDates,
       };
 
@@ -101,7 +101,7 @@ describe('Category Mapper', () => {
         parentId: null,
         taxKey: 'tax-key',
         status: 'active' as const,
-        accountingDomain: EAccountingDomain.Individual,
+        accountingEntityType: EAccountingEntityType.Individual,
         ...commonDomainDates,
       };
 

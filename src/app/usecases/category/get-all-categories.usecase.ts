@@ -1,5 +1,5 @@
 import accountingRules from '../../../domain/accounting/rules';
-import { EAccountingDomain } from '../../../domain/accounting/types/accounting.types';
+import { EAccountingEntityType } from '../../../domain/accounting/types/accounting.types';
 import ICategoryRepo from '../../../domain/category/repos/category.repo';
 import { ECategoryType } from '../../../domain/category/types/category.types';
 import { UJournalDirection } from '../../../domain/journal-entry/types/journal-entry.types';
@@ -28,7 +28,7 @@ export default function getAllCategoriesUseCase(
    * // TODO: pagination
    */
   return async ({ ledgerType, transactionDirection }: IPayload) => {
-    const { user, correlationId, accountingDomain } = requestContext.get();
+    const { user, correlationId, accountingEntityType } = requestContext.get();
 
     const getType = () => {
       if (!ledgerType) {
@@ -46,12 +46,12 @@ export default function getAllCategoriesUseCase(
     const repoParams = { correlationId };
 
     const userId =
-      accountingDomain === EAccountingDomain.Organization
+      accountingEntityType === EAccountingEntityType.Company
         ? undefined
         : user?.id;
 
     const filterParams = {
-      accountingDomain,
+      accountingEntityType,
       types: getType(),
       userId,
     };

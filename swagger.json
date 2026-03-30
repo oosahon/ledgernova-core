@@ -7,7 +7,7 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
-      "UAccountingDomain": {
+      "UaccountingEntityType": {
         "type": "string",
         "enum": ["organization", "sole_trader", "individual"]
       },
@@ -35,8 +35,8 @@
           "name": {
             "type": "string"
           },
-          "accountingDomain": {
-            "$ref": "#/components/schemas/UAccountingDomain"
+          "accountingEntityType": {
+            "$ref": "#/components/schemas/UaccountingEntityType"
           },
           "type": {
             "$ref": "#/components/schemas/UCategoryType"
@@ -75,7 +75,7 @@
         "required": [
           "id",
           "name",
-          "accountingDomain",
+          "accountingEntityType",
           "type",
           "taxKey",
           "status",
@@ -179,7 +179,7 @@
             "name": "x-accounting-domain",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UAccountingDomain"
+              "$ref": "#/components/schemas/UaccountingEntityType"
             }
           },
           {

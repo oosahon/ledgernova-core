@@ -4,7 +4,7 @@ import { ETransactionType } from '../../types/transaction.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import categoryEntity from '../../../category/entities/category.entity';
 import { AppError } from '../../../../shared/value-objects/error';
-import { EAccountingDomain } from '../../../accounting/types/accounting.types';
+import { EAccountingEntityType } from '../../../accounting/types/accounting.types';
 
 describe('Transaction Item Entity', () => {
   const currency = {
@@ -14,7 +14,7 @@ describe('Transaction Item Entity', () => {
     name: 'US Dollar',
   };
   const [baseCategory] = categoryEntity.make({
-    accountingDomain: EAccountingDomain.Individual,
+    accountingEntityType: EAccountingEntityType.Individual,
     name: 'Sales',
     type: ETransactionType.Receipt,
     createdBy: null,

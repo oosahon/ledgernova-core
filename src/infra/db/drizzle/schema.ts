@@ -17,10 +17,10 @@ import { sql } from 'drizzle-orm';
 
 export const audit = pgSchema('audit');
 export const core = pgSchema('core');
-export const accountingDomainInCore = core.enum('accounting_domain', [
+export const accountingEntityTypeInCore = core.enum('accounting_entity_type', [
   'individual',
   'sole_trader',
-  'organization',
+  'company',
 ]);
 export const categoryStatusInCore = core.enum('category_status', [
   'active',
@@ -147,7 +147,9 @@ export const categoriesInCore = core.table(
       .default(sql`uuid_generate_v4()`)
       .notNull(),
     name: varchar({ length: 100 }).notNull(),
-    accountingDomain: accountingDomainInCore('accounting_domain').notNull(),
+    accountingEntityType: accountingEntityTypeInCore(
+      'accounting_entity_type'
+    ).notNull(),
     type: categoryTypeInCore().notNull(),
     taxKey: varchar('tax_key', { length: 250 }).notNull(),
     status: categoryStatusInCore().default('active').notNull(),
@@ -178,12 +180,13 @@ export const categoriesInCore = core.table(
   ]
 );
 
-export const individualDomainAccountsInCore = core.table(
-  'individual_domain_accounts',
+export const accountingEntitiesInCore = core.table(
+  'accounting_entities',
   {
     id: uuid()
       .default(sql`uuid_generate_v4()`)
       .notNull(),
+    type: accountingEntityTypeInCore().notNull(),
     ownerId: uuid('owner_id').notNull(),
     functionalCurrencyCode: varchar('functional_currency_code', {
       length: 3,
@@ -200,12 +203,12 @@ export const individualDomainAccountsInCore = core.table(
     foreignKey({
       columns: [table.ownerId],
       foreignColumns: [usersInCore.id],
-      name: 'individual_domain_accounts_owner_id_fkey',
+      name: 'accounting_entities_owner_id_fkey',
     }),
     foreignKey({
       columns: [table.functionalCurrencyCode],
       foreignColumns: [currenciesInCore.code],
-      name: 'individual_domain_accounts_functional_currency_code_fkey',
+      name: 'accounting_entities_functional_currency_code_fkey',
     }),
   ]
 );

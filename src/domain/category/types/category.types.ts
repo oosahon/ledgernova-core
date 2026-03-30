@@ -1,4 +1,4 @@
-import { UAccountingDomain } from '../../accounting/types/accounting.types';
+import { UAccountingEntityType } from '../../accounting/types/accounting.types';
 
 export const ECategoryStatus = {
   Active: 'active',
@@ -24,7 +24,7 @@ export type UCategoryType = (typeof ECategoryType)[keyof typeof ECategoryType];
 export interface ICategory {
   id: string;
   name: string;
-  accountingDomain: UAccountingDomain;
+  accountingEntityType: UAccountingEntityType;
   type: UCategoryType;
   taxKey: string;
   status: UCategoryStatus;

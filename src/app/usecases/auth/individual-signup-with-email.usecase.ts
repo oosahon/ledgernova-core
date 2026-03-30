@@ -1,5 +1,6 @@
-import accountingDomainEntity from '../../../domain/accounting/entities/accounting-domain';
-import IIndividualDomainRepo from '../../../domain/accounting/repos/individual-domain.repo';
+import accountingEntityTypeEntity from '../../../domain/accounting/entities/accounting-entity.entity';
+import IAccountingEntityRepo from '../../../domain/accounting/repos/accounting-entity.repo';
+import { EAccountingEntityType } from '../../../domain/accounting/types/accounting.types';
 import userEntity from '../../../domain/user/entities/user.entity';
 import IUserRepo from '../../../domain/user/repos/user.repo';
 import emailValue from '../../../domain/user/value-objects/email.vo';
@@ -16,7 +17,7 @@ export default function individualSignupWithEmailUsecase(
   requestContext: IRequestContext,
   userRepo: IUserRepo,
   authService: IAuthService,
-  individualDomainRepo: IIndividualDomainRepo
+  accountingEntityRepo: IAccountingEntityRepo
 ) {
   return async (payload: IIndividualSignupReq) => {
     const { correlationId } = requestContext.get();
@@ -41,9 +42,10 @@ export default function individualSignupWithEmailUsecase(
 
     // TODO: publish events
     const [individualDomain, individualDomainEvents] =
-      accountingDomainEntity.makeIndividual({
+      accountingEntityTypeEntity.makeIndividual({
         owner: user,
         functionalCurrency: NAIRA,
+        type: EAccountingEntityType.Individual,
       });
 
     const password = passwordValue.make(payload.password);
@@ -52,7 +54,10 @@ export default function individualSignupWithEmailUsecase(
 
     await dbService.runInTransaction(async (tx) => {
       await userRepo.save(userWithPassword, { tx, correlationId });
-      await individualDomainRepo.save(individualDomain, { tx, correlationId });
+      await accountingEntityRepo.save(individualDomain, {
+        tx,
+        correlationId,
+      });
     });
   };
 }

@@ -3,33 +3,36 @@ import { TEntityWithEvents } from '../../../shared/types/event.types';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import currencyEntity from '../../currency/entities/currency.entity';
 import userEntity from '../../user/entities/user.entity';
-import accountingDomainEvents from '../events/accounting-domain.events';
-import { IIndividualDomain } from '../types/accounting.types';
+import accountingEntityTypeEvents from '../events/accounting-domain.events';
+import accountingHelpers from '../helpers/accounting.helpers';
+import { IaccountingEntityTypeEntity } from '../types/accounting.types';
 
-function makeIndividualDomain(
-  payload: TCreationOmits<IIndividualDomain>
-): TEntityWithEvents<IIndividualDomain, IIndividualDomain> {
+function makeIndividual(
+  payload: TCreationOmits<IaccountingEntityTypeEntity>
+): TEntityWithEvents<IaccountingEntityTypeEntity, IaccountingEntityTypeEntity> {
   userEntity.validate(payload.owner);
   currencyEntity.validateCode(payload.functionalCurrency.code);
+  accountingHelpers.validateEntityType(payload.type);
 
   const timestamp = new Date();
 
-  const domain: IIndividualDomain = Object.freeze({
+  const domain: IaccountingEntityTypeEntity = Object.freeze({
     id: generateUUID(),
     owner: payload.owner,
+    type: payload.type,
     functionalCurrency: payload.functionalCurrency,
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,
   });
 
-  const event = accountingDomainEvents.individualDomainAccountCreated(domain);
+  const event = accountingEntityTypeEvents.individualCreated(domain);
 
   return [domain, [event]];
 }
 
-const accountingDomainEntity = Object.freeze({
-  makeIndividual: makeIndividualDomain,
+const accountingEntity = Object.freeze({
+  makeIndividual,
 });
 
-export default accountingDomainEntity;
+export default accountingEntity;

@@ -5,7 +5,7 @@ import {
   currenciesInCore,
   currencyExchangeRatesInCore,
   categoriesInCore,
-  individualDomainAccountsInCore,
+  accountingEntitiesInCore,
 } from './schema';
 
 export const userActivitiesInAuditRelations = relations(
@@ -21,7 +21,7 @@ export const userActivitiesInAuditRelations = relations(
 export const usersInCoreRelations = relations(usersInCore, ({ many }) => ({
   userActivitiesInAudits: many(userActivitiesInAudit),
   categoriesInCores: many(categoriesInCore),
-  individualDomainAccountsInCores: many(individualDomainAccountsInCore),
+  accountingEntitiesInCores: many(accountingEntitiesInCore),
 }));
 
 export const currencyExchangeRatesInCoreRelations = relations(
@@ -59,7 +59,7 @@ export const currenciesInCoreRelations = relations(
           'currencyExchangeRatesInCore_targetCurrencyCode_currenciesInCore_code',
       }
     ),
-    individualDomainAccountsInCores: many(individualDomainAccountsInCore),
+    accountingEntitiesInCores: many(accountingEntitiesInCore),
   })
 );
 
@@ -81,15 +81,15 @@ export const categoriesInCoreRelations = relations(
   })
 );
 
-export const individualDomainAccountsInCoreRelations = relations(
-  individualDomainAccountsInCore,
+export const accountingEntitiesInCoreRelations = relations(
+  accountingEntitiesInCore,
   ({ one }) => ({
     usersInCore: one(usersInCore, {
-      fields: [individualDomainAccountsInCore.ownerId],
+      fields: [accountingEntitiesInCore.ownerId],
       references: [usersInCore.id],
     }),
     currenciesInCore: one(currenciesInCore, {
-      fields: [individualDomainAccountsInCore.functionalCurrencyCode],
+      fields: [accountingEntitiesInCore.functionalCurrencyCode],
       references: [currenciesInCore.code],
     }),
   })

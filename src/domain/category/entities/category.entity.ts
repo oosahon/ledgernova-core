@@ -19,12 +19,12 @@ function make(
 
   transactionEntity.validateType(payload.type);
   helpers.validateCreatorAndParentId(payload);
-  accountingHelpers.validateDomain(payload.accountingDomain);
+  accountingHelpers.validateEntityType(payload.accountingEntityType);
 
   const category = Object.freeze({
     id: generateUUID(),
     name: helpers.sanitizeName(payload.name),
-    accountingDomain: payload.accountingDomain,
+    accountingEntityType: payload.accountingEntityType,
     taxKey: taxKeyValue.make(payload.type, payload.createdBy),
     type: payload.type,
     parentId: payload.parentId,

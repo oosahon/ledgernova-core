@@ -17,7 +17,7 @@ import type {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-  UAccountingDomain: {
+  UaccountingEntityType: {
     dataType: 'refAlias',
     type: {
       dataType: 'union',
@@ -64,7 +64,7 @@ const models: TsoaRoute.Models = {
     properties: {
       id: { dataType: 'string', required: true },
       name: { dataType: 'string', required: true },
-      accountingDomain: { ref: 'UAccountingDomain', required: true },
+      accountingEntityType: { ref: 'UaccountingEntityType', required: true },
       type: { ref: 'UCategoryType', required: true },
       taxKey: { dataType: 'string', required: true },
       status: { ref: 'UCategoryStatus', required: true },
@@ -190,7 +190,7 @@ export function RegisterRoutes(app: Router) {
       in: 'header',
       name: 'x-accounting-domain',
       required: true,
-      ref: 'UAccountingDomain',
+      ref: 'UaccountingEntityType',
     },
     ledgerType: { in: 'query', name: 'ledgerType', ref: 'ULedgerType' },
     transactionDirection: {

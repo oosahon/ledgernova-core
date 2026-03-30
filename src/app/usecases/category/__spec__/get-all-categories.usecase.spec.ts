@@ -4,7 +4,7 @@ import MockRequestContext from '../../../contracts/storage/__mocks__/request-con
 import accountingRules from '../../../../domain/accounting/rules';
 import { UJournalDirection } from '../../../../domain/journal-entry/types/journal-entry.types';
 import { ULedgerType } from '../../../../domain/ledger/types/index.types';
-import { EAccountingDomain } from '../../../../domain/accounting/types/accounting.types';
+import { EAccountingEntityType } from '../../../../domain/accounting/types/accounting.types';
 import { ECategoryType } from '../../../../domain/category/types/category.types';
 
 describe('getAllCategoriesUseCase', () => {
@@ -14,12 +14,12 @@ describe('getAllCategoriesUseCase', () => {
 
   it('should get all categories successfully with user ID', async () => {
     const correlationId = 'test-corr-id';
-    const accountingDomain = EAccountingDomain.Individual;
+    const accountingEntityType = EAccountingEntityType.Individual;
     const user = { id: 'user-1' };
 
     MockRequestContext.get.mockReturnValue({
       correlationId,
-      accountingDomain,
+      accountingEntityType,
       user,
     } as any);
 
@@ -50,7 +50,7 @@ describe('getAllCategoriesUseCase', () => {
     expect(MockRequestContext.get).toHaveBeenCalledTimes(1);
     expect(MockCategoryRepo.findAll).toHaveBeenCalledWith(
       {
-        accountingDomain,
+        accountingEntityType,
         types: permittedTypes[transactionDirection],
         userId: user.id,
       },
@@ -61,12 +61,12 @@ describe('getAllCategoriesUseCase', () => {
 
   it('should get all categories successfully without user ID when domain is organization', async () => {
     const correlationId = 'test-corr-id-2';
-    const accountingDomain = EAccountingDomain.Organization;
+    const accountingEntityType = EAccountingEntityType.Company;
     const user = { id: 'user-2' }; // User is present but should be ignored
 
     MockRequestContext.get.mockReturnValue({
       correlationId,
-      accountingDomain,
+      accountingEntityType,
       user,
     } as any);
 
@@ -95,7 +95,7 @@ describe('getAllCategoriesUseCase', () => {
     expect(MockRequestContext.get).toHaveBeenCalledTimes(1);
     expect(MockCategoryRepo.findAll).toHaveBeenCalledWith(
       {
-        accountingDomain,
+        accountingEntityType,
         types: permittedTypes[transactionDirection],
         userId: undefined,
       },
@@ -106,12 +106,12 @@ describe('getAllCategoriesUseCase', () => {
 
   it('should return all ECategoryType values when no ledgerType is provided', async () => {
     const correlationId = 'test-corr-id-3';
-    const accountingDomain = EAccountingDomain.Individual;
+    const accountingEntityType = EAccountingEntityType.Individual;
     const user = { id: 'user-3' };
 
     MockRequestContext.get.mockReturnValue({
       correlationId,
-      accountingDomain,
+      accountingEntityType,
       user,
     } as any);
 
@@ -130,7 +130,7 @@ describe('getAllCategoriesUseCase', () => {
 
     expect(MockCategoryRepo.findAll).toHaveBeenCalledWith(
       {
-        accountingDomain,
+        accountingEntityType,
         types: Object.values(ECategoryType),
         userId: user.id,
       },
@@ -141,11 +141,11 @@ describe('getAllCategoriesUseCase', () => {
 
   it('should get all categories successfully specifying undefined userId if user is not present for individual domain', async () => {
     const correlationId = 'test-corr-id-5';
-    const accountingDomain = EAccountingDomain.Individual;
+    const accountingEntityType = EAccountingEntityType.Individual;
 
     MockRequestContext.get.mockReturnValue({
       correlationId,
-      accountingDomain,
+      accountingEntityType,
       user: undefined,
     } as any);
 
@@ -164,7 +164,7 @@ describe('getAllCategoriesUseCase', () => {
 
     expect(MockCategoryRepo.findAll).toHaveBeenCalledWith(
       {
-        accountingDomain,
+        accountingEntityType,
         types: Object.values(ECategoryType),
         userId: undefined,
       },
@@ -175,12 +175,12 @@ describe('getAllCategoriesUseCase', () => {
 
   it('should return combined debit and credit categories when no transactionDirection is provided', async () => {
     const correlationId = 'test-corr-id-4';
-    const accountingDomain = EAccountingDomain.SoleTrader;
+    const accountingEntityType = EAccountingEntityType.SoleTrader;
     const user = { id: 'user-4' };
 
     MockRequestContext.get.mockReturnValue({
       correlationId,
-      accountingDomain,
+      accountingEntityType,
       user,
     } as any);
 
@@ -207,7 +207,7 @@ describe('getAllCategoriesUseCase', () => {
 
     expect(MockCategoryRepo.findAll).toHaveBeenCalledWith(
       {
-        accountingDomain,
+        accountingEntityType,
         types: expectedTypes,
         userId: user.id,
       },

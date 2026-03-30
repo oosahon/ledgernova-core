@@ -11,7 +11,7 @@ describe('SYSTEM_CATEGORIES_INDIVIDUAL', () => {
 
   it('should have correct base properties for all categories', () => {
     SYSTEM_CATEGORIES_INDIVIDUAL.forEach((category) => {
-      expect(category.accountingDomain).toBe('individual');
+      expect(category.accountingEntityType).toBe('individual');
       expect(category.status).toBe('active');
       expect(category.createdBy).toBeNull();
       expect(category.deletedAt).toBeNull();
