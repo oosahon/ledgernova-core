@@ -12,7 +12,7 @@ import IAuthService from '../../contracts/infra-services/auth-service.contract';
 import IDbService from '../../contracts/infra-services/db.contract';
 import IRequestContext from '../../contracts/storage/request-context.contract';
 
-export default function individualSignupWithEmailUsecase(
+export default function signupWithEmailUsecase(
   dbService: IDbService,
   requestContext: IRequestContext,
   userRepo: IUserRepo,
@@ -59,5 +59,7 @@ export default function individualSignupWithEmailUsecase(
         correlationId,
       });
     });
+
+    // TODO: send email verification
   };
 }

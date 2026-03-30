@@ -7,9 +7,9 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
-      "UaccountingEntityType": {
+      "UAccountingEntityType": {
         "type": "string",
-        "enum": ["organization", "sole_trader", "individual"]
+        "enum": ["individual", "sole_trader", "company"]
       },
       "UCategoryType": {
         "type": "string",
@@ -36,7 +36,7 @@
             "type": "string"
           },
           "accountingEntityType": {
-            "$ref": "#/components/schemas/UaccountingEntityType"
+            "$ref": "#/components/schemas/UAccountingEntityType"
           },
           "type": {
             "$ref": "#/components/schemas/UCategoryType"
@@ -96,6 +96,25 @@
       "UJournalDirection": {
         "type": "string",
         "enum": ["debit", "credit"]
+      },
+      "IIndividualSignupReq": {
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["firstName", "lastName", "email", "password"],
+        "type": "object",
+        "additionalProperties": false
       }
     },
     "securitySchemes": {}
@@ -176,10 +195,10 @@
         "parameters": [
           {
             "in": "header",
-            "name": "x-accounting-domain",
+            "name": "x-accounting-entity-type",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UaccountingEntityType"
+              "$ref": "#/components/schemas/UAccountingEntityType"
             }
           },
           {
@@ -199,6 +218,30 @@
             }
           }
         ]
+      }
+    },
+    "/auth/signup-with-email": {
+      "post": {
+        "operationId": "signupWithEmail",
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "description": "User signup with email and password",
+        "tags": ["Auth"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IIndividualSignupReq"
+              }
+            }
+          }
+        }
       }
     }
   },

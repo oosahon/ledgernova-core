@@ -1,5 +1,7 @@
 import logger from '../observability/logger';
 
-const services = {};
+const services = {
+  auth: {} as any,
+};
 
 export default services;

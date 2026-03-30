@@ -7,6 +7,8 @@ import { fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 import { CurrencyController } from './src/interface/http/controllers/currency.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CategoryController } from './src/interface/http/controllers/category.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { AuthController } from './src/interface/http/controllers/auth.controller';
 import type {
   Request as ExRequest,
   Response as ExResponse,
@@ -17,14 +19,14 @@ import type {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-  UaccountingEntityType: {
+  UAccountingEntityType: {
     dataType: 'refAlias',
     type: {
       dataType: 'union',
       subSchemas: [
-        { dataType: 'enum', enums: ['organization'] },
-        { dataType: 'enum', enums: ['sole_trader'] },
         { dataType: 'enum', enums: ['individual'] },
+        { dataType: 'enum', enums: ['sole_trader'] },
+        { dataType: 'enum', enums: ['company'] },
       ],
       validators: {},
     },
@@ -64,7 +66,7 @@ const models: TsoaRoute.Models = {
     properties: {
       id: { dataType: 'string', required: true },
       name: { dataType: 'string', required: true },
-      accountingEntityType: { ref: 'UaccountingEntityType', required: true },
+      accountingEntityType: { ref: 'UAccountingEntityType', required: true },
       type: { ref: 'UCategoryType', required: true },
       taxKey: { dataType: 'string', required: true },
       status: { ref: 'UCategoryStatus', required: true },
@@ -124,6 +126,17 @@ const models: TsoaRoute.Models = {
       ],
       validators: {},
     },
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  IIndividualSignupReq: {
+    dataType: 'refObject',
+    properties: {
+      firstName: { dataType: 'string', required: true },
+      lastName: { dataType: 'string', required: true },
+      email: { dataType: 'string', required: true },
+      password: { dataType: 'string', required: true },
+    },
+    additionalProperties: false,
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -188,9 +201,9 @@ export function RegisterRoutes(app: Router) {
   > = {
     _: {
       in: 'header',
-      name: 'x-accounting-domain',
+      name: 'x-accounting-entity-type',
       required: true,
-      ref: 'UaccountingEntityType',
+      ref: 'UAccountingEntityType',
     },
     ledgerType: { in: 'query', name: 'ledgerType', ref: 'ULedgerType' },
     transactionDirection: {
@@ -225,6 +238,55 @@ export function RegisterRoutes(app: Router) {
 
         await templateService.apiHandler({
           methodName: 'getCategories',
+          controller,
+          response,
+          next,
+          validatedArgs,
+          successStatus: 200,
+        });
+      } catch (err) {
+        return next(err);
+      }
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsAuthController_signupWithEmail: Record<
+    string,
+    TsoaRoute.ParameterSchema
+  > = {
+    body: {
+      in: 'body',
+      name: 'body',
+      required: true,
+      ref: 'IIndividualSignupReq',
+    },
+  };
+  app.post(
+    '/api/v1/auth/signup-with-email',
+    ...fetchMiddlewares<RequestHandler>(AuthController),
+    ...fetchMiddlewares<RequestHandler>(
+      AuthController.prototype.signupWithEmail
+    ),
+
+    async function AuthController_signupWithEmail(
+      request: ExRequest,
+      response: ExResponse,
+      next: any
+    ) {
+      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsAuthController_signupWithEmail,
+          request,
+          response,
+        });
+
+        const controller = new AuthController();
+
+        await templateService.apiHandler({
+          methodName: 'signupWithEmail',
           controller,
           response,
           next,
