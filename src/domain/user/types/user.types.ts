@@ -6,7 +6,7 @@ export interface IUser {
   lastName: string;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt?: Date;
+  deletedAt: Date | null;
 }
 
 export interface IUserWithPassword extends IUser {

@@ -177,3 +177,35 @@ export const categoriesInCore = core.table(
     }).onDelete('set null'),
   ]
 );
+
+export const individualDomainAccountsInCore = core.table(
+  'individual_domain_accounts',
+  {
+    id: uuid()
+      .default(sql`uuid_generate_v4()`)
+      .notNull(),
+    ownerId: uuid('owner_id').notNull(),
+    functionalCurrencyCode: varchar('functional_currency_code', {
+      length: 3,
+    }).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.ownerId],
+      foreignColumns: [usersInCore.id],
+      name: 'individual_domain_accounts_owner_id_fkey',
+    }),
+    foreignKey({
+      columns: [table.functionalCurrencyCode],
+      foreignColumns: [currenciesInCore.code],
+      name: 'individual_domain_accounts_functional_currency_code_fkey',
+    }),
+  ]
+);

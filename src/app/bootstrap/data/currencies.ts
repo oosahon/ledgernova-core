@@ -13,49 +13,49 @@
  */
 import { ICurrency } from '../../../domain/currency/types/currency.types';
 
-const NAIRA: ICurrency = {
+export const NAIRA: ICurrency = {
   name: 'Naira',
   symbol: '₦',
   code: 'NGN',
   minorUnit: 2n,
 };
 
-const USD: ICurrency = {
+export const USD: ICurrency = {
   name: 'United States Dollar',
   symbol: '$',
   code: 'USD',
   minorUnit: 2n,
 };
 
-const EUR: ICurrency = {
+export const EUR: ICurrency = {
   name: 'Euro',
   symbol: '€',
   code: 'EUR',
   minorUnit: 2n,
 };
 
-const GBP: ICurrency = {
+export const GBP: ICurrency = {
   name: 'British Pound',
   symbol: '£',
   code: 'GBP',
   minorUnit: 2n,
 };
 
-const CAD: ICurrency = {
+export const CAD: ICurrency = {
   name: 'Canadian Dollar',
   symbol: '$',
   code: 'CAD',
   minorUnit: 2n,
 };
 
-const YEN: ICurrency = {
+export const YEN: ICurrency = {
   name: 'Yen',
   symbol: '¥',
   code: 'JPY',
   minorUnit: 0n,
 };
 
-const YUAN: ICurrency = {
+export const YUAN: ICurrency = {
   name: 'Yuan',
   symbol: '¥',
   code: 'CNY',

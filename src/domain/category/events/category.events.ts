@@ -1,4 +1,3 @@
-import { IEvent } from '../../../shared/types/event.types';
 import eventValue from '../../../shared/value-objects/event.vo';
 import { ICategory } from '../types/category.types';
 
