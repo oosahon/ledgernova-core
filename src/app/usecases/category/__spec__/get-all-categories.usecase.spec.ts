@@ -3,7 +3,7 @@ import { MockCategoryRepo } from '../../../../infra/db/repos/__mocks__/category.
 import MockRequestContext from '../../../contracts/storage/__mocks__/request-context.mock';
 import accountingRules from '../../../../domain/accounting/rules';
 import { UJournalDirection } from '../../../../domain/journal-entry/types/journal-entry.types';
-import { ULedgerType } from '../../../../domain/ledger-account/types/index.types';
+import { ULedgerType } from '../../../../domain/ledger/types/index.types';
 import { EAccountingDomain } from '../../../../domain/accounting/types/accounting.types';
 import { ECategoryType } from '../../../../domain/category/types/category.types';
 

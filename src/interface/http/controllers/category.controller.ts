@@ -11,7 +11,7 @@ import {
 } from 'tsoa';
 import categoryUseCase from '../../../app/usecases/category';
 import middlewares from '../middlewares';
-import { ULedgerType } from '../../../domain/ledger-account/types/index.types';
+import { ULedgerType } from '../../../domain/ledger/types/index.types';
 import { UJournalDirection } from '../../../domain/journal-entry/types/journal-entry.types';
 import { UAccountingDomain } from '../../../domain/accounting/types/accounting.types';
 

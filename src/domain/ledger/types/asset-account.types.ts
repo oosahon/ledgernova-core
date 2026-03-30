@@ -1,4 +1,4 @@
-import { ILedgerAccount } from '../../ledger-account/types/index.types';
+import { ILedgerAccount } from '../../ledger/types/index.types';
 import { IGeneralLedgerAccount } from './index.types';
 
 export const EAssetAccountType = {

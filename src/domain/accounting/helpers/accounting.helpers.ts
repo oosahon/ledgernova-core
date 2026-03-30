@@ -1,5 +1,5 @@
 import { AppError } from '../../../shared/value-objects/error';
-import { ULedgerType } from '../../ledger-account/types/index.types';
+import { ULedgerType } from '../../ledger/types/index.types';
 import ledgerCodeRules from '../rules/account-codes.rule';
 import {
   EAccountingDomain,

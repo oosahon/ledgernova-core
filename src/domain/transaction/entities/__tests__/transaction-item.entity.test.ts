@@ -1,5 +1,5 @@
 import transactionItemEntity from '../transaction-item.entity';
-import { ELedgerType } from '../../../ledger-account/types/index.types';
+import { ELedgerType } from '../../../ledger/types/index.types';
 import { ETransactionType } from '../../types/transaction.types';
 import moneyValue from '../../../../shared/value-objects/money.vo';
 import categoryEntity from '../../../category/entities/category.entity';

@@ -1,8 +1,5 @@
 import { AppError } from '../../../../shared/value-objects/error';
-import {
-  ELedgerType,
-  ULedgerType,
-} from '../../../ledger-account/types/index.types';
+import { ELedgerType, ULedgerType } from '../../../ledger/types/index.types';
 import {
   EAccountingDomain,
   UAccountingDomain,

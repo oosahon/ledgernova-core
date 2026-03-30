@@ -12,7 +12,7 @@ import { ELiabilityAccountType } from '../../types/liability-account.types';
 import ledgerAccountEntity from '../ledger-account.entity';
 import stringUtils from '../../../../shared/utils/string';
 
-describe('ledger-account.entity', () => {
+describe('ledger.entity', () => {
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2026-03-14T10:00:00.000Z'));
   });

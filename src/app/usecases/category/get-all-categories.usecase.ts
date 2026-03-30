@@ -3,7 +3,7 @@ import { EAccountingDomain } from '../../../domain/accounting/types/accounting.t
 import ICategoryRepo from '../../../domain/category/repos/category.repo';
 import { ECategoryType } from '../../../domain/category/types/category.types';
 import { UJournalDirection } from '../../../domain/journal-entry/types/journal-entry.types';
-import { ULedgerType } from '../../../domain/ledger-account/types/index.types';
+import { ULedgerType } from '../../../domain/ledger/types/index.types';
 import IRequestContext from '../../contracts/storage/request-context.contract';
 
 interface IPayload {
