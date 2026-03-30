@@ -32,7 +32,7 @@ This repo contains the core accounting module of LedgerNova. It encompasses the 
 - Docker (for local PostgreSQL and Redis databases)
 - Node.js (>=20.18.1 as specified in `package.json`)
 - npm
-- AWS account (or LocalStack) for S3 immutable blob storage
+- AWS account for S3 storage
 - API credentials for 3rd party integrations (Paystack, Mono, ZeptoMail) managed securely via Doppler
 
 ## Installation
@@ -41,10 +41,13 @@ This repo contains the core accounting module of LedgerNova. It encompasses the 
 - Run `npm install`
 - Copy the environment variables from Doppler (dev) and save them in a `.env` file in the root directory. [Env URL](https://dashboard.doppler.com/workplace/b0fb8d6179aa66108eac/projects/purple-ledger-be/configs/dev)
 
-## Running the core app
+### Setting up the PostgreSQL database
 
-- Ensure Docker is running in the background.
-- Setup databases (e.g., `npm run start:postgres` and `npm run start:redis`).
+- Clone the [postgres schema repo](https://github.com/oosahon/ledgernova-db-schema)
+- Follow the instructions in the repo to set up the database.
+
+### Running the core app
+
 - Run `npm run dev`
 - The app should now be running on `http://localhost:${PORT}`
 

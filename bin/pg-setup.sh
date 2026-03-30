@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ENV_FILE=".env"
-POSTGRES_VOLUME="purple_ledger_pg_data"
-
-if [ "${NODE_ENV:-}" = "test" ]; then
-  ENV_FILE=".env.test"
-  POSTGRES_VOLUME="purple_ledger_pg_data_test"
+if [ "${NODE_ENV:-}" != "test" ]; then
+  echo "Skipping pg-setup: NODE_ENV is not 'test' (current: ${NODE_ENV:-})"
+  exit 0
 fi
+
+ENV_FILE=".env.test"
+POSTGRES_VOLUME="ledgernova_pg_data_test"
 
 if [ ! -f "$ENV_FILE" ]; then
   echo "$ENV_FILE file not found"
