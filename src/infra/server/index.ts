@@ -30,6 +30,8 @@ function setupServer(bootstrap?: () => Promise<void>) {
 
   app.use(...swagger());
 
+  app.use(middlewares.errorHandler);
+
   app.listen(PORT, async () => {
     await bootstrap?.();
     logger.info(`Server listening on port ${PORT}`);

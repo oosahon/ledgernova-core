@@ -13,10 +13,7 @@ import {
   UCategoryType,
 } from '../../category/types/category.types';
 import { UJournalDirection } from '../../journal-entry/types/journal-entry.types';
-import {
-  ELedgerType,
-  ULedgerType,
-} from '../../ledger-account/types/index.types';
+import { ELedgerType, ULedgerType } from '../../ledger/types/index.types';
 
 function assetCategories(): Record<UJournalDirection, UCategoryType[]> {
   const debit = [

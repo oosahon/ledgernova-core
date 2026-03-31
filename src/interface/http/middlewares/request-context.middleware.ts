@@ -2,8 +2,8 @@ import { RequestHandler } from 'express';
 import IRequestContext from '../../../app/contracts/storage/request-context.contract';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import {
-  EAccountingDomain,
-  UAccountingDomain,
+  EAccountingEntityType,
+  UAccountingEntityType,
 } from '../../../domain/accounting/types/accounting.types';
 import { ErrorForbidden } from '../../../shared/value-objects/error';
 import accountingHelpers from '../../../domain/accounting/helpers/accounting.helpers';
@@ -20,8 +20,8 @@ export default function requestContextMiddleware(
   return (req, res, next) => {
     const correlationId = getHttpHeaderValue('x-correlation-id', req.headers);
     const idempotencyKey = getHttpHeaderValue('x-idempotency-key', req.headers);
-    const accountingDomain = getHttpHeaderValue(
-      'x-accounting-domain',
+    const accountingEntityType = getHttpHeaderValue(
+      'x-accounting-entity-type',
       req.headers
     );
 
@@ -32,7 +32,7 @@ export default function requestContextMiddleware(
         user,
         correlationId: correlationId || generateUUID(),
         idempotencyKey: idempotencyKey || '',
-        accountingDomain: accountingDomain as UAccountingDomain,
+        accountingEntityType: accountingEntityType as UAccountingEntityType,
       },
       next
     );

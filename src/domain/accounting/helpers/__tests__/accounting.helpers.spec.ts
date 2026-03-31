@@ -1,51 +1,54 @@
 import { AppError } from '../../../../shared/value-objects/error';
+import { ELedgerType, ULedgerType } from '../../../ledger/types/index.types';
 import {
-  ELedgerType,
-  ULedgerType,
-} from '../../../ledger-account/types/index.types';
-import {
-  EAccountingDomain,
-  UAccountingDomain,
+  EAccountingEntityType,
+  UAccountingEntityType,
 } from '../../types/accounting.types';
 import accountingHelpers from '../accounting.helpers';
 
 describe('Accounting Helpers', () => {
-  describe('isValidDomain()', () => {
+  describe('isValidEntityType()', () => {
     it('should return true for valid accounting domains', () => {
       expect(
-        accountingHelpers.isValidDomain(EAccountingDomain.Organization)
+        accountingHelpers.isValidEntityType(EAccountingEntityType.Company)
       ).toBe(true);
       expect(
-        accountingHelpers.isValidDomain(EAccountingDomain.SoleTrader)
+        accountingHelpers.isValidEntityType(EAccountingEntityType.SoleTrader)
       ).toBe(true);
       expect(
-        accountingHelpers.isValidDomain(EAccountingDomain.Individual)
+        accountingHelpers.isValidEntityType(EAccountingEntityType.Individual)
       ).toBe(true);
     });
 
     it('should return false for invalid accounting domains', () => {
       expect(
-        accountingHelpers.isValidDomain('invalid_domain' as UAccountingDomain)
+        accountingHelpers.isValidEntityType(
+          'invalid_domain' as UAccountingEntityType
+        )
       ).toBe(false);
-      expect(accountingHelpers.isValidDomain('' as UAccountingDomain)).toBe(
-        false
-      );
+      expect(
+        accountingHelpers.isValidEntityType('' as UAccountingEntityType)
+      ).toBe(false);
     });
   });
 
-  describe('validateDomain()', () => {
+  describe('validateEntityType()', () => {
     it('should not throw an error for valid domains', () => {
       expect(() =>
-        accountingHelpers.validateDomain(EAccountingDomain.Organization)
+        accountingHelpers.validateEntityType(EAccountingEntityType.Company)
       ).not.toThrow();
     });
 
     it('should throw an AppError for invalid domains', () => {
       expect(() =>
-        accountingHelpers.validateDomain('invalid_domain' as UAccountingDomain)
+        accountingHelpers.validateEntityType(
+          'invalid_domain' as UAccountingEntityType
+        )
       ).toThrow(AppError);
       expect(() =>
-        accountingHelpers.validateDomain('invalid_domain' as UAccountingDomain)
+        accountingHelpers.validateEntityType(
+          'invalid_domain' as UAccountingEntityType
+        )
       ).toThrow('Invalid accounting domain');
     });
   });

@@ -76,7 +76,9 @@ describe('Email Value Object', () => {
 
     it('should throw AppError if invalid', () => {
       expect(() => email.make('invalid-email')).toThrow(AppError);
-      expect(() => email.make('invalid-email')).toThrow('error.email.invalid');
+      expect(() => email.make('invalid-email')).toThrow(
+        'Invalid email address'
+      );
     });
 
     it('should throw AppError if not a string', () => {

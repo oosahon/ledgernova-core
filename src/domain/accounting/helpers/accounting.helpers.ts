@@ -1,17 +1,17 @@
 import { AppError } from '../../../shared/value-objects/error';
-import { ULedgerType } from '../../ledger-account/types/index.types';
+import { ULedgerType } from '../../ledger/types/index.types';
 import ledgerCodeRules from '../rules/account-codes.rule';
 import {
-  EAccountingDomain,
-  UAccountingDomain,
+  EAccountingEntityType,
+  UAccountingEntityType,
 } from '../types/accounting.types';
 
-function isValidDomain(domain: UAccountingDomain) {
-  return Object.values(EAccountingDomain).includes(domain);
+function isValidEntityType(domain: UAccountingEntityType) {
+  return Object.values(EAccountingEntityType).includes(domain);
 }
 
-function validateDomain(domain: UAccountingDomain) {
-  if (!isValidDomain(domain)) {
+function validateEntityType(domain: UAccountingEntityType) {
+  if (!isValidEntityType(domain)) {
     throw new AppError('Invalid accounting domain', { cause: domain });
   }
 }
@@ -38,8 +38,8 @@ function validateLedgerCode(ledgerType: ULedgerType, ledgerCode: string) {
 }
 
 const accountingHelpers = Object.freeze({
-  isValidDomain,
-  validateDomain,
+  isValidEntityType,
+  validateEntityType,
 
   isValidLedgerCode,
   validateLedgerCode,

@@ -11,9 +11,9 @@ import {
 } from 'tsoa';
 import categoryUseCase from '../../../app/usecases/category';
 import middlewares from '../middlewares';
-import { ULedgerType } from '../../../domain/ledger-account/types/index.types';
+import { ULedgerType } from '../../../domain/ledger/types/index.types';
 import { UJournalDirection } from '../../../domain/journal-entry/types/journal-entry.types';
-import { UAccountingDomain } from '../../../domain/accounting/types/accounting.types';
+import { UAccountingEntityType } from '../../../domain/accounting/types/accounting.types';
 
 @Route('categories')
 @Tags('Category')
@@ -26,7 +26,7 @@ export class CategoryController extends Controller {
   @SuccessResponse('200')
   @Middlewares(middlewares.isOptionalAuthenticatedUser)
   public async getCategories(
-    @Header('x-accounting-domain') _: UAccountingDomain,
+    @Header('x-accounting-entity-type') _: UAccountingEntityType,
 
     @Query() ledgerType?: ULedgerType,
     @Query() transactionDirection?: UJournalDirection

@@ -1,5 +1,5 @@
 import { IMoney } from '../../../shared/types/money.types';
-import { ULedgerType } from '../../ledger-account/types/index.types';
+import { ULedgerType } from '../../ledger/types/index.types';
 
 export const EJournalDirection = {
   Debit: 'debit',

@@ -7,9 +7,9 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
-      "UAccountingDomain": {
+      "UAccountingEntityType": {
         "type": "string",
-        "enum": ["organization", "sole_trader", "individual"]
+        "enum": ["individual", "sole_trader", "company"]
       },
       "UCategoryType": {
         "type": "string",
@@ -35,8 +35,8 @@
           "name": {
             "type": "string"
           },
-          "accountingDomain": {
-            "$ref": "#/components/schemas/UAccountingDomain"
+          "accountingEntityType": {
+            "$ref": "#/components/schemas/UAccountingEntityType"
           },
           "type": {
             "$ref": "#/components/schemas/UCategoryType"
@@ -75,7 +75,7 @@
         "required": [
           "id",
           "name",
-          "accountingDomain",
+          "accountingEntityType",
           "type",
           "taxKey",
           "status",
@@ -96,6 +96,55 @@
       "UJournalDirection": {
         "type": "string",
         "enum": ["debit", "credit"]
+      },
+      "IApiValidationError": {
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["field", "message"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "IApiError": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "validationErrors": {
+            "items": {
+              "$ref": "#/components/schemas/IApiValidationError"
+            },
+            "type": "array"
+          },
+          "cause": {}
+        },
+        "required": ["message"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "IIndividualSignupReq": {
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": ["firstName", "lastName", "email", "password"],
+        "type": "object",
+        "additionalProperties": false
       }
     },
     "securitySchemes": {}
@@ -176,10 +225,10 @@
         "parameters": [
           {
             "in": "header",
-            "name": "x-accounting-domain",
+            "name": "x-accounting-entity-type",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/UAccountingDomain"
+              "$ref": "#/components/schemas/UAccountingEntityType"
             }
           },
           {
@@ -199,6 +248,80 @@
             }
           }
         ]
+      }
+    },
+    "/auth/signup-with-email": {
+      "post": {
+        "operationId": "signupWithEmail",
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          }
+        },
+        "description": "User signup with email and password",
+        "tags": ["Auth"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IIndividualSignupReq"
+              }
+            }
+          }
+        }
       }
     }
   },

@@ -44,7 +44,7 @@ const categoryRepo: ICategoryRepo = {
 
   findAll: async (params, options) => {
     const where: SQL<unknown>[] = [
-      eq(categories.accountingDomain, params.accountingDomain),
+      eq(categories.accountingEntityType, params.accountingEntityType),
 
       eq(categories.status, ECategoryStatus.Active),
       isNull(categories.deletedAt),

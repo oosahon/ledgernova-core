@@ -2,27 +2,24 @@ import { AppError } from '../../../shared/value-objects/error';
 import {
   EAssetAccountSubType,
   EAssetAccountType,
-} from '../../ledger-account/types/asset-account.types';
+} from '../../ledger/types/asset-account.types';
 import {
   EEquityAccountSubType,
   EEquityAccountType,
-} from '../../ledger-account/types/equity-account.types';
+} from '../../ledger/types/equity-account.types';
 import {
   EExpenseAccountSubType,
   EExpenseAccountType,
-} from '../../ledger-account/types/expense-account.types';
-import {
-  ELedgerType,
-  ULedgerType,
-} from '../../ledger-account/types/index.types';
+} from '../../ledger/types/expense-account.types';
+import { ELedgerType, ULedgerType } from '../../ledger/types/index.types';
 import {
   ELiabilityAccountSubType,
   ELiabilityAccountType,
-} from '../../ledger-account/types/liability-account.types';
+} from '../../ledger/types/liability-account.types';
 import {
   ERevenueAccountSubType,
   ERevenueAccountType,
-} from '../../ledger-account/types/revenue-account.types';
+} from '../../ledger/types/revenue-account.types';
 
 // ================ LEVEL 0 =================
 const LEDGER_CODES = {

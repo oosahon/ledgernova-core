@@ -1,6 +1,6 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import generateUUID from '../../../shared/utils/uuid-generator';
-import ledgerAccountEntity from '../../ledger-account/entities/ledger-account.entity';
+import ledgerAccountEntity from '../../ledger/entities/ledger-account.entity';
 import { IJournalEntry, UJournalDirection } from '../types/journal-entry.types';
 import helpers from './helpers/journal-entry.helpers';
 import moneyValue from '../../../shared/value-objects/money.vo';
