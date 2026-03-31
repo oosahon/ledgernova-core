@@ -42,7 +42,7 @@ export default function signupWithEmailUsecase(
 
     // TODO: publish events
     const [individualDomain, individualDomainEvents] =
-      accountingEntityTypeEntity.makeIndividual({
+      accountingEntityTypeEntity.make({
         owner: user,
         functionalCurrency: NAIRA,
         type: EAccountingEntityType.Individual,

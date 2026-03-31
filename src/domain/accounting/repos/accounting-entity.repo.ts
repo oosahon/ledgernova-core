@@ -1,9 +1,6 @@
 import IRepoOptions from '../../../shared/types/repo-options.types';
-import { IaccountingEntityTypeEntity } from '../types/accounting.types';
+import { IAccountingEntity } from '../types/accounting.types';
 
 export default interface IAccountingEntityRepo {
-  save(
-    domain: IaccountingEntityTypeEntity,
-    options: IRepoOptions
-  ): Promise<void>;
+  save(domain: IAccountingEntity, options: IRepoOptions): Promise<void>;
 }

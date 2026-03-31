@@ -10,7 +10,7 @@ export const EAccountingEntityType = {
 export type UAccountingEntityType =
   (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
 
-export interface IaccountingEntityTypeEntity {
+export interface IAccountingEntity {
   id: string;
   type: UAccountingEntityType;
   owner: IUser;

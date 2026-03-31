@@ -3,11 +3,11 @@ import accountingEntityTypeEntity from '../accounting-entity.entity';
 import userEntity from '../../../user/entities/user.entity';
 import { ICurrency } from '../../../currency/types/currency.types';
 import { IUser } from '../../../user/types/user.types';
-import { EAccountDomainEvents } from '../../events/accounting-domain.events';
+import { EAccountingEntity } from '../../events/accounting-entity.events';
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
 import {
   EAccountingEntityType,
-  IaccountingEntityTypeEntity,
+  IAccountingEntity,
 } from '../../types/accounting.types';
 
 describe('Accounting Domain Entity', () => {
@@ -39,20 +39,19 @@ describe('Accounting Domain Entity', () => {
     jest.clearAllMocks();
   });
 
-  describe('makeIndividual', () => {
+  describe('make', () => {
     it('should successfully create an individual domain account with valid inputs', () => {
-      const payload: TCreationOmits<IaccountingEntityTypeEntity> = {
+      const payload: TCreationOmits<IAccountingEntity> = {
         owner: validUser,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
       };
 
-      const [domain, events] =
-        accountingEntityTypeEntity.makeIndividual(payload);
+      const [domain, events] = accountingEntityTypeEntity.make(payload);
 
       expect(events).toHaveLength(1);
       expect(events[0].event.type).toBe(
-        EAccountDomainEvents.IndividualDomainAccountCreated
+        EAccountingEntity.AccountingEntityCreated
       );
       expect(events[0].event.data).toEqual(domain);
 
@@ -69,29 +68,25 @@ describe('Accounting Domain Entity', () => {
     it('should throw an AppError if the owner is invalid', () => {
       const invalidUser = { ...validUser, firstName: '' };
 
-      const payload: TCreationOmits<IaccountingEntityTypeEntity> = {
+      const payload: TCreationOmits<IAccountingEntity> = {
         owner: invalidUser,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
       };
 
-      expect(() => accountingEntityTypeEntity.makeIndividual(payload)).toThrow(
-        AppError
-      );
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
     });
 
     it('should throw an AppError if the functional currency code is invalid', () => {
       const invalidCurrency = { ...validCurrency, code: 'INVALID_CODE' };
 
-      const payload: TCreationOmits<IaccountingEntityTypeEntity> = {
+      const payload: TCreationOmits<IAccountingEntity> = {
         owner: validUser,
         type: EAccountingEntityType.Individual,
         functionalCurrency: invalidCurrency,
       };
 
-      expect(() => accountingEntityTypeEntity.makeIndividual(payload)).toThrow(
-        AppError
-      );
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
     });
 
     it('should throw an AppError if currency code is undefined or not a string', () => {
@@ -100,15 +95,13 @@ describe('Accounting Domain Entity', () => {
         code: undefined as unknown as string,
       };
 
-      const payload: TCreationOmits<IaccountingEntityTypeEntity> = {
+      const payload: TCreationOmits<IAccountingEntity> = {
         owner: validUser,
         type: EAccountingEntityType.SoleTrader,
         functionalCurrency: invalidCurrency,
       };
 
-      expect(() => accountingEntityTypeEntity.makeIndividual(payload)).toThrow(
-        AppError
-      );
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
     });
   });
 });
