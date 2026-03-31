@@ -1,11 +1,14 @@
 import signupWithEmailUsecase from '../signup-with-email.usecase';
 import { EAccountingEntityType } from '../../../../domain/accounting/types/accounting.types';
-import { ErrorConflict } from '../../../../shared/value-objects/error';
+import {
+  ErrorConflict,
+  ErrorForbidden,
+} from '../../../../shared/value-objects/error';
 import emailValue from '../../../../domain/user/value-objects/email.vo';
-import MockRequestContext from '../../../contracts/storage/__mocks__/request-context.mock';
+import mockRequestContext from '../../../contracts/storage/__mocks__/request-context.mock';
 import mockDbService from '../../../../infra/services/__mocks__/db.service.mock';
-import MockUserRepo from '../../../../infra/db/repos/__mocks__/user.repo.impl.mock';
-import MockAccountingEntityRepo from '../../../../infra/db/repos/__mocks__/accounting-entity.repo.impl.mock';
+import mockUserRepo from '../../../../infra/db/repos/__mocks__/user.repo.impl.mock';
+import mockAccountingEntityRepo from '../../../../infra/db/repos/__mocks__/accounting-entity.repo.impl.mock';
 import mockAuthService from '../../../../infra/services/__mocks__/auth.service.mock';
 import IRequestContextData from '../../../../shared/types/request-context.types';
 import { IUser } from '../../../../domain/user/types/user.types';
@@ -18,7 +21,7 @@ describe('signupWithEmailUsecase', () => {
 
   it('should successfully sign up a new user and create an individual accounting domain', async () => {
     const correlationId = 'test-corr-id';
-    MockRequestContext.get.mockReturnValue({
+    mockRequestContext.get.mockReturnValue({
       correlationId,
     } as unknown as IRequestContextData);
 
@@ -29,29 +32,31 @@ describe('signupWithEmailUsecase', () => {
       password: 'SecurePassword123!',
     };
 
+    mockAuthService.isPermittedEmail.mockReturnValue(true);
+
     const mockTx = { txId: 'tx-1' };
     mockDbService.runInTransaction.mockImplementation(async (cb) => {
       await cb(mockTx as unknown as TDBTransaction);
     });
 
-    MockUserRepo.findByEmail.mockResolvedValue(null);
+    mockUserRepo.findByEmail.mockResolvedValue(null);
     mockAuthService.hashPassword.mockResolvedValue('hashed-password');
 
     const usecase = signupWithEmailUsecase(
       mockDbService,
-      MockRequestContext,
-      MockUserRepo,
+      mockRequestContext,
+      mockUserRepo,
       mockAuthService,
-      MockAccountingEntityRepo
+      mockAccountingEntityRepo
     );
 
     await usecase(payload);
 
-    expect(MockRequestContext.get).toHaveBeenCalledTimes(1);
+    expect(mockRequestContext.get).toHaveBeenCalledTimes(1);
 
     // Check if user was searched by email
     const emailVo = emailValue.make(payload.email);
-    expect(MockUserRepo.findByEmail).toHaveBeenCalledWith(emailVo, {
+    expect(mockUserRepo.findByEmail).toHaveBeenCalledWith(emailVo, {
       correlationId,
     });
 
@@ -59,8 +64,8 @@ describe('signupWithEmailUsecase', () => {
     expect(mockDbService.runInTransaction).toHaveBeenCalledTimes(1);
 
     // Assert that save methods were called correctly within the transaction
-    expect(MockUserRepo.save).toHaveBeenCalledTimes(1);
-    const savedUserArgs = MockUserRepo.save.mock.calls[0];
+    expect(mockUserRepo.save).toHaveBeenCalledTimes(1);
+    const savedUserArgs = mockUserRepo.save.mock.calls[0];
     expect(savedUserArgs[0]).toMatchObject({
       firstName: payload.firstName,
       lastName: payload.lastName,
@@ -70,8 +75,8 @@ describe('signupWithEmailUsecase', () => {
     });
     expect(savedUserArgs[1]).toEqual({ tx: mockTx, correlationId });
 
-    expect(MockAccountingEntityRepo.save).toHaveBeenCalledTimes(1);
-    const savedDomainArgs = MockAccountingEntityRepo.save.mock.calls[0];
+    expect(mockAccountingEntityRepo.save).toHaveBeenCalledTimes(1);
+    const savedDomainArgs = mockAccountingEntityRepo.save.mock.calls[0];
     expect(savedDomainArgs[0]).toMatchObject({
       type: EAccountingEntityType.Individual,
       owner: expect.objectContaining({
@@ -87,7 +92,7 @@ describe('signupWithEmailUsecase', () => {
 
   it('should throw ErrorConflict if user already exists', async () => {
     const correlationId = 'test-corr-id';
-    MockRequestContext.get.mockReturnValue({
+    mockRequestContext.get.mockReturnValue({
       correlationId,
     } as unknown as IRequestContextData);
 
@@ -98,22 +103,55 @@ describe('signupWithEmailUsecase', () => {
       password: 'SecurePassword123!',
     };
 
-    MockUserRepo.findByEmail.mockResolvedValue({
+    mockAuthService.isPermittedEmail.mockReturnValue(true);
+
+    mockUserRepo.findByEmail.mockResolvedValue({
       id: 'existing-user-id',
     } as unknown as IUser);
 
     const usecase = signupWithEmailUsecase(
       mockDbService,
-      MockRequestContext,
-      MockUserRepo,
+      mockRequestContext,
+      mockUserRepo,
       mockAuthService,
-      MockAccountingEntityRepo
+      mockAccountingEntityRepo
     );
 
     await expect(usecase(payload)).rejects.toThrow(ErrorConflict);
     await expect(usecase(payload)).rejects.toThrow('User already exists');
 
-    expect(MockUserRepo.findByEmail).toHaveBeenCalledTimes(2); // Since we called it twice in expect
+    expect(mockUserRepo.findByEmail).toHaveBeenCalledTimes(2); // Since we called it twice in expect
+    expect(mockAuthService.hashPassword).not.toHaveBeenCalled();
+    expect(mockDbService.runInTransaction).not.toHaveBeenCalled();
+  });
+
+  it('should throw ErrorForbidden if email is not permitted', async () => {
+    const correlationId = 'test-corr-id';
+    mockRequestContext.get.mockReturnValue({
+      correlationId,
+    } as unknown as IRequestContextData);
+
+    const payload = {
+      firstName: 'Jane',
+      lastName: 'Doe',
+      email: 'notpermitted@example.com',
+      password: 'SecurePassword123!',
+    };
+
+    mockAuthService.isPermittedEmail.mockReturnValue(false);
+
+    const usecase = signupWithEmailUsecase(
+      mockDbService,
+      mockRequestContext,
+      mockUserRepo,
+      mockAuthService,
+      mockAccountingEntityRepo
+    );
+
+    await expect(usecase(payload)).rejects.toThrow(ErrorForbidden);
+    await expect(usecase(payload)).rejects.toThrow('Email is not permitted');
+
+    expect(mockUserRepo.findByEmail).not.toHaveBeenCalled();
     expect(mockAuthService.hashPassword).not.toHaveBeenCalled();
     expect(mockDbService.runInTransaction).not.toHaveBeenCalled();
   });

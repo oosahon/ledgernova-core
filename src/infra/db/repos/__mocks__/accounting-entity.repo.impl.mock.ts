@@ -1,7 +1,7 @@
 import IAccountingEntityRepo from '../../../../domain/accounting/repos/accounting-entity.repo';
 
-export const MockAccountingEntityRepo: jest.Mocked<IAccountingEntityRepo> = {
+export const mockAccountingEntityRepo: jest.Mocked<IAccountingEntityRepo> = {
   save: jest.fn(),
 };
 
-export default MockAccountingEntityRepo;
+export default mockAccountingEntityRepo;

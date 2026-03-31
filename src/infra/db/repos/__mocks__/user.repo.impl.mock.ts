@@ -1,10 +1,10 @@
 import IUserRepo from '../../../../domain/user/repos/user.repo';
 
-export const MockUserRepo: jest.Mocked<IUserRepo> = {
+export const mockUserRepo: jest.Mocked<IUserRepo> = {
   save: jest.fn(),
   findByEmail: jest.fn(),
   findById: jest.fn(),
   delete: jest.fn(),
 };
 
-export default MockUserRepo;
+export default mockUserRepo;
