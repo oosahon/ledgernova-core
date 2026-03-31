@@ -97,6 +97,36 @@
         "type": "string",
         "enum": ["debit", "credit"]
       },
+      "IApiValidationError": {
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["field", "message"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "IApiError": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "validationErrors": {
+            "items": {
+              "$ref": "#/components/schemas/IApiValidationError"
+            },
+            "type": "array"
+          },
+          "cause": {}
+        },
+        "required": ["message"],
+        "type": "object",
+        "additionalProperties": false
+      },
       "IIndividualSignupReq": {
         "properties": {
           "firstName": {
@@ -224,8 +254,58 @@
       "post": {
         "operationId": "signupWithEmail",
         "responses": {
-          "200": {
+          "201": {
             "description": ""
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IApiError"
+                }
+              }
+            }
           }
         },
         "description": "User signup with email and password",

@@ -1,8 +1,15 @@
 import IAccountingEntityRepo from '../../../domain/accounting/repos/accounting-entity.repo';
+import { accountingEntitiesInCore } from '../drizzle/schema';
+import accountingEntityMapper from '../../../app/mappers/accounting-entity.mapper';
+import getDbQuery from './query';
 
 const accountingEntityRepo: IAccountingEntityRepo = {
   save: async (domain, options) => {
-    // TODO: implement
+    const query = getDbQuery(options);
+
+    await query
+      .insert(accountingEntitiesInCore)
+      .values(accountingEntityMapper.toRepo(domain));
   },
 };
 

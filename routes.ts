@@ -128,6 +128,28 @@ const models: TsoaRoute.Models = {
     },
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  IApiValidationError: {
+    dataType: 'refObject',
+    properties: {
+      field: { dataType: 'string', required: true },
+      message: { dataType: 'string', required: true },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  IApiError: {
+    dataType: 'refObject',
+    properties: {
+      message: { dataType: 'string', required: true },
+      validationErrors: {
+        dataType: 'array',
+        array: { dataType: 'refObject', ref: 'IApiValidationError' },
+      },
+      cause: { dataType: 'any' },
+    },
+    additionalProperties: false,
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   IIndividualSignupReq: {
     dataType: 'refObject',
     properties: {
@@ -291,7 +313,7 @@ export function RegisterRoutes(app: Router) {
           response,
           next,
           validatedArgs,
-          successStatus: 200,
+          successStatus: 201,
         });
       } catch (err) {
         return next(err);

@@ -8,9 +8,10 @@ import {
 import { NODE_ENV } from '../../../infra/config/vars.config';
 import ILogger from '../../../app/contracts/infra-services/logger.contract';
 import IReporter from '../../../app/contracts/infra-services/reporter.contract';
+import { IApiError } from '../../../app/contracts/dto/errors.dto';
 
 function httpErrorHandler(logger: ILogger, reporter: IReporter) {
-  return (req: Request, res: Response, error: any) => {
+  return (req: Request, res: Response<IApiError>, error: any) => {
     delete req?.headers.authorization;
     // @ts-ignore
     delete req?.file?.buffer;
@@ -29,7 +30,9 @@ function httpErrorHandler(logger: ILogger, reporter: IReporter) {
           message: value.message,
         })
       );
-      const { code, ...body } = new ErrorUnprocessableEntity(validationErrors);
+      const { code, name, ...body } = new ErrorUnprocessableEntity(
+        validationErrors
+      );
 
       return res.status(code).json(body);
     }
@@ -38,6 +41,7 @@ function httpErrorHandler(logger: ILogger, reporter: IReporter) {
       return res.status(error.code).json({
         message: error.message,
         validationErrors: error.validationErrors,
+        cause: error.cause,
       });
     }
 
@@ -48,7 +52,10 @@ function httpErrorHandler(logger: ILogger, reporter: IReporter) {
       logger.error('error', serverError);
     }
 
-    return res.status(serverError.code).json({ message: serverError.message });
+    return res.status(serverError.code).json({
+      message: serverError.message,
+      cause: serverError.cause,
+    });
   };
 }
 
