@@ -79,10 +79,7 @@ describe('signupWithEmailUsecase', () => {
     const savedDomainArgs = mockAccountingEntityRepo.save.mock.calls[0];
     expect(savedDomainArgs[0]).toMatchObject({
       type: EAccountingEntityType.Individual,
-      owner: expect.objectContaining({
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-      }),
+      ownerId: expect.any(String),
       functionalCurrency: expect.objectContaining({
         code: 'NGN',
       }),

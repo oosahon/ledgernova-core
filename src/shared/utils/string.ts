@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { AppError } from '../value-objects/error';
+import { TEntityId } from '../types/uuid';
+import { v7 as uuid } from 'uuid';
 
 interface ISanitizeOptions {
   min: number;
@@ -39,11 +41,22 @@ function isNumeric(value: string) {
   return /^[0-9]+$/.test(value);
 }
 
+function toUUD(value: string): TEntityId {
+  validateUUID(value);
+  return value as TEntityId;
+}
+
+function generateUUID(): TEntityId {
+  return uuid() as TEntityId;
+}
+
 const stringUtils = Object.freeze({
   sanitizeAndValidate: sanitizeAndValidateString,
   isUUID,
   isNonEmptyString,
   validateUUID,
+  generateUUID,
+  toUUD,
   isNumeric,
 });
 

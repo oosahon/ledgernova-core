@@ -1,8 +1,4 @@
-import {
-  ELedgerType,
-  ILedgerAccount,
-  ISuspenseLedgerAccount,
-} from './ledger.types';
+import { ELedgerType, ILedgerAccount } from './ledger.types';
 import {
   TAssetLedgerCode,
   TAssetSuspenseLedgerCode,
@@ -19,6 +15,7 @@ import {
   TGoodwillLedgerCode,
 } from './ledger-code.types';
 import { EAdjunctAccountRule, EContraAccountRule } from './ledger.types';
+import { ISuspenseLedgerAccount } from './suspense-account';
 
 export const EAssetSubType = {
   Suspense: 'suspense',

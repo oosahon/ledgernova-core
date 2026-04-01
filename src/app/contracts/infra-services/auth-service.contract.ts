@@ -1,5 +1,7 @@
+import { TEntityId } from '../../../shared/types/uuid';
+
 export interface IAuthTokenPayload {
-  id: string;
+  id: TEntityId;
   email: string;
 }
 

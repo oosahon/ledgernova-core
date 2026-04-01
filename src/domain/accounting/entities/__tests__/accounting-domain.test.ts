@@ -9,6 +9,7 @@ import {
   EAccountingEntityType,
   IAccountingEntity,
 } from '../../types/accounting.types';
+import { TEntityId } from '../../../../shared/types/uuid';
 
 describe('Accounting Domain Entity', () => {
   let validUser: IUser;
@@ -42,7 +43,7 @@ describe('Accounting Domain Entity', () => {
   describe('make', () => {
     it('should successfully create an individual domain account with valid inputs', () => {
       const payload: TCreationOmits<IAccountingEntity> = {
-        owner: validUser,
+        ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
       };
@@ -57,7 +58,7 @@ describe('Accounting Domain Entity', () => {
 
       expect(typeof domain.id).toBe('string');
       expect(domain.id.length).toBeGreaterThan(0);
-      expect(domain.owner).toEqual(validUser);
+      expect(domain.ownerId).toEqual(validUser.id);
       expect(domain.functionalCurrency).toEqual(validCurrency);
       expect(domain.createdAt).toEqual(new Date('2026-03-15T00:00:00.000Z'));
       expect(domain.updatedAt).toEqual(new Date('2026-03-15T00:00:00.000Z'));
@@ -65,11 +66,9 @@ describe('Accounting Domain Entity', () => {
       expect(Object.isFrozen(domain)).toBe(true);
     });
 
-    it('should throw an AppError if the owner is invalid', () => {
-      const invalidUser = { ...validUser, firstName: '' };
-
+    it('should throw an AppError if the ownerId is invalid', () => {
       const payload: TCreationOmits<IAccountingEntity> = {
-        owner: invalidUser,
+        ownerId: 'invalid-uuid' as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
       };
@@ -81,7 +80,7 @@ describe('Accounting Domain Entity', () => {
       const invalidCurrency = { ...validCurrency, code: 'INVALID_CODE' };
 
       const payload: TCreationOmits<IAccountingEntity> = {
-        owner: validUser,
+        ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: invalidCurrency,
       };
@@ -96,7 +95,7 @@ describe('Accounting Domain Entity', () => {
       };
 
       const payload: TCreationOmits<IAccountingEntity> = {
-        owner: validUser,
+        ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.SoleTrader,
         functionalCurrency: invalidCurrency,
       };

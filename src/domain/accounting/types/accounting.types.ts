@@ -1,5 +1,5 @@
+import { TEntityId } from '../../../shared/types/uuid';
 import { ICurrency } from '../../currency/types/currency.types';
-import { IUser } from '../../user/types/user.types';
 
 export const EAccountingEntityType = {
   Individual: 'individual',
@@ -11,9 +11,9 @@ export type UAccountingEntityType =
   (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
 
 export interface IAccountingEntity {
-  id: string;
+  id: TEntityId;
   type: UAccountingEntityType;
-  owner: IUser;
+  ownerId: TEntityId;
   functionalCurrency: ICurrency;
   createdAt: Date;
   updatedAt: Date;

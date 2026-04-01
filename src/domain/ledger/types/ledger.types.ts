@@ -1,6 +1,5 @@
-import { IAccountingEntity } from '../../accounting/types/accounting.types';
+import { TEntityId } from '../../../shared/types/uuid';
 import { ICurrency } from '../../currency/types/currency.types';
-import { IUser } from '../../user/types/user.types';
 
 export const ELedgerType = {
   Asset: 'asset',
@@ -54,32 +53,21 @@ type UAdjunctAccountRule =
  *   This will allow us determine realized gains and losses on FX transactions.
  */
 export interface ILedgerAccount {
-  id: string;
+  id: TEntityId;
   code: string;
-  accountingEntity: string;
+  accountingEntityId: TEntityId;
   type: ULedgerType;
   subType: string;
   behavior: string;
   isControlAccount: boolean;
-  controlAccount: Omit<ILedgerAccount, 'controlAccount'> | null;
+  controlAccountId: TEntityId;
   name: string;
   currency: ICurrency;
   status: ULedgerAccountStatus;
   contraAccountRule: UContraAccountRule;
   adjunctAccountRule: UAdjunctAccountRule;
-  createdBy: string;
+  createdBy: TEntityId;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
-}
-
-export type TSuspenseSubType = 'suspense';
-export type TSuspenseBehavior = 'default';
-
-export interface ISuspenseLedgerAccount extends ILedgerAccount {
-  type: typeof ELedgerType.Asset | typeof ELedgerType.Liability;
-  subType: TSuspenseSubType;
-  behavior: TSuspenseBehavior;
-  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
-  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
 }

@@ -2,6 +2,7 @@ import { InferSelectModel } from 'drizzle-orm';
 import { IUser, IUserWithPassword } from '../../domain/user/types/user.types';
 import { usersInCore } from '../../infra/db/drizzle/schema';
 import { fromCommonRepoDates, toCommonRepoDates } from './date';
+import { TEntityId } from '../../shared/types/uuid';
 
 export interface IUserModel extends InferSelectModel<typeof usersInCore> {}
 
@@ -17,6 +18,7 @@ const userMapper = {
   toDomain({ password, ...user }: IUserModel): IUser {
     return Object.freeze({
       ...user,
+      id: user.id as TEntityId,
       ...fromCommonRepoDates(user),
     });
   },

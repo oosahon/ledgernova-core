@@ -1,9 +1,9 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import { TEntityWithEvents } from '../../../shared/types/event.types';
+import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import { AppError } from '../../../shared/value-objects/error';
 import currencyEntity from '../../currency/entities/currency.entity';
-import userEntity from '../../user/entities/user.entity';
 import accountingEntityTypeEvents from '../events/accounting-entity.events';
 import {
   EAccountingEntityType,
@@ -18,7 +18,7 @@ function validateType(entityType: UAccountingEntityType) {
 }
 
 function validate(entity: TCreationOmits<IAccountingEntity>) {
-  userEntity.validate(entity.owner);
+  stringUtils.validateUUID(entity.ownerId);
   currencyEntity.validateCode(entity.functionalCurrency.code);
   validateType(entity.type);
 }
@@ -32,7 +32,7 @@ function make(
 
   const domain: IAccountingEntity = Object.freeze({
     id: generateUUID(),
-    owner: payload.owner,
+    ownerId: payload.ownerId,
     type: payload.type,
     functionalCurrency: payload.functionalCurrency,
     createdAt: timestamp,
