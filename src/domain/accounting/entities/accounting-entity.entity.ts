@@ -1,16 +1,26 @@
 import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import { TEntityWithEvents } from '../../../shared/types/event.types';
 import generateUUID from '../../../shared/utils/uuid-generator';
+import { AppError } from '../../../shared/value-objects/error';
 import currencyEntity from '../../currency/entities/currency.entity';
 import userEntity from '../../user/entities/user.entity';
 import accountingEntityTypeEvents from '../events/accounting-entity.events';
-import accountingHelpers from '../helpers/accounting.helpers';
-import { IAccountingEntity } from '../types/accounting.types';
+import {
+  EAccountingEntityType,
+  IAccountingEntity,
+  UAccountingEntityType,
+} from '../types/accounting.types';
+
+function validateType(entityType: UAccountingEntityType) {
+  if (!Object.values(EAccountingEntityType).includes(entityType)) {
+    throw new AppError('Invalid accounting entity type', { cause: entityType });
+  }
+}
 
 function validate(entity: TCreationOmits<IAccountingEntity>) {
   userEntity.validate(entity.owner);
   currencyEntity.validateCode(entity.functionalCurrency.code);
-  accountingHelpers.validateEntityType(entity.type);
+  validateType(entity.type);
 }
 
 function make(
@@ -38,6 +48,7 @@ function make(
 const accountingEntity = Object.freeze({
   make,
   validate,
+  validateType,
 });
 
 export default accountingEntity;

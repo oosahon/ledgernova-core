@@ -2,7 +2,7 @@ import { TCreationOmits } from '../../../shared/types/creation-omits.types';
 import { TEntityWithEvents } from '../../../shared/types/event.types';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
-import accountingHelpers from '../../accounting/helpers/accounting.helpers';
+import accountingEntity from '../../accounting/entities/accounting-entity.entity';
 import taxKeyValue from '../../tax/value-objects/tax-keys.vo';
 import transactionEntity from '../../transaction/entities/transaction.entity';
 import categoryEvents from '../events/category.events';
@@ -19,7 +19,7 @@ function make(
 
   transactionEntity.validateType(payload.type);
   helpers.validateCreatorAndParentId(payload);
-  accountingHelpers.validateEntityType(payload.accountingEntityType);
+  accountingEntity.validateType(payload.accountingEntityType);
 
   const category = Object.freeze({
     id: generateUUID(),
