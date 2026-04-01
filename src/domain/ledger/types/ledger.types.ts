@@ -26,7 +26,7 @@ export const EContraAccountRule = {
   NotApplicable: 'not_applicable',
 } as const;
 
-type UContraAccountRule =
+export type UContraAccountRule =
   (typeof EContraAccountRule)[keyof typeof EContraAccountRule];
 
 export const EAdjunctAccountRule = {
@@ -36,7 +36,7 @@ export const EAdjunctAccountRule = {
   NotApplicable: 'not_applicable',
 } as const;
 
-type UAdjunctAccountRule =
+export type UAdjunctAccountRule =
   (typeof EAdjunctAccountRule)[keyof typeof EAdjunctAccountRule];
 
 /**
@@ -60,7 +60,7 @@ export interface ILedgerAccount {
   subType: string;
   behavior: string;
   isControlAccount: boolean;
-  controlAccountId: TEntityId;
+  controlAccountId: TEntityId | null;
   name: string;
   currency: ICurrency;
   status: ULedgerAccountStatus;

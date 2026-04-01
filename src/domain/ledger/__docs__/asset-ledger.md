@@ -4,7 +4,6 @@
 
 - [Introduction](#introduction)
 - [Current Assets](#current-assets)
-  - [Suspense Accounts:](#suspense-accounts)
   - [Cash and Cash Equivalents](#cash-and-cash-equivalents)
   - [Short Term Investments](#short-term-investments)
   - [Receivables](#receivables)
@@ -15,6 +14,7 @@
   - [Long Term Investments](#long-term-investments)
   - [Property, Plant & Equipment (PPE)](#property-plant--equipment-ppe)
   - [Intangible Assets, Right-of-Use (ROU), & Goodwill](#intangible-assets-right-of-use-rou--goodwill)
+  - [Suspense Accounts:](#suspense-accounts)
 - [Application Bootstrap](#application-bootstrap)
   - [Individual](#individual)
 
@@ -35,21 +35,9 @@ The following table shows the behaviors of different asset account classes
 
 ## Current Assets
 
-### Suspense Accounts:
-
-- **Ledger codes**: 100xxx
-- **Description**: accounts that are used to temporarily store transactions that have not yet been assigned to a specific account.
-- **Main reporting hierarchy**: Current Assets (for positive balances) or Current Liabilities (for negative balances)
-
-#### Behaviors
-
-| Sub-Class | Reporting Hierarchy            | Behaviors                                                                                                                                                                         |
-| --------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| \*        | (TBD - Depends on the balance) | <ul><li>Adjunct accounts prohibited</li><li>Contra accounts prohibited</li><li>Must be reconciled and cleared to a zero balance prior to period-end financial reporting</li></ul> |
-
 ### Cash and Cash Equivalents
 
-- **Ledger codes**: 101xxx
+- **Ledger codes**: 100xxx
 - **Description**: accounts that are used to track cash and cash equivalents.
 - **Main reporting hierarchy**: Current Assets / Cash and Cash Equivalents
 
@@ -62,7 +50,7 @@ The following table shows the behaviors of different asset account classes
 
 ### Short Term Investments
 
-- **Ledger codes**: 102xxx
+- **Ledger codes**: 101xxx
 - **Description**: accounts that are used to track short term investments.
 - **Main reporting hierarchy**: Current Assets / Short Term Investments
 
@@ -78,7 +66,7 @@ The following table shows the behaviors of different asset account classes
 
 ### Receivables
 
-- **Ledger codes**: 103xxx
+- **Ledger codes**: 102xxx
 - **Description**: accounts that are used to track receivables.
 - **Main reporting hierarchy**: Current Assets / Receivables
 
@@ -92,7 +80,7 @@ The following table shows the behaviors of different asset account classes
 
 ### Inventories
 
-- **Ledger codes**: 104xxx
+- **Ledger codes**: 103xxx
 
 > [!INFO]
 > Out of scope for MVP (individual domain).\
@@ -100,7 +88,7 @@ The following table shows the behaviors of different asset account classes
 
 ### Accrued Income
 
-- **Ledger codes**: 105xxx
+- **Ledger codes**: 104xxx
 - **Description**: accounts that are used to track revenue that has been earned by providing goods or services, but has not yet been formally billed to the customer (e.g., unbilled project milestones, unbilled subscriptions).
 - **Main reporting hierarchy**: Current Assets / Accrued Income
 
@@ -112,7 +100,7 @@ The following table shows the behaviors of different asset account classes
 
 ### Prepayments
 
-- **Ledger codes**: 106xxx
+- **Ledger codes**: 105xxx
 - **Description**: accounts that are used to track payments made in advance for goods or services to be received in the future (e.g., prepaid software, prepaid insurance).
 - **Main reporting hierarchy**: Current Assets / Prepayments
 
@@ -126,7 +114,7 @@ The following table shows the behaviors of different asset account classes
 
 ### Long Term Investments
 
-- **Ledger codes**: 107xxx
+- **Ledger codes**: 106xxx
 - **Description**: accounts that are used to track investments the entity intends to hold for longer than 12 months (e.g., equity investments in other companies, long-term bonds).
 - **Main reporting hierarchy**: Non-Current Assets / Long Term Investments
 
@@ -140,7 +128,7 @@ The following table shows the behaviors of different asset account classes
 
 ### Property, Plant & Equipment (PPE)
 
-- **Ledger codes**: 108xxx
+- **Ledger codes**: 107xxx
 - **Description**: accounts that track tangible, long-term assets used in business operations with a useful life of more than one year (e.g., buildings, machinery, vehicles, land).
 - **Main reporting hierarchy**: Non-Current Assets / Property, Plant & Equipment
 
@@ -159,11 +147,23 @@ The following table shows the behaviors of different asset account classes
 
 ### Intangible Assets, Right-of-Use (ROU), & Goodwill
 
-- **Ledger codes**: 109xxx, 110xxx, 111xxx
+- **Ledger codes**: 108xxx, 109xxx, 110xxx
 
 > [!INFO]
 > Out of scope for MVP.\
 > These advanced asset classes are purposefully excluded from the initial release to maintain system simplicity for non-power users. The ledger code blocks are permanently reserved for future enterprise compliance features.
+
+## Suspense Accounts:
+
+- **Ledger codes**: 199xxx
+- **Description**: accounts that are used to temporarily store transactions that have not yet been assigned to a specific account.
+- **Main reporting hierarchy**: Current Assets (for positive balances) or Current Liabilities (for negative balances)
+
+#### Behaviors
+
+| Sub-Class | Reporting Hierarchy            | Behaviors                                                                                                                                                                         |
+| --------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| \*        | (TBD - Depends on the balance) | <ul><li>Adjunct accounts prohibited</li><li>Contra accounts prohibited</li><li>Must be reconciled and cleared to a zero balance prior to period-end financial reporting</li></ul> |
 
 ## Application Bootstrap
 
@@ -175,14 +175,14 @@ For an individual the following accounts will be bootstrapped:
 
 #### Current Assets
 
-- Suspense Accounts: `100000` (control account)
-- Cash and Cash Equivalents: `101000` (control account)
-- Short Term Investments: `102000` (control account)
-- TradeReceivables: `103100` (control account)
-- StatutoryReceivables: `103200` (control account)
-- OtherReceivables: `103300` (control account)
+- Cash and Cash Equivalents: `100000` (control account)
+- Short Term Investments: `101000` (control account)
+- TradeReceivables: `102000` (control account)
+- StatutoryReceivables: `103000` (control account)
+- OtherReceivables: `104000` (control account)
 - AccruedIncome: `105000` (control account)
 - Prepayments: `106000` (control account)
+- Suspense Accounts: `199000` (control account)
 
 #### Non Current Assets
 
