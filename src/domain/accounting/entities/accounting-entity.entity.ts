@@ -7,12 +7,16 @@ import accountingEntityTypeEvents from '../events/accounting-entity.events';
 import accountingHelpers from '../helpers/accounting.helpers';
 import { IAccountingEntity } from '../types/accounting.types';
 
+function validate(entity: TCreationOmits<IAccountingEntity>) {
+  userEntity.validate(entity.owner);
+  currencyEntity.validateCode(entity.functionalCurrency.code);
+  accountingHelpers.validateEntityType(entity.type);
+}
+
 function make(
   payload: TCreationOmits<IAccountingEntity>
 ): TEntityWithEvents<IAccountingEntity, IAccountingEntity> {
-  userEntity.validate(payload.owner);
-  currencyEntity.validateCode(payload.functionalCurrency.code);
-  accountingHelpers.validateEntityType(payload.type);
+  validate(payload);
 
   const timestamp = new Date();
 
@@ -33,6 +37,7 @@ function make(
 
 const accountingEntity = Object.freeze({
   make,
+  validate,
 });
 
 export default accountingEntity;

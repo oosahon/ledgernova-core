@@ -35,11 +35,16 @@ function validateUUID(value: string) {
   }
 }
 
+function isNumeric(value: string) {
+  return /^[0-9]+$/.test(value);
+}
+
 const stringUtils = Object.freeze({
   sanitizeAndValidate: sanitizeAndValidateString,
   isUUID,
   isNonEmptyString,
   validateUUID,
+  isNumeric,
 });
 
 export default stringUtils;
