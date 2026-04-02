@@ -60,8 +60,63 @@ function makePettyCashAccount(
   return account;
 }
 
-function validateBankAccountMeta(meta: IBankAccountMeta) {
-  const {
+function makeBankAccountMeta(meta: IBankAccountMeta) {
+  const bankName = stringUtils.sanitizeAndValidate(meta.bankName, {
+    min: 2,
+    max: 100,
+  });
+
+  const accountNumber = stringUtils.sanitizeAndValidate(meta.accountNumber, {
+    min: 6,
+    max: 34,
+  });
+
+  const accountName = stringUtils.sanitizeAndValidate(meta.accountName, {
+    min: 2,
+    max: 100,
+  });
+
+  let sortCode: string | null = null;
+  if (meta.sortCode) {
+    sortCode = stringUtils.sanitizeAndValidate(meta.sortCode, {
+      min: 6,
+      max: 6,
+    });
+  }
+
+  let swiftCode: string | null = null;
+  if (meta.swiftCode) {
+    swiftCode = stringUtils.sanitizeAndValidate(meta.swiftCode, {
+      min: 8,
+      max: 11,
+    });
+  }
+
+  let iban: string | null = null;
+  if (meta.iban) {
+    iban = stringUtils.sanitizeAndValidate(meta.iban, {
+      min: 15,
+      max: 34,
+    });
+  }
+
+  let routingNumber: string | null = null;
+  if (meta.routingNumber) {
+    routingNumber = stringUtils.sanitizeAndValidate(meta.routingNumber, {
+      min: 9,
+      max: 9,
+    });
+  }
+
+  let branchCode: string | null = null;
+  if (meta.branchCode) {
+    branchCode = stringUtils.sanitizeAndValidate(meta.branchCode, {
+      min: 1,
+      max: 10,
+    });
+  }
+
+  return Object.freeze<IBankAccountMeta>({
     bankName,
     accountNumber,
     accountName,
@@ -70,71 +125,6 @@ function validateBankAccountMeta(meta: IBankAccountMeta) {
     iban,
     routingNumber,
     branchCode,
-  } = meta;
-
-  stringUtils.sanitizeAndValidate(bankName, {
-    min: 2,
-    max: 100,
-  });
-
-  stringUtils.sanitizeAndValidate(accountNumber, {
-    min: 6,
-    max: 34,
-  });
-
-  stringUtils.sanitizeAndValidate(accountName, {
-    min: 2,
-    max: 100,
-  });
-
-  if (sortCode) {
-    stringUtils.sanitizeAndValidate(sortCode, {
-      min: 6,
-      max: 6,
-    });
-  }
-
-  if (swiftCode) {
-    stringUtils.sanitizeAndValidate(swiftCode, {
-      min: 8,
-      max: 11,
-    });
-  }
-
-  if (iban) {
-    stringUtils.sanitizeAndValidate(iban, {
-      min: 15,
-      max: 34,
-    });
-  }
-
-  if (routingNumber) {
-    stringUtils.sanitizeAndValidate(routingNumber, {
-      min: 9,
-      max: 9,
-    });
-  }
-
-  if (branchCode) {
-    stringUtils.sanitizeAndValidate(branchCode, {
-      min: 1,
-      max: 10,
-    });
-  }
-}
-
-function makeBankAccountMeta(meta: IBankAccountMeta) {
-  validateBankAccountMeta(meta);
-
-  return Object.freeze<IBankAccountMeta>({
-    bankName: meta.bankName,
-    accountNumber: meta.accountNumber,
-    accountName: meta.accountName,
-    sortCode: meta.sortCode,
-    swiftCode: meta.swiftCode,
-    iban: meta.iban,
-    routingNumber: meta.routingNumber,
-    branchCode: meta.branchCode,
     lastReconciliationDate: null,
   });
 }
@@ -176,7 +166,6 @@ const cashAndCashEquivalentAssetLedgerEntity = Object.freeze({
   makeBankAccountMeta,
   makePettyCashAccount,
   getCode,
-  validateBankAccountMeta,
 });
 
 export default cashAndCashEquivalentAssetLedgerEntity;
