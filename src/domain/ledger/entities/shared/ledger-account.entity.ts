@@ -57,6 +57,32 @@ function validateBehavior(behavior: string) {
   }
 }
 
+function getSubLedgerCode<T extends string>(
+  headerCode: string,
+  predecessorCode: T
+): T {
+  if (!/^[1-5][0-9]{2}$/.test(headerCode)) {
+    throw new AppError('Invalid ledger header code', { cause: headerCode });
+  }
+
+  const code = predecessorCode.substring(3);
+  const isInvalidPredecessorCode =
+    !predecessorCode.startsWith(headerCode) || code.length !== 3;
+  if (isInvalidPredecessorCode) {
+    throw new AppError('Invalid predecessor code', { cause: predecessorCode });
+  }
+
+  if (code === '999') {
+    throw new AppError('Limit reached for ledger code', {
+      cause: predecessorCode,
+    });
+  }
+
+  const nextCode = (Number(code) + 1).toString().padStart(3, '0');
+
+  return `${headerCode}${nextCode}` as T;
+}
+
 function make<T extends ILedgerAccount>(
   payload: TCreationOmits<T>
 ): Readonly<T> {
@@ -92,6 +118,8 @@ function make<T extends ILedgerAccount>(
     status: payload.status,
     contraAccountRule: payload.contraAccountRule,
     adjunctAccountRule: payload.adjunctAccountRule,
+    // Meta validation is delegated to the specific ledger account entity
+    meta: payload.meta,
     createdBy: payload.createdBy,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -108,6 +136,8 @@ const ledgerAccountEntity = Object.freeze({
   validateStatus,
   validateContraRule,
   validateAdjunctRule,
+
+  getSubLedgerCode,
 });
 
 export default ledgerAccountEntity;

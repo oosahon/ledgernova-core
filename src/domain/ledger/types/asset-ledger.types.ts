@@ -15,10 +15,10 @@ import {
   TGoodwillLedgerCode,
 } from './ledger-code.types';
 import { EAdjunctAccountRule, EContraAccountRule } from './ledger.types';
-import { ISuspenseLedgerAccount } from './suspense-account';
+import { ISuspenseLedgerAccount, TSuspenseSubType } from './suspense-account';
+import { TEntityId } from '../../../shared/types/uuid';
 
 export const EAssetSubType = {
-  Suspense: 'suspense',
   CashAndCashEquivalent: 'cash_and_cash_equivalent',
   ShortTermInvestment: 'short_term_investment',
   Receivables: 'receivables',
@@ -32,7 +32,9 @@ export const EAssetSubType = {
   Goodwill: 'goodwill',
 } as const;
 
-export type UAssetSubType = (typeof EAssetSubType)[keyof typeof EAssetSubType];
+export type UAssetSubType =
+  | (typeof EAssetSubType)[keyof typeof EAssetSubType]
+  | TSuspenseSubType;
 
 export interface IAssetLedgerAccount extends ILedgerAccount {
   code: TAssetLedgerCode;
@@ -49,7 +51,7 @@ export interface IAssetLedgerAccount extends ILedgerAccount {
 export interface IAssetSuspenseAccount extends ISuspenseLedgerAccount {
   code: TAssetSuspenseLedgerCode;
   type: typeof ELedgerType.Asset;
-  subType: typeof EAssetSubType.Suspense;
+  subType: TSuspenseSubType;
   behavior: typeof EAssetAccountBehavior.Default;
 }
 
@@ -79,7 +81,7 @@ export interface ICashAndCashEquivalentAccount extends IAssetLedgerAccount {
   adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctPermitted;
 }
 
-interface IBankAccountMeta {
+export interface IBankAccountMeta {
   bankName: string;
   accountNumber: string;
   accountName: string;
@@ -92,16 +94,18 @@ interface IBankAccountMeta {
 }
 
 export interface IBankAccount extends ICashAndCashEquivalentAccount {
+  controlAccountId: TEntityId;
   behavior: typeof ECashBehavior.Bank;
   meta: IBankAccountMeta;
 }
 
-interface IPettyCashMeta {
+export interface IPettyCashAccountMeta {
   lastReconciliationDate: Date | null;
 }
-export interface IPettyCash extends ICashAndCashEquivalentAccount {
+export interface IPettyCashAccount extends ICashAndCashEquivalentAccount {
+  controlAccountId: TEntityId;
   behavior: typeof ECashBehavior.PettyCash;
-  meta: IPettyCashMeta;
+  meta: IPettyCashAccountMeta;
 }
 
 /**
@@ -134,7 +138,7 @@ interface IStockAndETFsMeta {
   market: string;
   lastValuationDate: Date | null;
 }
-export interface IStockAndETFs extends IShortTermInvestmentAccount {
+export interface IStockAndETFsAccount extends IShortTermInvestmentAccount {
   behavior: typeof EShortTermInvestmentBehavior.StockAndETFs;
   meta: IStockAndETFsMeta;
 }

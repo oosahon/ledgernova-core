@@ -66,6 +66,7 @@ export interface ILedgerAccount {
   status: ULedgerAccountStatus;
   contraAccountRule: UContraAccountRule;
   adjunctAccountRule: UAdjunctAccountRule;
+  meta: object | null;
   createdBy: TEntityId;
   createdAt: Date;
   updatedAt: Date;

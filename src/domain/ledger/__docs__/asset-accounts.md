@@ -1,4 +1,4 @@
-# Assets
+# Asset Accounts
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@
   - [Long Term Investments](#long-term-investments)
   - [Property, Plant & Equipment (PPE)](#property-plant--equipment-ppe)
   - [Intangible Assets, Right-of-Use (ROU), & Goodwill](#intangible-assets-right-of-use-rou--goodwill)
-  - [Suspense Accounts:](#suspense-accounts)
+- [Suspense Accounts:](#suspense-accounts)
 - [Application Bootstrap](#application-bootstrap)
   - [Individual](#individual)
 
@@ -45,8 +45,8 @@ The following table shows the behaviors of different asset account classes
 
 | Sub-Class    | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                                                                                                                | Flows                                   |
 | ------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
-| Bank Account | /                   | <ul><li>Supports adjunct and contra accounts (strictly for Unrealized FX Revaluation on multi-currency accounts)</li><li>Requires reconciliation</li> <li>Allows reconciliation with bank statements</li> <li>Overdrafts are recorded as liabilities</li><li>FX accounts support sale & purchase transactions</li> </ul> | [Bank Flow](./bank-flow.md)             |
 | Petty Cash   | /                   | <ul><li>Supports adjunct and contra accounts (strictly for Unrealized FX Revaluation on multi-currency accounts)</li><li>Requires reconciliation</li> <li>Allows manual reconciliations</li> <li>FX accounts support sale & purchase transactions</li> </ul>                                                             | [Petty Cash Flow](./petty-cash-flow.md) |
+| Bank Account | /                   | <ul><li>Supports adjunct and contra accounts (strictly for Unrealized FX Revaluation on multi-currency accounts)</li><li>Requires reconciliation</li> <li>Allows reconciliation with bank statements</li> <li>Overdrafts are recorded as liabilities</li><li>FX accounts support sale & purchase transactions</li> </ul> | [Bank Flow](./bank-flow.md)             |
 
 ### Short Term Investments
 
@@ -156,8 +156,7 @@ The following table shows the behaviors of different asset account classes
 ## Suspense Accounts:
 
 - **Ledger codes**: 199xxx
-- **Description**: accounts that are used to temporarily store transactions that have not yet been assigned to a specific account.
-- **Main reporting hierarchy**: Current Assets (for positive balances) or Current Liabilities (for negative balances)
+- **Description**: See [Suspense Accounts](./suspense-accounts.md) for more information.
 
 #### Behaviors
 
