@@ -1,20 +1,13 @@
 /**
- * A suspense account is a temporary account used to hold funds that are
- * awaiting proper allocation. It is used to ensure that the accounting
- * equation remains balanced even when the proper accounts are not yet known.
- *
- * In the context of an asset ledger, for example, a suspense account is used to hold
- * funds that are awaiting proper allocation. It is used to ensure that the
- * accounting equation remains balanced even when the proper accounts are not
- * yet known.
- *
  * For non-power users, a suspense sub-ledger will predominantly be used for
  * bank reconciliation where one will be created by default for each bank account
  *
- * @see {@link ../__docs__/asset-ledger#suspense-accounts} to understand their behaviors
+ * @see {@link ../__docs__/suspense-account.md} to understand their behaviors
  *
  */
 
+import stringUtils from '../../../../shared/utils/string';
+import { AppError } from '../../../../shared/value-objects/error';
 import {
   EAssetAccountBehavior,
   IAssetSuspenseAccount,
@@ -26,15 +19,33 @@ import {
   ELedgerAccountStatus,
   ELedgerType,
 } from '../../types/ledger.types';
+import { ISuspenseAccountMeta } from '../../types/suspense-account.types';
 import ledgerAccountEntity from '../shared/ledger-account.entity';
+
+function validateMeta(meta: ISuspenseAccountMeta) {
+  stringUtils.validateUUID(meta.targetAccount.id);
+  ledgerAccountEntity.validateCode(meta.targetAccount.code);
+
+  const isAssetOrLiability =
+    meta.targetAccount.code.startsWith('1') ||
+    meta.targetAccount.code.startsWith('2');
+
+  if (isAssetOrLiability) {
+    throw new AppError('Target account must be an asset or liability', {
+      cause: meta.targetAccount,
+    });
+  }
+}
 
 function make(
   payload: Pick<
     IAssetSuspenseAccount,
-    'type' | 'name' | 'createdBy' | 'accountingEntityId' | 'currency'
+    'type' | 'name' | 'createdBy' | 'accountingEntityId' | 'currency' | 'meta'
   >,
   predecessorCode: TAssetSuspenseLedgerCode
 ) {
+  validateMeta(payload.meta);
+
   return ledgerAccountEntity.make<IAssetSuspenseAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
@@ -45,7 +56,7 @@ function make(
     type: ELedgerType.Asset,
     subType: 'suspense',
     behavior: EAssetAccountBehavior.Default,
-    meta: null, // TODO: revisit this meta behavior during bank reconciliation
+    meta: payload.meta,
     isControlAccount: false,
     controlAccountId: null,
     currency: payload.currency,

@@ -15,7 +15,10 @@ import {
   TGoodwillLedgerCode,
 } from './ledger-code.types';
 import { EAdjunctAccountRule, EContraAccountRule } from './ledger.types';
-import { ISuspenseLedgerAccount, TSuspenseSubType } from './suspense-account';
+import {
+  ISuspenseLedgerAccount,
+  TSuspenseSubType,
+} from './suspense-account.types';
 import { TEntityId } from '../../../shared/types/uuid';
 
 export const EAssetSubType = {
