@@ -32,6 +32,7 @@ function make(
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
     code: getCode(predecessorCode),
+    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue),
     type: ELedgerType.Revenue,
     subType: ERevenueSubType.Services,
     behavior: ERevenueAccountBehavior.Services,

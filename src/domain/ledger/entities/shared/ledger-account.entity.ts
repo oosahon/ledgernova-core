@@ -32,6 +32,17 @@ function getNormalBalance(type: ULedgerType): UNormalBalance {
   }
 }
 
+function getContraBalance(normalBalance: UNormalBalance): UNormalBalance {
+  switch (normalBalance) {
+    case ENormalBalance.Debit:
+      return ENormalBalance.Credit;
+    case ENormalBalance.Credit:
+      return ENormalBalance.Debit;
+    default:
+      throw new AppError('Invalid normal balance', { cause: normalBalance });
+  }
+}
+
 function validateCode(code: string) {
   if (!/^[1-5][0-9]{5}$/.test(code)) {
     throw new AppError('Invalid ledger code', { cause: code });
@@ -59,6 +70,12 @@ function validateContraRule(rule: UContraAccountRule) {
 function validateAdjunctRule(rule: UAdjunctAccountRule) {
   if (!Object.values(EAdjunctAccountRule).includes(rule)) {
     throw new AppError('Invalid adjunct account rule', { cause: rule });
+  }
+}
+
+function validateNormalBalance(normalBalance: UNormalBalance) {
+  if (!Object.values(ENormalBalance).includes(normalBalance)) {
+    throw new AppError('Invalid normal balance', { cause: normalBalance });
   }
 }
 
@@ -101,7 +118,7 @@ function getSubLedgerCode<T extends string>(
 }
 
 function make<T extends ILedgerAccount>(
-  payload: TCreationOmits<T, 'normalBalance'>
+  payload: TCreationOmits<T>
 ): Readonly<T> {
   validateCode(payload.code);
   stringUtils.validateUUID(payload.accountingEntityId);
@@ -120,6 +137,7 @@ function make<T extends ILedgerAccount>(
 
   validateSubType(payload.subType);
   validateBehavior(payload.behavior);
+  validateNormalBalance(payload.normalBalance);
 
   const timestamp = new Date();
 
@@ -128,7 +146,7 @@ function make<T extends ILedgerAccount>(
     code: payload.code,
     accountingEntityId: payload.accountingEntityId,
     type: payload.type,
-    normalBalance: getNormalBalance(payload.type),
+    normalBalance: payload.normalBalance,
     subType: payload.subType,
     behavior: payload.behavior,
     isControlAccount: !!payload.isControlAccount,
@@ -160,6 +178,7 @@ const ledgerAccountEntity = Object.freeze({
   getSubLedgerCode,
 
   getNormalBalance,
+  getContraBalance,
 });
 
 export default ledgerAccountEntity;

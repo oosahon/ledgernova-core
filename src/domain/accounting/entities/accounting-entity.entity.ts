@@ -8,8 +8,44 @@ import accountingEntityTypeEvents from '../events/accounting-entity.events';
 import {
   EAccountingEntityType,
   IAccountingEntity,
+  IFiscalYearEnd,
   UAccountingEntityType,
 } from '../types/accounting.types';
+
+const DAYS_IN_MONTH: Record<number, number> = {
+  1: 31,
+  2: 29, // Allow Feb 29 (leap year); application-layer handles non-leap years
+  3: 31,
+  4: 30,
+  5: 31,
+  6: 30,
+  7: 31,
+  8: 31,
+  9: 30,
+  10: 31,
+  11: 30,
+  12: 31,
+};
+
+function validateFiscalYearEnd(fiscalYearEnd: IFiscalYearEnd) {
+  const { month, day } = fiscalYearEnd;
+
+  if (
+    !Number.isInteger(month) ||
+    !Number.isInteger(day) ||
+    month < 1 ||
+    month > 12
+  ) {
+    throw new AppError('Invalid fiscal year-end month', { cause: month });
+  }
+
+  const maxDay = DAYS_IN_MONTH[month];
+  if (day < 1 || day > maxDay) {
+    throw new AppError('Invalid fiscal year-end day', {
+      cause: { month, day },
+    });
+  }
+}
 
 function validateType(entityType: UAccountingEntityType) {
   if (!Object.values(EAccountingEntityType).includes(entityType)) {
@@ -21,6 +57,7 @@ function validate(entity: TCreationOmits<IAccountingEntity>) {
   stringUtils.validateUUID(entity.ownerId);
   currencyEntity.validateCode(entity.functionalCurrency.code);
   validateType(entity.type);
+  validateFiscalYearEnd(entity.fiscalYearEnd);
 }
 
 function make(
@@ -35,6 +72,7 @@ function make(
     ownerId: payload.ownerId,
     type: payload.type,
     functionalCurrency: payload.functionalCurrency,
+    fiscalYearEnd: Object.freeze({ ...payload.fiscalYearEnd }),
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,
@@ -49,6 +87,7 @@ const accountingEntity = Object.freeze({
   make,
   validate,
   validateType,
+  validateFiscalYearEnd,
 });
 
 export default accountingEntity;

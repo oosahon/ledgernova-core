@@ -191,6 +191,8 @@ export const accountingEntitiesInCore = core.table(
     functionalCurrencyCode: varchar('functional_currency_code', {
       length: 3,
     }).notNull(),
+    fiscalYearEndMonth: smallint('fiscal_year_end_month').default(12).notNull(),
+    fiscalYearEndDay: smallint('fiscal_year_end_day').default(31).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .defaultNow()
       .notNull(),

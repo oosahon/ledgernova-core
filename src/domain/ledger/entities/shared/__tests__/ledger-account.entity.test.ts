@@ -24,12 +24,13 @@ describe('Ledger Account Shared Entity', () => {
     minorUnit: 2n,
   };
 
-  const validPayload: TCreationOmits<ILedgerAccount, 'normalBalance'> = {
+  const validPayload: TCreationOmits<ILedgerAccount> = {
     code: '101001',
     accountingEntityId: validUUID1,
     type: ELedgerType.Asset,
     subType: 'cash',
     behavior: 'bank',
+    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Asset),
     isControlAccount: false,
     controlAccountId: null,
     name: 'Main Bank Account',

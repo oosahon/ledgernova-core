@@ -137,3 +137,58 @@ export type TGainOnSaleLedgerCode = `${typeof GainOnSalePrefix}${string}`;
 declare const UnrealizedGainPrefix = '407';
 export type TUnrealizedGainLedgerCode =
   `${typeof UnrealizedGainPrefix}${string}`;
+
+/**
+ * ===================== EXPENSE LEDGER CODES =====================
+ * @see {@link ../__docs__/05-expense-accounts.md} to understand the structure of expense ledger codes
+ */
+declare const ExpensePrefix = '5';
+export type TExpenseLedgerCode = `${typeof ExpensePrefix}${string}`;
+
+declare const CostOfSalesPrefix = '500';
+export type TCostOfSalesLedgerCode = `${typeof CostOfSalesPrefix}${string}`;
+
+declare const ContraExpensePrefix = '501';
+export type TContraExpenseLedgerCode = `${typeof ContraExpensePrefix}${string}`;
+
+declare const PayrollPrefix = '502';
+export type TPayrollLedgerCode = `${typeof PayrollPrefix}${string}`;
+
+declare const RentUtilitiesPrefix = '503';
+export type TRentUtilitiesLedgerCode = `${typeof RentUtilitiesPrefix}${string}`;
+
+declare const AdminGeneralPrefix = '504';
+export type TAdminGeneralLedgerCode = `${typeof AdminGeneralPrefix}${string}`;
+
+declare const MarketingSellingPrefix = '505';
+export type TMarketingSellingLedgerCode =
+  `${typeof MarketingSellingPrefix}${string}`;
+
+declare const ResearchDevPrefix = '506';
+export type TResearchDevLedgerCode = `${typeof ResearchDevPrefix}${string}`;
+
+declare const DepreciationAmortizationPrefix = '507';
+export type TDepreciationAmortizationLedgerCode =
+  `${typeof DepreciationAmortizationPrefix}${string}`;
+
+declare const InterestFinancePrefix = '508';
+export type TInterestFinanceLedgerCode =
+  `${typeof InterestFinancePrefix}${string}`;
+
+declare const IncomeTaxPrefix = '509';
+export type TIncomeTaxLedgerCode = `${typeof IncomeTaxPrefix}${string}`;
+
+declare const UnrealizedLossPrefix = '510';
+export type TUnrealizedLossLedgerCode =
+  `${typeof UnrealizedLossPrefix}${string}`;
+
+declare const AssetDisposalLossPrefix = '511';
+export type TAssetDisposalLossLedgerCode =
+  `${typeof AssetDisposalLossPrefix}${string}`;
+
+declare const ImpairmentLossPrefix = '512';
+export type TImpairmentLossLedgerCode =
+  `${typeof ImpairmentLossPrefix}${string}`;
+
+declare const OtherLossesPrefix = '513';
+export type TOtherLossesLedgerCode = `${typeof OtherLossesPrefix}${string}`;

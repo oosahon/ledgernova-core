@@ -46,6 +46,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 12, day: 31 },
       };
 
       const [domain, events] = accountingEntityTypeEntity.make(payload);
@@ -60,10 +61,25 @@ describe('Accounting Domain Entity', () => {
       expect(domain.id.length).toBeGreaterThan(0);
       expect(domain.ownerId).toEqual(validUser.id);
       expect(domain.functionalCurrency).toEqual(validCurrency);
+      expect(domain.fiscalYearEnd).toEqual({ month: 12, day: 31 });
+      expect(Object.isFrozen(domain.fiscalYearEnd)).toBe(true);
       expect(domain.createdAt).toEqual(new Date('2026-03-15T00:00:00.000Z'));
       expect(domain.updatedAt).toEqual(new Date('2026-03-15T00:00:00.000Z'));
       expect(domain.deletedAt).toBeNull();
       expect(Object.isFrozen(domain)).toBe(true);
+    });
+
+    it('should successfully create an entity with a non-December fiscal year-end', () => {
+      const payload: TCreationOmits<IAccountingEntity> = {
+        ownerId: validUser.id as TEntityId,
+        type: EAccountingEntityType.Company,
+        functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 3, day: 31 },
+      };
+
+      const [domain] = accountingEntityTypeEntity.make(payload);
+
+      expect(domain.fiscalYearEnd).toEqual({ month: 3, day: 31 });
     });
 
     it('should throw an AppError if the ownerId is invalid', () => {
@@ -71,6 +87,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: 'invalid-uuid' as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 12, day: 31 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -83,6 +100,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: invalidCurrency,
+        fiscalYearEnd: { month: 12, day: 31 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -98,6 +116,75 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.SoleTrader,
         functionalCurrency: invalidCurrency,
+        fiscalYearEnd: { month: 12, day: 31 },
+      };
+
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
+    });
+
+    it('should throw an AppError if fiscal year-end month is out of range', () => {
+      const payload: TCreationOmits<IAccountingEntity> = {
+        ownerId: validUser.id as TEntityId,
+        type: EAccountingEntityType.Individual,
+        functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 13, day: 31 },
+      };
+
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
+    });
+
+    it('should throw an AppError if fiscal year-end month is zero', () => {
+      const payload: TCreationOmits<IAccountingEntity> = {
+        ownerId: validUser.id as TEntityId,
+        type: EAccountingEntityType.Individual,
+        functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 0, day: 15 },
+      };
+
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
+    });
+
+    it('should throw an AppError if fiscal year-end day exceeds the maximum for the month', () => {
+      const payload: TCreationOmits<IAccountingEntity> = {
+        ownerId: validUser.id as TEntityId,
+        type: EAccountingEntityType.Individual,
+        functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 4, day: 31 }, // April has 30 days
+      };
+
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
+    });
+
+    it('should throw an AppError if fiscal year-end day is zero', () => {
+      const payload: TCreationOmits<IAccountingEntity> = {
+        ownerId: validUser.id as TEntityId,
+        type: EAccountingEntityType.Individual,
+        functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 6, day: 0 },
+      };
+
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
+    });
+
+    it('should allow February 29 as a valid fiscal year-end day', () => {
+      const payload: TCreationOmits<IAccountingEntity> = {
+        ownerId: validUser.id as TEntityId,
+        type: EAccountingEntityType.Company,
+        functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 2, day: 29 },
+      };
+
+      const [domain] = accountingEntityTypeEntity.make(payload);
+
+      expect(domain.fiscalYearEnd).toEqual({ month: 2, day: 29 });
+    });
+
+    it('should throw an AppError if February day exceeds 29', () => {
+      const payload: TCreationOmits<IAccountingEntity> = {
+        ownerId: validUser.id as TEntityId,
+        type: EAccountingEntityType.Company,
+        functionalCurrency: validCurrency,
+        fiscalYearEnd: { month: 2, day: 30 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);

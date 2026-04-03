@@ -1,27 +1,34 @@
 flowchart LR
     Expenses["Expenses: 5xxxxx"]
-    Expenses --> DirectCosts & OperatingExpenses & NonOperatingExpenses  & TaxExpense & Losses
+    Expenses --> DirectCosts & OperatingExpenses & NonOperatingExpenses & TaxExpense & Losses
 
-    DirectCosts["Cost of Sales (COGS): 500xxx"]
+    DirectCosts["Direct Costs"]
+        DirectCosts --> CostOfSales["Cost of Sales: 500xxx"]
+        CostOfSales --> COGS["Cost of Goods Sold (COGS): 500001"]
+        CostOfSales --> COS["Cost of Services: 500002"]
+
+        DirectCosts --> ContraExpenses["Contra-Expenses: 501xxx"]
+        ContraExpenses --> PurchaseReturns["Purchase Returns & Allowances: 501xx1"]
+        ContraExpenses --> PurchaseDiscounts["Purchase Discounts: 501xx2"]
     
     OperatingExpenses["Operating Expenses (OPEX)"]
-        OperatingExpenses --> PayrollAndPersonnel["Payroll & Personnel: 501xxx"] 
-       
-            
-        OperatingExpenses --> RentUtilities["Rent & Utilities: 502xxx"]
-        OperatingExpenses --> AdminGeneral["Admin & General: 503xxx"]
-        OperatingExpenses --> MarketingSelling["Marketing & Selling: 504xxx"]
-        OperatingExpenses --> Depreciation["Depreciation & Amortization: 505xxx"]
+        OperatingExpenses --> PayrollAndPersonnel["Payroll & Personnel: 502xxx"] 
+        OperatingExpenses --> RentUtilities["Rent & Utilities: 503xxx"]
+        OperatingExpenses --> AdminGeneral["Admin & General: 504xxx"]
+        OperatingExpenses --> MarketingSelling["Marketing & Selling: 505xxx"]
+        OperatingExpenses --> ResearchDevelopment["Research & Development: 506xxx"]
+        OperatingExpenses --> Depreciation["Depreciation & Amortization: 507xxx"]
             
     NonOperatingExpenses["Non-Operating Expenses"]
-        NonOperatingExpenses --> FinanceCosts["Interest & Finance Charges: 506xxx"]
+        NonOperatingExpenses --> FinanceCosts["Interest & Finance Charges: 508xxx"]
 
-
+    TaxExpense["Income Tax Expense: 509xxx"]
 
     Losses["Losses & Adjustments"]
-        Losses --> UnrealizedLoss["Unrealized Loss: 508xxx"]
-        Losses --> AssetDisposal["Loss on Asset Disposal: 509xxx"]
-
+        Losses --> UnrealizedLoss["Unrealized Loss: 510xxx"]
+        Losses --> AssetDisposal["Loss on Asset Disposal: 511xxx"]
+        Losses --> ImpairmentLoss["Impairment Losses: 512xxx"]
+        Losses --> OtherLosses["Other Losses: 513xxx"]
 
      %% For positioning
     OperatingExpenses ~~~ DirectCosts & TaxExpense

@@ -37,6 +37,7 @@ function make(
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
     code: getCode(predecessorCode),
+    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Equity),
     type: ELedgerType.Equity,
     subType: EEquitySubType.OpeningBalance,
     behavior: EEquityAccountBehavior.OpeningBalanceEquity,

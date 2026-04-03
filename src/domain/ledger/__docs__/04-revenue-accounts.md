@@ -146,10 +146,6 @@ For an individual, the following revenue accounts will be bootstrapped:
 #### Operating Revenues
 
 - Sales: `400000` (control account)
-- Contra-Revenues: `401000` (control account)
-  - Returns: `401001`
-  - Refunds: `401002`
-  - Discounts: `401003`
 - Services: `402000` (control account)
 - Subscriptions: `403000` (control account)
 - Employment Income: `404000` (control account)

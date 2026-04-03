@@ -55,6 +55,7 @@ export default function signupWithEmailUsecase(
         ownerId: user.id,
         functionalCurrency: NAIRA,
         type: EAccountingEntityType.Individual,
+        fiscalYearEnd: { month: 12, day: 31 },
       });
 
     const password = passwordValue.make(payload.password);

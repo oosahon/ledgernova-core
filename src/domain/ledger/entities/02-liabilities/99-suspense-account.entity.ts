@@ -34,6 +34,7 @@ function make(
     name,
     accountingEntityId,
     code: getCode(predecessorCode),
+    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Liability),
     type: ELedgerType.Liability,
     subType: ELiabilitySubType.Suspense,
     behavior: ELiabilityAccountBehavior.Default,

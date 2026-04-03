@@ -10,11 +10,22 @@ export const EAccountingEntityType = {
 export type UAccountingEntityType =
   (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
 
+/**
+ * Represents the month and day on which an accounting entity's fiscal year ends.
+ * Defaults to December 31 for individuals. Companies and sole traders
+ * may configure any valid calendar date (e.g., March 31, June 30).
+ */
+export interface IFiscalYearEnd {
+  month: number;
+  day: number;
+}
+
 export interface IAccountingEntity {
   id: TEntityId;
   type: UAccountingEntityType;
   ownerId: TEntityId;
   functionalCurrency: ICurrency;
+  fiscalYearEnd: IFiscalYearEnd;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

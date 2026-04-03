@@ -20,6 +20,8 @@ const accountingEntityMapper = {
       ownerId: entity.ownerId,
       functionalCurrencyCode: entity.functionalCurrency.code,
       type: entity.type,
+      fiscalYearEndMonth: entity.fiscalYearEnd.month,
+      fiscalYearEndDay: entity.fiscalYearEnd.day,
       ...toCommonRepoDates(entity),
     };
   },
@@ -30,6 +32,10 @@ const accountingEntityMapper = {
       ownerId: payload.ownerId as TEntityId,
       functionalCurrency: currencyMapper.toDomain(payload.functionalCurrency),
       type: payload.type,
+      fiscalYearEnd: Object.freeze({
+        month: payload.fiscalYearEndMonth,
+        day: payload.fiscalYearEndDay,
+      }),
       ...fromCommonRepoDates(payload),
     });
   },
