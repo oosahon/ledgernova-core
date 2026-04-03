@@ -3,22 +3,15 @@ flowchart LR
 
     OperatingRevenues["Operating Revenues"]
         Sales["Sales: 400xxx"]
-
-        ContraRevenues["Returns, Refunds & Discounts: 401xxx"]
-            Returns["Returns: 401xx1"]
-            Refunds["Refunds: 401xx2"]
-            Discounts["Discounts: 401xx3"]
-
-        Services["Services: 402xxx"]
-        Subscriptions["Subscriptions: 403xxx"]
-        EmploymentIncome["Employment Income: 404xxx"]
+        Services["Services: 401xxx"]
+        Subscriptions["Subscriptions: 402xxx"]
+        EmploymentIncome["Employment Income: 403xxx"]
         
     NonOperatingRevenues["Non-Operating Revenues"]
-        InterestIncome["Interest Income: 405xxx"]
-        GainOnSale["Gain on Sale of Assets: 406xxx"]
-        UnrealizedGains["Unrealized Gains: 407xxx"]
+        InterestIncome["Interest Income: 404xxx"]
+        GainOnSale["Gain on Sale of Assets: 405xxx"]
+        UnrealizedGains["Unrealized Gains: 406xxx"]
 
     Revenues --> OperatingRevenues & NonOperatingRevenues
-    OperatingRevenues --> Sales & ContraRevenues & Services & Subscriptions & EmploymentIncome
-    ContraRevenues --> Returns & Refunds & Discounts
+    OperatingRevenues --> Sales & Services & Subscriptions & EmploymentIncome
     NonOperatingRevenues --> InterestIncome & GainOnSale & UnrealizedGains

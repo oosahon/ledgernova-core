@@ -2,7 +2,6 @@ import { ELedgerType, ILedgerAccount } from './ledger.types';
 import {
   TRevenueLedgerCode,
   TSalesLedgerCode,
-  TContraRevenueLedgerCode,
   TServicesLedgerCode,
   TSubscriptionsLedgerCode,
   TEmploymentIncomeLedgerCode,
@@ -14,7 +13,6 @@ import { EAdjunctAccountRule, EContraAccountRule } from './ledger.types';
 
 export const ERevenueSubType = {
   Sales: 'sales',
-  ContraRevenue: 'contra_revenue',
   Services: 'services',
   Subscriptions: 'subscriptions',
   EmploymentIncome: 'employment_income',
@@ -28,9 +26,6 @@ export type URevenueSubType =
 
 export const ERevenueAccountBehavior = {
   Sales: 'sales',
-  Returns: 'returns',
-  Refunds: 'refunds',
-  Discounts: 'discounts',
   Services: 'services',
   Subscriptions: 'subscriptions',
   EmploymentIncome: 'employment_income',
@@ -62,23 +57,8 @@ export interface ISalesAccount extends IRevenueLedgerAccount {
 }
 
 /**
- * =============== Contra-Revenues (Returns, Refunds & Discounts) ===============
- * code: 401xxx
- */
-export interface IContraRevenueAccount extends IRevenueLedgerAccount {
-  code: TContraRevenueLedgerCode;
-  subType: typeof ERevenueSubType.ContraRevenue;
-  behavior:
-    | typeof ERevenueAccountBehavior.Returns
-    | typeof ERevenueAccountBehavior.Refunds
-    | typeof ERevenueAccountBehavior.Discounts;
-  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
-  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
-}
-
-/**
  * =============== Services ===============
- * code: 402xxx
+ * code: 401xxx
  */
 export interface IServicesAccount extends IRevenueLedgerAccount {
   code: TServicesLedgerCode;
@@ -90,7 +70,7 @@ export interface IServicesAccount extends IRevenueLedgerAccount {
 
 /**
  * =============== Subscriptions ===============
- * code: 403xxx
+ * code: 402xxx
  */
 export interface ISubscriptionsAccount extends IRevenueLedgerAccount {
   code: TSubscriptionsLedgerCode;
@@ -102,7 +82,7 @@ export interface ISubscriptionsAccount extends IRevenueLedgerAccount {
 
 /**
  * =============== Employment Income ===============
- * code: 404xxx
+ * code: 403xxx
  */
 export interface IEmploymentIncomeAccount extends IRevenueLedgerAccount {
   code: TEmploymentIncomeLedgerCode;
@@ -114,7 +94,7 @@ export interface IEmploymentIncomeAccount extends IRevenueLedgerAccount {
 
 /**
  * =============== Interest Income ===============
- * code: 405xxx
+ * code: 404xxx
  */
 export interface IInterestIncomeAccount extends IRevenueLedgerAccount {
   code: TInterestIncomeLedgerCode;
@@ -126,7 +106,7 @@ export interface IInterestIncomeAccount extends IRevenueLedgerAccount {
 
 /**
  * =============== Gain on Sale of Assets ===============
- * code: 406xxx
+ * code: 405xxx
  */
 export interface IGainOnSaleAccount extends IRevenueLedgerAccount {
   code: TGainOnSaleLedgerCode;
@@ -138,7 +118,7 @@ export interface IGainOnSaleAccount extends IRevenueLedgerAccount {
 
 /**
  * =============== Unrealized Gains ===============
- * code: 407xxx
+ * code: 406xxx
  */
 export interface IUnrealizedGainAccount extends IRevenueLedgerAccount {
   code: TUnrealizedGainLedgerCode;

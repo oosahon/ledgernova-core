@@ -5,7 +5,6 @@
 - [Introduction](#introduction)
 - [Operating Revenues](#operating-revenues)
   - [Sales](#sales)
-  - [Contra-Revenues (Returns, Refunds & Discounts)](#contra-revenues-returns-refunds--discounts)
   - [Services](#services)
   - [Subscriptions](#subscriptions)
   - [Employment Income](#employment-income)
@@ -27,7 +26,7 @@ Revenue ledgers come in two reporting hierarchies:
 
 When a revenue ledger/sub-ledger is created, it MUST be associated with one of the two reporting hierarchies.
 
-By default, standard revenue accounts carry a **credit** normal balance. **Contra-revenue accounts** (like Returns and Discounts) carry a **debit** normal balance as they act to reduce gross revenue. These are automatically derived from the account type during creation.
+By default, standard revenue accounts carry a **credit** normal balance. **Contra-revenue accounts** (like Returns and Discounts) carry a **debit** normal balance as they act to reduce gross revenue. Contra-revenue accounts are created relationally within their parent's code range and are distinguished by their flipped `normalBalance` and `IAdjustmentMetaData`. See [ADR-0012](../../../../docs/adrs/0012-relational-contra-adjunct-accounts.md) for the full design rationale.
 
 To ensure our system is extensible, we have not baked functionalities into ledger codes or predefined accounts. For non-power users, our ledger accounts bootstrap will handle the creation of accounts and association of behaviors. For power users, they can create accounts and associate behaviors available to the account class.
 
@@ -43,27 +42,13 @@ The following table shows the behaviors of different revenue account classes:
 
 #### Behaviors
 
-| Sub-Class | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                                                        |
-| --------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Sales     | /                   | <ul><li>Requires sales invoice or cash receipt transaction for creation</li><li>Automatically closed to Retained Earnings at period-end</li><li>Supports adjunct accounts</li><li>Contra accounts are typically tracked separately in the 401xxx block</li></ul> |
-
-### Contra-Revenues (Returns, Refunds & Discounts)
-
-- **Ledger codes**: 401xxx (e.g., 401xx1, 401xx2, 401xx3)
-- **Description**: accounts used to track reductions to gross sales, primarily from goods returned, services refunded, or promotional discounts offered to customers. They maintain a normal **debit** balance.
-- **Main reporting hierarchy**: Operating Revenues / Contra-Revenues
-
-#### Behaviors
-
-| Sub-Class | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                                                                                                   |
-| --------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Returns   | /                   | <ul><li>Carries a **debit** normal balance</li><li>Requires a credit note or refund transaction against a previous sale</li><li>Reduces Gross Revenue to calculate Net Revenue</li><li>Automatically closed to Retained Earnings at period-end</li></ul>                                                    |
-| Refunds   | /                   | <ul><li>Carries a **debit** normal balance</li><li>Requires a refund transaction (often linked to service, digital, or subscription concessions rather than physical goods)</li><li>Automatically closed to Retained Earnings at period-end</li></ul>                                                       |
-| Discounts | /                   | <ul><li>Carries a **debit** normal balance</li><li>Requires an applied discount on an invoice or early payment settlement</li><li>Separating discounts from returns preserves product quality metrics vs pricing strategy metrics</li><li>Automatically closed to Retained Earnings at period-end</li></ul> |
+| Sub-Class | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                                                                                                                                                    |
+| --------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Sales     | /                   | <ul><li>Requires sales invoice or cash receipt transaction for creation</li><li>Automatically closed to Retained Earnings at period-end</li><li>Supports adjunct accounts</li><li>Contra accounts (Returns, Refunds, Discounts) are created relationally within the 400xxx range with a flipped normal balance and mandatory `IAdjustmentMetaData`</li></ul> |
 
 ### Services
 
-- **Ledger codes**: 402xxx
+- **Ledger codes**: 401xxx
 - **Description**: accounts used to track gross revenue earned from providing professional services, consulting, or labor.
 - **Main reporting hierarchy**: Operating Revenues / Services
 
@@ -75,7 +60,7 @@ The following table shows the behaviors of different revenue account classes:
 
 ### Subscriptions
 
-- **Ledger codes**: 403xxx
+- **Ledger codes**: 402xxx
 - **Description**: accounts used to track recurring revenue from subscripted access to products, software, or ongoing services.
 - **Main reporting hierarchy**: Operating Revenues / Subscriptions
 
@@ -87,7 +72,7 @@ The following table shows the behaviors of different revenue account classes:
 
 ### Employment Income
 
-- **Ledger codes**: 404xxx
+- **Ledger codes**: 403xxx
 - **Description**: accounts used to track gross salary, wages, and other employment compensation received from an employer (subject to PAYE).
 - **Main reporting hierarchy**: Operating Revenues / Employment Income
 
@@ -101,7 +86,7 @@ The following table shows the behaviors of different revenue account classes:
 
 ### Interest Income
 
-- **Ledger codes**: 405xxx
+- **Ledger codes**: 404xxx
 - **Description**: accounts used to track income earned from cash balances, term deposits, or financing provided to others, separated from core operational performance.
 - **Main reporting hierarchy**: Non-Operating Revenues / Interest Income
 
@@ -113,7 +98,7 @@ The following table shows the behaviors of different revenue account classes:
 
 ### Gain on Sale of Assets
 
-- **Ledger codes**: 406xxx
+- **Ledger codes**: 405xxx
 - **Description**: accounts used to track the net financial gain resulting from the disposal/sale of Property, Plant & Equipment or Long Term Investments above their carrying (book) value.
 - **Main reporting hierarchy**: Non-Operating Revenues / Gain on Sale of Assets
 
@@ -125,7 +110,7 @@ The following table shows the behaviors of different revenue account classes:
 
 ### Unrealized Gains
 
-- **Ledger codes**: 407xxx
+- **Ledger codes**: 406xxx
 - **Description**: accounts used to track positive mark-to-market valuations (paper gains) on short-term trading assets, marketable securities, or foreign exchange (FX) balances before they are sold or settled.
 - **Main reporting hierarchy**: Non-Operating Revenues / Unrealized Gains
 
@@ -146,15 +131,15 @@ For an individual, the following revenue accounts will be bootstrapped:
 #### Operating Revenues
 
 - Sales: `400000` (control account)
-- Services: `402000` (control account)
-- Subscriptions: `403000` (control account)
-- Employment Income: `404000` (control account)
+- Services: `401000` (control account)
+- Subscriptions: `402000` (control account)
+- Employment Income: `403000` (control account)
 
 #### Non-Operating Revenues
 
-- Interest Income: `405000` (control account)
-- Gain on Sale of Assets: `406000` (control account)
-- Unrealized Gains: `407000` (control account)
+- Interest Income: `404000` (control account)
+- Gain on Sale of Assets: `405000` (control account)
+- Unrealized Gains: `406000` (control account)
 
 > [!NOTE]
 > All revenue ledgers are automatically cleared and closed out to `RetainedEarnings (301000)` at the end of the financial/accounting period.

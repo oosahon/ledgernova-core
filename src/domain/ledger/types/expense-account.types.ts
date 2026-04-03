@@ -1,8 +1,7 @@
 import { ELedgerType, ILedgerAccount } from './ledger.types';
 import {
   TExpenseLedgerCode,
-  TCostOfSalesLedgerCode,
-  TContraExpenseLedgerCode,
+  TDirectCostsLedgerCode,
   TPayrollLedgerCode,
   TRentUtilitiesLedgerCode,
   TAdminGeneralLedgerCode,
@@ -19,8 +18,7 @@ import {
 import { EAdjunctAccountRule, EContraAccountRule } from './ledger.types';
 
 export const EExpenseSubType = {
-  CostOfSales: 'cost_of_sales',
-  ContraExpense: 'contra_expense',
+  DirectCosts: 'direct_costs',
   PayrollAndPersonnel: 'payroll_and_personnel',
   RentAndUtilities: 'rent_and_utilities',
   AdminAndGeneral: 'admin_and_general',
@@ -38,21 +36,14 @@ export const EExpenseSubType = {
 export type UExpenseSubType =
   (typeof EExpenseSubType)[keyof typeof EExpenseSubType];
 
-const ECostOfSalesBehavior = {
+const EDirectCostsBehavior = {
   COGS: 'cogs',
   CostOfServices: 'cost_of_services',
+  CostOfRevenue: 'cost_of_revenue',
 } as const;
 
-type UCostOfSalesBehavior =
-  (typeof ECostOfSalesBehavior)[keyof typeof ECostOfSalesBehavior];
-
-const EContraExpenseBehavior = {
-  PurchaseReturns: 'purchase_returns',
-  PurchaseDiscounts: 'purchase_discounts',
-} as const;
-
-type UContraExpenseBehavior =
-  (typeof EContraExpenseBehavior)[keyof typeof EContraExpenseBehavior];
+type UDirectCostsBehavior =
+  (typeof EDirectCostsBehavior)[keyof typeof EDirectCostsBehavior];
 
 const EOpexBehavior = {
   PayrollAndPersonnel: 'payroll_and_personnel',
@@ -76,8 +67,7 @@ const ELossBehavior = {
 } as const;
 
 export const EExpenseAccountBehavior = {
-  ...ECostOfSalesBehavior,
-  ...EContraExpenseBehavior,
+  ...EDirectCostsBehavior,
   ...EOpexBehavior,
   ...ENonOperatingExpenseBehavior,
   ...ELossBehavior,
@@ -94,32 +84,20 @@ export interface IExpenseLedgerAccount extends ILedgerAccount {
 }
 
 /**
- * =============== Cost of Sales ===============
+ * =============== Direct Costs ===============
  * code: 500xxx
  */
-export interface ICostOfSalesAccount extends IExpenseLedgerAccount {
-  code: TCostOfSalesLedgerCode;
-  subType: typeof EExpenseSubType.CostOfSales;
-  behavior: UCostOfSalesBehavior;
-  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
-  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
-}
-
-/**
- * =============== Contra-Expenses (Purchase Returns & Discounts) ===============
- * code: 501xxx
- */
-export interface IContraExpenseAccount extends IExpenseLedgerAccount {
-  code: TContraExpenseLedgerCode;
-  subType: typeof EExpenseSubType.ContraExpense;
-  behavior: UContraExpenseBehavior;
+export interface IDirectCostsAccount extends IExpenseLedgerAccount {
+  code: TDirectCostsLedgerCode;
+  subType: typeof EExpenseSubType.DirectCosts;
+  behavior: UDirectCostsBehavior;
   contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
   adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
 }
 
 /**
  * =============== Payroll & Personnel ===============
- * code: 502xxx
+ * code: 501xxx
  */
 export interface IPayrollAccount extends IExpenseLedgerAccount {
   code: TPayrollLedgerCode;
@@ -131,7 +109,7 @@ export interface IPayrollAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Rent & Utilities ===============
- * code: 503xxx
+ * code: 502xxx
  */
 export interface IRentUtilitiesAccount extends IExpenseLedgerAccount {
   code: TRentUtilitiesLedgerCode;
@@ -143,7 +121,7 @@ export interface IRentUtilitiesAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Admin & General ===============
- * code: 504xxx
+ * code: 503xxx
  */
 export interface IAdminGeneralAccount extends IExpenseLedgerAccount {
   code: TAdminGeneralLedgerCode;
@@ -155,7 +133,7 @@ export interface IAdminGeneralAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Marketing & Selling ===============
- * code: 505xxx
+ * code: 504xxx
  */
 export interface IMarketingSellingAccount extends IExpenseLedgerAccount {
   code: TMarketingSellingLedgerCode;
@@ -167,7 +145,7 @@ export interface IMarketingSellingAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Research & Development ===============
- * code: 506xxx
+ * code: 505xxx
  */
 export interface IResearchDevAccount extends IExpenseLedgerAccount {
   code: TResearchDevLedgerCode;
@@ -179,7 +157,7 @@ export interface IResearchDevAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Depreciation & Amortization ===============
- * code: 507xxx
+ * code: 506xxx
  */
 export interface IDepreciationAmortizationAccount extends IExpenseLedgerAccount {
   code: TDepreciationAmortizationLedgerCode;
@@ -191,7 +169,7 @@ export interface IDepreciationAmortizationAccount extends IExpenseLedgerAccount 
 
 /**
  * =============== Interest & Finance Charges ===============
- * code: 508xxx
+ * code: 507xxx
  */
 export interface IInterestFinanceAccount extends IExpenseLedgerAccount {
   code: TInterestFinanceLedgerCode;
@@ -203,7 +181,7 @@ export interface IInterestFinanceAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Income Tax Expense ===============
- * code: 509xxx
+ * code: 508xxx
  */
 export interface IIncomeTaxExpenseAccount extends IExpenseLedgerAccount {
   code: TIncomeTaxLedgerCode;
@@ -215,7 +193,7 @@ export interface IIncomeTaxExpenseAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Unrealized Loss ===============
- * code: 510xxx
+ * code: 509xxx
  */
 export interface IUnrealizedLossAccount extends IExpenseLedgerAccount {
   code: TUnrealizedLossLedgerCode;
@@ -227,7 +205,7 @@ export interface IUnrealizedLossAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Loss on Asset Disposal ===============
- * code: 511xxx
+ * code: 510xxx
  */
 export interface IAssetDisposalLossAccount extends IExpenseLedgerAccount {
   code: TAssetDisposalLossLedgerCode;
@@ -239,7 +217,7 @@ export interface IAssetDisposalLossAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Impairment Losses ===============
- * code: 512xxx
+ * code: 511xxx
  */
 export interface IImpairmentLossAccount extends IExpenseLedgerAccount {
   code: TImpairmentLossLedgerCode;
@@ -251,7 +229,7 @@ export interface IImpairmentLossAccount extends IExpenseLedgerAccount {
 
 /**
  * =============== Other Losses ===============
- * code: 513xxx
+ * code: 512xxx
  */
 export interface IOtherLossesAccount extends IExpenseLedgerAccount {
   code: TOtherLossesLedgerCode;

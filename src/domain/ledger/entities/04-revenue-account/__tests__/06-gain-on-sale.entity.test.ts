@@ -36,8 +36,8 @@ describe('Gain on Sale Revenue Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for gain on sale accounts', () => {
-      expect(gainOnSaleLedgerEntity.getCode('406000')).toBe('406001');
-      expect(gainOnSaleLedgerEntity.getCode('406099')).toBe('406100');
+      expect(gainOnSaleLedgerEntity.getCode('405000')).toBe('405001');
+      expect(gainOnSaleLedgerEntity.getCode('405099')).toBe('405100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
@@ -58,10 +58,10 @@ describe('Gain on Sale Revenue Entity', () => {
     it('should successfully create a gain on sale account', () => {
       const [account, events] = gainOnSaleLedgerEntity.make(
         validPayload,
-        '406000'
+        '405000'
       );
 
-      expect(account.code).toBe('406001');
+      expect(account.code).toBe('405001');
       expect(account.type).toBe(ELedgerType.Revenue);
       expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(ERevenueSubType.GainOnSale);
@@ -87,7 +87,7 @@ describe('Gain on Sale Revenue Entity', () => {
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' };
       expect(() =>
-        gainOnSaleLedgerEntity.make(invalidPayload, '406000')
+        gainOnSaleLedgerEntity.make(invalidPayload, '405000')
       ).toThrow(AppError);
     });
   });

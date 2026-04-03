@@ -16,7 +16,7 @@ import ledgerAccountEntity from '../shared/ledger-account.entity';
 
 function getCode(predecessorCode: TServicesLedgerCode): TServicesLedgerCode {
   return ledgerAccountEntity.getSubLedgerCode<TServicesLedgerCode>(
-    '402',
+    '401',
     predecessorCode
   );
 }

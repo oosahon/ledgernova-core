@@ -18,7 +18,7 @@ function getCode(
   predecessorCode: TUnrealizedGainLedgerCode
 ): TUnrealizedGainLedgerCode {
   return ledgerAccountEntity.getSubLedgerCode<TUnrealizedGainLedgerCode>(
-    '407',
+    '406',
     predecessorCode
   );
 }

@@ -18,7 +18,7 @@ function getCode(
   predecessorCode: TGainOnSaleLedgerCode
 ): TGainOnSaleLedgerCode {
   return ledgerAccountEntity.getSubLedgerCode<TGainOnSaleLedgerCode>(
-    '406',
+    '405',
     predecessorCode
   );
 }

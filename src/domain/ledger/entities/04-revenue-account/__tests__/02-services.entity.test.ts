@@ -36,8 +36,8 @@ describe('Services Revenue Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for services accounts', () => {
-      expect(servicesLedgerEntity.getCode('402000')).toBe('402001');
-      expect(servicesLedgerEntity.getCode('402099')).toBe('402100');
+      expect(servicesLedgerEntity.getCode('401000')).toBe('401001');
+      expect(servicesLedgerEntity.getCode('401099')).toBe('401100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
@@ -58,10 +58,10 @@ describe('Services Revenue Entity', () => {
     it('should successfully create a services account', () => {
       const [account, events] = servicesLedgerEntity.make(
         validPayload,
-        '402000'
+        '401000'
       );
 
-      expect(account.code).toBe('402001');
+      expect(account.code).toBe('401001');
       expect(account.type).toBe(ELedgerType.Revenue);
       expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(ERevenueSubType.Services);
@@ -86,7 +86,7 @@ describe('Services Revenue Entity', () => {
 
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' };
-      expect(() => servicesLedgerEntity.make(invalidPayload, '402000')).toThrow(
+      expect(() => servicesLedgerEntity.make(invalidPayload, '401000')).toThrow(
         AppError
       );
     });

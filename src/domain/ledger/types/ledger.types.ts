@@ -47,6 +47,26 @@ export const EAdjunctAccountRule = {
 export type UAdjunctAccountRule =
   (typeof EAdjunctAccountRule)[keyof typeof EAdjunctAccountRule];
 
+export const EAdjustmentType = {
+  Contra: 'contra',
+  Adjunct: 'adjunct',
+} as const;
+
+export type UAdjustmentType =
+  (typeof EAdjustmentType)[keyof typeof EAdjustmentType];
+
+/**
+ * Metadata required for contra and adjunct accounts.
+ * Every contra/adjunct account MUST carry this in its `meta` field,
+ * specifying the target account it adjusts.
+ *
+ * @see ADR-0012: Relational Contra & Adjunct Accounts
+ */
+export interface IAdjustmentMetaData {
+  adjustmentType: UAdjustmentType;
+  targetAccountId: TEntityId;
+}
+
 /**
  * PLAN:
  * - I'm trying to make ledger accounts in such a way that they will support different types of behaviors.

@@ -18,7 +18,7 @@ function getCode(
   predecessorCode: TEmploymentIncomeLedgerCode
 ): TEmploymentIncomeLedgerCode {
   return ledgerAccountEntity.getSubLedgerCode<TEmploymentIncomeLedgerCode>(
-    '404',
+    '403',
     predecessorCode
   );
 }

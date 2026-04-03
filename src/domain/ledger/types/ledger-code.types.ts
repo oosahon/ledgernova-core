@@ -114,27 +114,24 @@ export type TRevenueLedgerCode = `${typeof RevenuePrefix}${string}`;
 declare const SalesPrefix = '400';
 export type TSalesLedgerCode = `${typeof SalesPrefix}${string}`;
 
-declare const ContraRevenuePrefix = '401';
-export type TContraRevenueLedgerCode = `${typeof ContraRevenuePrefix}${string}`;
-
-declare const ServicesPrefix = '402';
+declare const ServicesPrefix = '401';
 export type TServicesLedgerCode = `${typeof ServicesPrefix}${string}`;
 
-declare const SubscriptionsPrefix = '403';
+declare const SubscriptionsPrefix = '402';
 export type TSubscriptionsLedgerCode = `${typeof SubscriptionsPrefix}${string}`;
 
-declare const EmploymentIncomePrefix = '404';
+declare const EmploymentIncomePrefix = '403';
 export type TEmploymentIncomeLedgerCode =
   `${typeof EmploymentIncomePrefix}${string}`;
 
-declare const InterestIncomePrefix = '405';
+declare const InterestIncomePrefix = '404';
 export type TInterestIncomeLedgerCode =
   `${typeof InterestIncomePrefix}${string}`;
 
-declare const GainOnSalePrefix = '406';
+declare const GainOnSalePrefix = '405';
 export type TGainOnSaleLedgerCode = `${typeof GainOnSalePrefix}${string}`;
 
-declare const UnrealizedGainPrefix = '407';
+declare const UnrealizedGainPrefix = '406';
 export type TUnrealizedGainLedgerCode =
   `${typeof UnrealizedGainPrefix}${string}`;
 
@@ -145,50 +142,47 @@ export type TUnrealizedGainLedgerCode =
 declare const ExpensePrefix = '5';
 export type TExpenseLedgerCode = `${typeof ExpensePrefix}${string}`;
 
-declare const CostOfSalesPrefix = '500';
-export type TCostOfSalesLedgerCode = `${typeof CostOfSalesPrefix}${string}`;
+declare const DirectCostsPrefix = '500';
+export type TDirectCostsLedgerCode = `${typeof DirectCostsPrefix}${string}`;
 
-declare const ContraExpensePrefix = '501';
-export type TContraExpenseLedgerCode = `${typeof ContraExpensePrefix}${string}`;
-
-declare const PayrollPrefix = '502';
+declare const PayrollPrefix = '501';
 export type TPayrollLedgerCode = `${typeof PayrollPrefix}${string}`;
 
-declare const RentUtilitiesPrefix = '503';
+declare const RentUtilitiesPrefix = '502';
 export type TRentUtilitiesLedgerCode = `${typeof RentUtilitiesPrefix}${string}`;
 
-declare const AdminGeneralPrefix = '504';
+declare const AdminGeneralPrefix = '503';
 export type TAdminGeneralLedgerCode = `${typeof AdminGeneralPrefix}${string}`;
 
-declare const MarketingSellingPrefix = '505';
+declare const MarketingSellingPrefix = '504';
 export type TMarketingSellingLedgerCode =
   `${typeof MarketingSellingPrefix}${string}`;
 
-declare const ResearchDevPrefix = '506';
+declare const ResearchDevPrefix = '505';
 export type TResearchDevLedgerCode = `${typeof ResearchDevPrefix}${string}`;
 
-declare const DepreciationAmortizationPrefix = '507';
+declare const DepreciationAmortizationPrefix = '506';
 export type TDepreciationAmortizationLedgerCode =
   `${typeof DepreciationAmortizationPrefix}${string}`;
 
-declare const InterestFinancePrefix = '508';
+declare const InterestFinancePrefix = '507';
 export type TInterestFinanceLedgerCode =
   `${typeof InterestFinancePrefix}${string}`;
 
-declare const IncomeTaxPrefix = '509';
+declare const IncomeTaxPrefix = '508';
 export type TIncomeTaxLedgerCode = `${typeof IncomeTaxPrefix}${string}`;
 
-declare const UnrealizedLossPrefix = '510';
+declare const UnrealizedLossPrefix = '509';
 export type TUnrealizedLossLedgerCode =
   `${typeof UnrealizedLossPrefix}${string}`;
 
-declare const AssetDisposalLossPrefix = '511';
+declare const AssetDisposalLossPrefix = '510';
 export type TAssetDisposalLossLedgerCode =
   `${typeof AssetDisposalLossPrefix}${string}`;
 
-declare const ImpairmentLossPrefix = '512';
+declare const ImpairmentLossPrefix = '511';
 export type TImpairmentLossLedgerCode =
   `${typeof ImpairmentLossPrefix}${string}`;
 
-declare const OtherLossesPrefix = '513';
+declare const OtherLossesPrefix = '512';
 export type TOtherLossesLedgerCode = `${typeof OtherLossesPrefix}${string}`;

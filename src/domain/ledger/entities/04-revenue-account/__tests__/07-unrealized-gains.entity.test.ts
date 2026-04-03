@@ -36,8 +36,8 @@ describe('Unrealized Gains Revenue Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for unrealized gains accounts', () => {
-      expect(unrealizedGainsLedgerEntity.getCode('407000')).toBe('407001');
-      expect(unrealizedGainsLedgerEntity.getCode('407099')).toBe('407100');
+      expect(unrealizedGainsLedgerEntity.getCode('406000')).toBe('406001');
+      expect(unrealizedGainsLedgerEntity.getCode('406099')).toBe('406100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
@@ -58,10 +58,10 @@ describe('Unrealized Gains Revenue Entity', () => {
     it('should successfully create an unrealized gains account', () => {
       const [account, events] = unrealizedGainsLedgerEntity.make(
         validPayload,
-        '407000'
+        '406000'
       );
 
-      expect(account.code).toBe('407001');
+      expect(account.code).toBe('406001');
       expect(account.type).toBe(ELedgerType.Revenue);
       expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(ERevenueSubType.UnrealizedGains);
@@ -87,7 +87,7 @@ describe('Unrealized Gains Revenue Entity', () => {
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' };
       expect(() =>
-        unrealizedGainsLedgerEntity.make(invalidPayload, '407000')
+        unrealizedGainsLedgerEntity.make(invalidPayload, '406000')
       ).toThrow(AppError);
     });
   });
