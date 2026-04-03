@@ -16,6 +16,7 @@ import {
 } from './ledger-code.types';
 import { EAdjunctAccountRule, EContraAccountRule } from './ledger.types';
 import {
+  ESuspenseSubType,
   ISuspenseLedgerAccount,
   TSuspenseSubType,
 } from './suspense-account.types';
@@ -33,11 +34,10 @@ export const EAssetSubType = {
   IntangibleAssets: 'intangible_assets',
   ROUAssets: 'right_of_use_assets',
   Goodwill: 'goodwill',
+  Suspense: ESuspenseSubType.Suspense,
 } as const;
 
-export type UAssetSubType =
-  | (typeof EAssetSubType)[keyof typeof EAssetSubType]
-  | TSuspenseSubType;
+export type UAssetSubType = (typeof EAssetSubType)[keyof typeof EAssetSubType];
 
 export interface IAssetLedgerAccount extends ILedgerAccount {
   code: TAssetLedgerCode;

@@ -11,9 +11,9 @@ flowchart LR
     %% ==========================================
     CA[Current Assets]
     CA --> SG_Cash & SG_STInvestments & SG_Inventories & SG_Receivables
-    CA --> SG_StatutoryReceivables & SG_Prepayments & SG_AccruedIncome & SG_OtherCurrent
+    CA --> SG_StatutoryReceivables & SG_Prepayments & SG_AccruedIncome
 
-    subgraph SG_Cash ["Cash and Cash Equivalents: 101xxx"]
+    subgraph SG_Cash ["Cash and Cash Equivalents: 100xxx"]
         direction TB
         subgraph CCEBehaviors ["Behaviors"]
             CCEBv1[["Bank Account"]]:::behavior
@@ -25,7 +25,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_STInvestments ["Short Term Investments: 102xxx"]
+    subgraph SG_STInvestments ["Short Term Investments: 101xxx"]
         direction TB
         subgraph STBehaviors ["Behaviors"]
             STBv1[["Stocks behavior"]]:::behavior
@@ -39,7 +39,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_Inventories ["Inventories: 103xxx"]
+    subgraph SG_Inventories ["Inventories: 102xxx"]
         direction TB
         subgraph InvBehaviors ["Behaviors"]
             InvBv1[["Raw Materials"]]:::behavior
@@ -52,7 +52,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_Receivables ["Receivables: 104xxx"]
+    subgraph SG_Receivables ["Receivables: 103xxx"]
         direction TB
         subgraph RecBehaviors ["Behaviors"]
             RecBv1[["Trade Receivables"]]:::behavior
@@ -64,7 +64,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_StatutoryReceivables ["Statutory Receivables: 105xxx"]
+    subgraph SG_StatutoryReceivables ["Statutory Receivables: 104xxx"]
         direction TB
         subgraph SRecBehaviors ["Behaviors"]
             SRecBv1[["VAT / Sales Tax Receivable"]]:::behavior
@@ -76,7 +76,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_Prepayments ["Prepayments: 106xxx"]
+    subgraph SG_Prepayments ["Prepayments: 105xxx"]
         direction TB
         subgraph PrepBehaviors ["Behaviors"]
             PrepBv1[["Prepaid Rent"]]:::behavior
@@ -88,7 +88,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_AccruedIncome ["Accrued Income: 107xxx"]
+    subgraph SG_AccruedIncome ["Accrued Income: 106xxx"]
         direction TB
         subgraph AccBehaviors ["Behaviors"]
             AccBv1[["Unbilled Revenue"]]:::behavior
@@ -99,23 +99,14 @@ flowchart LR
         end
     end
 
-    subgraph SG_OtherCurrent ["Other Current Assets: 1xxxxx"]
-        direction TB
-        subgraph OtherCBehaviors ["Behaviors"]
-            OtherCBv1[["Custom Asset Traits"]]:::behavior
-        end
-        subgraph OtherCRules ["Rules"]
-            OtherCRl1[["Flexible / Open validation"]]
-        end
-    end
 
     %% ==========================================
     %% NON CURRENT ASSETS
     %% ==========================================
     NCA[Non Current Assets]
-    NCA --> SG_LTInvestments & SG_PPE & SG_IntangibleAssets & SG_ROU & SG_Goodwill & SG_OtherNonCurrent
+    NCA --> SG_LTInvestments & SG_PPE & SG_IntangibleAssets & SG_ROU & SG_Goodwill
 
-    subgraph SG_LTInvestments ["Long Term Investments: 109xxx"]
+    subgraph SG_LTInvestments ["Long Term Investments: 107xxx"]
         direction TB
         subgraph LTIBehaviors ["Behaviors"]
             LTIBv1[["Equity Method Investments"]]:::behavior
@@ -127,7 +118,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_PPE ["Property, Plant & Equipment: 110xxx"]
+    subgraph SG_PPE ["Property, Plant & Equipment: 108xxx"]
         direction TB
         subgraph PPEBehaviors ["Behaviors"]
             PPEBv1[["Land"]]:::behavior
@@ -142,7 +133,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_IntangibleAssets ["Intangible Assets: 111xxx"]
+    subgraph SG_IntangibleAssets ["Intangible Assets: 109xxx"]
         direction TB
         subgraph IntBehaviors ["Behaviors"]
             IntBv1[["Patents & Trademarks"]]:::behavior
@@ -155,7 +146,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_ROU ["Right-of-Use Assets: 112xxx"]
+    subgraph SG_ROU ["Right-of-Use Assets: 110xxx"]
         direction TB
         subgraph ROUBehaviors ["Behaviors"]
             ROUBv1[["Operating Leases"]]:::behavior
@@ -167,7 +158,7 @@ flowchart LR
         end
     end
 
-    subgraph SG_Goodwill ["Goodwill: 113xxx"]
+    subgraph SG_Goodwill ["Goodwill: 111xxx"]
         direction TB
         subgraph GWBehaviors ["Behaviors"]
             GWBv1[["Acquired Goodwill"]]:::behavior
@@ -179,20 +170,11 @@ flowchart LR
         end
     end
 
-    subgraph SG_OtherNonCurrent ["Other Non Current Assets: 1xxxxx"]
-        direction TB
-        subgraph OtherNCBehaviors ["Behaviors"]
-            OtherNCBv1[["Custom Asset Traits"]]:::behavior
-        end
-        subgraph OtherNCRules ["Rules"]
-            OtherNCRl1[["Flexible / Open validation"]]
-        end
-    end
 
     %% ==========================================
     %% SUSPENSE
     %% ==========================================
-    subgraph SG_Suspense ["Suspense Accounts: 100xxx"]
+    subgraph SG_Suspense ["Suspense Accounts: 199xxx"]
         direction TB
         subgraph SuspBehaviors ["Behaviors"]
             SuspBv1[["Clearing Account"]]:::behavior

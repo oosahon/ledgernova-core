@@ -1,5 +1,7 @@
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
+import { TEntityWithEvents } from '../../../../shared/types/event.types';
 import stringUtils from '../../../../shared/utils/string';
+import assetAccountEvents from '../../events/asset-account.events';
 import {
   EAssetAccountBehavior,
   EAssetSubType,
@@ -7,7 +9,7 @@ import {
   IBankAccountMeta,
   IPettyCashAccount,
   IPettyCashAccountMeta,
-} from '../../types/asset-ledger.types';
+} from '../../types/asset-account.types';
 import { TCashLedgerCode } from '../../types/ledger-code.types';
 import {
   EAdjunctAccountRule,
@@ -33,7 +35,7 @@ function getCode(predecessorCode: TCashLedgerCode): TCashLedgerCode {
 function makePettyCashAccount(
   payload: TCreationOmits<IPettyCashAccount>,
   predecessorCode: TCashLedgerCode
-) {
+): TEntityWithEvents<IPettyCashAccount, IPettyCashAccount> {
   stringUtils.validateUUID(payload.controlAccountId);
 
   const meta: IPettyCashAccountMeta = Object.freeze({
@@ -57,7 +59,8 @@ function makePettyCashAccount(
     createdBy: payload.createdBy,
   });
 
-  return account;
+  const event = assetAccountEvents.pettyCashCreated(account);
+  return [account, [event]];
 }
 
 function makeBankAccountMeta(meta: IBankAccountMeta) {
@@ -138,7 +141,7 @@ function makeBankAccountMeta(meta: IBankAccountMeta) {
 function makeBankAccount(
   payload: TCreationOmits<IBankAccount>,
   predecessorCode: TCashLedgerCode
-) {
+): TEntityWithEvents<IBankAccount, IBankAccount> {
   stringUtils.validateUUID(payload.controlAccountId);
 
   const account = ledgerAccountEntity.make<IBankAccount>({
@@ -158,7 +161,8 @@ function makeBankAccount(
     createdBy: payload.createdBy,
   });
 
-  return account;
+  const event = assetAccountEvents.bankAccountCreated(account);
+  return [account, [event]];
 }
 
 const cashAndCashEquivalentAssetLedgerEntity = Object.freeze({

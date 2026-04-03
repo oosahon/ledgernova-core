@@ -77,7 +77,7 @@ function verifyEmail(user: IUser): TEntityWithEvents<IUser, IUser> {
 function update(
   user: IUser,
   options: Partial<Pick<IUser, 'firstName' | 'lastName'>>
-) {
+): TEntityWithEvents<IUser, IUser> {
   userHelpers.validate(user);
 
   const firstName = stringUtils.sanitizeAndValidate(

@@ -1,0 +1,272 @@
+import { AppError } from '../../../../../shared/value-objects/error';
+import { TCreationOmits } from '../../../../../shared/types/creation-omits.types';
+import { TEntityId } from '../../../../../shared/types/uuid';
+import generateUUID from '../../../../../shared/utils/uuid-generator';
+import cashAndCashEquivalentAssetLedgerEntity from '../00-cash-account.entity';
+import {
+  EAssetAccountBehavior,
+  EAssetSubType,
+  IBankAccount,
+  IBankAccountMeta,
+  IPettyCashAccount,
+} from '../../../types/asset-account.types';
+import {
+  EAdjunctAccountRule,
+  EContraAccountRule,
+  ELedgerAccountStatus,
+  ELedgerType,
+} from '../../../types/ledger.types';
+
+describe('Cash and Cash Equivalent Entity', () => {
+  const validUUID1 = generateUUID();
+  const validUUID2 = generateUUID();
+  const validUUID3 = generateUUID();
+
+  const validCurrency = {
+    code: 'USD',
+    name: 'US Dollar',
+    symbol: '$',
+    minorUnit: 2n,
+  };
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-04-01T00:00:00.000Z'));
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+    jest.clearAllMocks();
+  });
+
+  describe('getCode', () => {
+    it('should generate the next sub-ledger code for cash accounts', () => {
+      expect(cashAndCashEquivalentAssetLedgerEntity.getCode('100000')).toBe(
+        '100001'
+      );
+      expect(cashAndCashEquivalentAssetLedgerEntity.getCode('100099')).toBe(
+        '100100'
+      );
+    });
+  });
+
+  describe('makeBankAccountMeta', () => {
+    const validMeta: IBankAccountMeta = {
+      bankName: 'Test Bank',
+      accountNumber: '1234567890',
+      accountName: 'Main Corporate Account',
+      sortCode: '123456',
+      swiftCode: 'TESTBANKXX',
+      iban: 'GB12TEST123456789012',
+      routingNumber: '123456789',
+      branchCode: '12345',
+      lastReconciliationDate: null,
+    };
+
+    it('should successfully create bank account meta with all valid fields', () => {
+      const meta =
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta(validMeta);
+      expect(meta).toEqual(validMeta);
+      expect(Object.isFrozen(meta)).toBe(true);
+    });
+
+    it('should successfully create bank account meta without optional fields', () => {
+      const {
+        sortCode,
+        swiftCode,
+        iban,
+        routingNumber,
+        branchCode,
+        ...requiredMeta
+      } = validMeta;
+      const meta = cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta(
+        requiredMeta as any
+      );
+      expect(meta).toEqual({
+        ...requiredMeta,
+        sortCode: null,
+        swiftCode: null,
+        iban: null,
+        routingNumber: null,
+        branchCode: null,
+        lastReconciliationDate: null,
+      });
+    });
+
+    it('should throw AppError if bankName is too short', () => {
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+          ...validMeta,
+          bankName: 'A',
+        })
+      ).toThrow(AppError);
+    });
+
+    it('should throw AppError if accountNumber is invalid', () => {
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+          ...validMeta,
+          accountNumber: '12345',
+        })
+      ).toThrow(AppError); // < 6
+    });
+
+    it('should throw AppError if accountName is invalid', () => {
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+          ...validMeta,
+          accountName: 'N',
+        })
+      ).toThrow(AppError);
+    });
+
+    it('should throw AppError if sortCode is provided but invalid length', () => {
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+          ...validMeta,
+          sortCode: '12345',
+        })
+      ).toThrow(AppError);
+    });
+
+    it('should throw AppError if swiftCode is provided but invalid length', () => {
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+          ...validMeta,
+          swiftCode: 'TEST',
+        })
+      ).toThrow(AppError); // < 8
+    });
+
+    it('should throw AppError if iban is provided but invalid length', () => {
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+          ...validMeta,
+          iban: 'GB12TEST',
+        })
+      ).toThrow(AppError); // < 15
+    });
+
+    it('should throw AppError if routingNumber is provided but invalid length', () => {
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+          ...validMeta,
+          routingNumber: '12345',
+        })
+      ).toThrow(AppError); // != 9
+    });
+
+    it('should throw AppError if branchCode is provided but invalid length', () => {
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+          ...validMeta,
+          branchCode: '12345678901',
+        })
+      ).toThrow(AppError); // > 10
+    });
+  });
+
+  describe('makePettyCashAccount', () => {
+    const validPettyCashPayload: TCreationOmits<IPettyCashAccount> = {
+      name: 'Main Office Petty Cash',
+      accountingEntityId: validUUID1,
+      isControlAccount: false,
+      controlAccountId: validUUID3,
+      currency: validCurrency,
+      createdBy: validUUID2,
+    } as TCreationOmits<IPettyCashAccount>;
+
+    it('should successfully create a petty cash account', () => {
+      const [account, events] =
+        cashAndCashEquivalentAssetLedgerEntity.makePettyCashAccount(
+          validPettyCashPayload,
+          '100000'
+        );
+
+      expect(account.code).toBe('100001');
+      expect(account.type).toBe(ELedgerType.Asset);
+      expect(account.subType).toBe(EAssetSubType.CashAndCashEquivalent);
+      expect(account.behavior).toBe(EAssetAccountBehavior.PettyCash);
+      expect(account.status).toBe(ELedgerAccountStatus.Active);
+      expect(account.contraAccountRule).toBe(
+        EContraAccountRule.ContraPermitted
+      );
+      expect(account.adjunctAccountRule).toBe(
+        EAdjunctAccountRule.AdjunctPermitted
+      );
+      expect(account.meta).toEqual({ lastReconciliationDate: null });
+      expect(Object.isFrozen(account.meta)).toBe(true);
+    });
+
+    it('should throw if controlAccountId is invalid', () => {
+      const invalidPayload = {
+        ...validPettyCashPayload,
+        controlAccountId: 'invalid' as TEntityId,
+      };
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makePettyCashAccount(
+          invalidPayload as any,
+          '100000'
+        )
+      ).toThrow(AppError);
+    });
+  });
+
+  describe('makeBankAccount', () => {
+    const validBankAccountMeta: IBankAccountMeta = {
+      bankName: 'Test Bank',
+      accountNumber: '1234567890',
+      accountName: 'Main Corporate Account',
+      sortCode: null,
+      swiftCode: null,
+      iban: null,
+      routingNumber: null,
+      branchCode: null,
+      lastReconciliationDate: null,
+    };
+
+    const validBankPayload: TCreationOmits<IBankAccount> = {
+      name: 'Operations Bank Account',
+      accountingEntityId: validUUID1,
+      isControlAccount: false,
+      controlAccountId: validUUID3,
+      currency: validCurrency,
+      meta: validBankAccountMeta,
+      createdBy: validUUID2,
+    } as TCreationOmits<IBankAccount>;
+
+    it('should successfully create a bank account', () => {
+      const [account, events] =
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccount(
+          validBankPayload,
+          '100000'
+        );
+
+      expect(account.code).toBe('100001');
+      expect(account.type).toBe(ELedgerType.Asset);
+      expect(account.subType).toBe(EAssetSubType.CashAndCashEquivalent);
+      expect(account.behavior).toBe(EAssetAccountBehavior.Bank);
+      expect(account.status).toBe(ELedgerAccountStatus.Active);
+      expect(account.contraAccountRule).toBe(
+        EContraAccountRule.ContraPermitted
+      );
+      expect(account.adjunctAccountRule).toBe(
+        EAdjunctAccountRule.AdjunctPermitted
+      );
+      expect(account.meta).toEqual(validBankAccountMeta);
+    });
+
+    it('should throw if controlAccountId is invalid', () => {
+      const invalidPayload = {
+        ...validBankPayload,
+        controlAccountId: 'invalid' as TEntityId,
+      };
+      expect(() =>
+        cashAndCashEquivalentAssetLedgerEntity.makeBankAccount(
+          invalidPayload as any,
+          '100000'
+        )
+      ).toThrow(AppError);
+    });
+  });
+});

@@ -13,16 +13,11 @@ Suspense accounts are temporary balance sheet accounts that are used to hold tra
 - Bank Reconciliation
 - Trial Balance Adjustments (for power users)
 - Uncategorized transactions
-- Uncleared transactions
-- Down payments received
-- Down payments made for property, plant & equipment
 
 > [!INFO]
 > It is important to note that by the end of the reporting year, all suspense accounts should be cleared.
 
-Seeing that they are balance sheet accounts, in LedgerNova they can only be associated with asset and liability accounts.
-
-Also, a suspense account can only be associated with one asset/liability account. If the account they are associated with is a control account, then the sub-ledger accounts under it will be associated with the suspense account.
+In LedgerNova, we use one liability/asset suspense account per accounting entity, per operating currency. That is, if the accounting entity has multiple operating currencies, it will have multiple liability/asset suspense accounts.
 
 ## Asset Accounts (199xxx)
 
@@ -30,8 +25,6 @@ In the Asset ledger, a suspense account typically carries a debit balance. It re
 
 - Uncategorized credit transactions during bank reconciliation
 - Uncleared/unidentified outgoing payments
-- Duplicate outgoing payments to vendors
-- Deposits for property, plant & equipment purchases
 
 ## Liability Accounts (299xxx)
 
@@ -39,8 +32,3 @@ In the Liability ledger, a suspense account typically carries a credit balance. 
 
 - Uncategorized debit transactions during bank reconciliation
 - Uncleared/unidentified incoming payments
-- Duplicate incoming payments
-- Down payments for goods/services
-
-> [!INFO]
-> A suspense account CANNOT be created without an associated asset or liability account.

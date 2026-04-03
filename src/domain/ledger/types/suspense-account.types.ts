@@ -1,29 +1,35 @@
-import { TEntityId } from '../../../shared/types/uuid';
-import { TAssetLedgerCode } from './ledger-code.types';
+import {
+  TAssetLedgerCode,
+  TAssetSuspenseLedgerCode,
+  TLiabilitySuspenseLedgerCode,
+} from './ledger-code.types';
 import {
   EAdjunctAccountRule,
   EContraAccountRule,
   ILedgerAccount,
 } from './ledger.types';
 
-export type TSuspenseSubType = 'suspense';
-export type TSuspenseBehavior = 'default';
+export const ESuspenseSubType = {
+  Suspense: 'suspense',
+} as const;
 
-interface ITargetAccount {
-  id: TEntityId;
-  code: TAssetLedgerCode; // TODO add liability code
-}
+export type TSuspenseSubType =
+  (typeof ESuspenseSubType)[keyof typeof ESuspenseSubType];
 
-export interface ISuspenseAccountMeta {
-  targetAccount: ITargetAccount;
-}
+export const ESuspenseBehavior = {
+  Default: 'default',
+} as const;
+
+export type TSuspenseBehavior =
+  (typeof ESuspenseBehavior)[keyof typeof ESuspenseBehavior];
 
 export interface ISuspenseLedgerAccount extends ILedgerAccount {
+  code: TAssetSuspenseLedgerCode | TLiabilitySuspenseLedgerCode;
   subType: TSuspenseSubType;
   behavior: TSuspenseBehavior;
   isControlAccount: false;
   controlAccountId: null;
   contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
   adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
-  meta: ISuspenseAccountMeta;
+  meta: null; // NB: this may change as we add functionalities
 }
