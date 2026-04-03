@@ -103,3 +103,37 @@ export type TReservesLedgerCode = `${typeof ReservesPrefix}${string}`;
 declare const OpeningBalanceEquityPrefix = '399';
 export type TOpeningBalanceEquityLedgerCode =
   `${typeof OpeningBalanceEquityPrefix}${string}`;
+
+/**
+ * ===================== REVENUE LEDGER CODES =====================
+ * @see {@link ../__docs__/04-revenue-accounts.md} to understand the structure of revenue ledger codes
+ */
+declare const RevenuePrefix = '4';
+export type TRevenueLedgerCode = `${typeof RevenuePrefix}${string}`;
+
+declare const SalesPrefix = '400';
+export type TSalesLedgerCode = `${typeof SalesPrefix}${string}`;
+
+declare const ContraRevenuePrefix = '401';
+export type TContraRevenueLedgerCode = `${typeof ContraRevenuePrefix}${string}`;
+
+declare const ServicesPrefix = '402';
+export type TServicesLedgerCode = `${typeof ServicesPrefix}${string}`;
+
+declare const SubscriptionsPrefix = '403';
+export type TSubscriptionsLedgerCode = `${typeof SubscriptionsPrefix}${string}`;
+
+declare const EmploymentIncomePrefix = '404';
+export type TEmploymentIncomeLedgerCode =
+  `${typeof EmploymentIncomePrefix}${string}`;
+
+declare const InterestIncomePrefix = '405';
+export type TInterestIncomeLedgerCode =
+  `${typeof InterestIncomePrefix}${string}`;
+
+declare const GainOnSalePrefix = '406';
+export type TGainOnSaleLedgerCode = `${typeof GainOnSalePrefix}${string}`;
+
+declare const UnrealizedGainPrefix = '407';
+export type TUnrealizedGainLedgerCode =
+  `${typeof UnrealizedGainPrefix}${string}`;
