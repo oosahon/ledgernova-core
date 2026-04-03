@@ -29,6 +29,8 @@ Asset ledgers come in two reporting hierarchies:
 
 When an asset ledger/sub-ledger is created, it MUST be associated with one of the two reporting hierarchies.
 
+By default, asset accounts carry a **debit** normal balance. This is automatically derived from the account type during creation.
+
 To ensure our system is extensible, we have not baked functionalities into ledger codes or predefined accounts. For non-power users, our ledger accounts bootstrap will handle the creation of accounts and association of behaviors. For power users, they can create accounts and associate behaviors available to the account class.
 
 The following table shows the behaviors of different asset account classes

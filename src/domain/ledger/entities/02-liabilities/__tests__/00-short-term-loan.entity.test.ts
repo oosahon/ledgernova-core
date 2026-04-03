@@ -18,6 +18,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
 } from '../../../types/ledger.types';
 
 describe('Short Term Loan Liability Entity', () => {
@@ -130,6 +131,7 @@ describe('Short Term Loan Liability Entity', () => {
 
       expect(account.code).toBe('200001');
       expect(account.type).toBe(ELedgerType.Liability);
+      expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(ELiabilitySubType.ShortTermDebt);
       expect(account.behavior).toBe(ELiabilityAccountBehavior.CreditCard);
       expect(account.status).toBe(ELedgerAccountStatus.Active);
@@ -203,6 +205,7 @@ describe('Short Term Loan Liability Entity', () => {
 
       expect(account.code).toBe('200001');
       expect(account.type).toBe(ELedgerType.Liability);
+      expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(ELiabilitySubType.ShortTermDebt);
       expect(account.behavior).toBe(ELiabilityAccountBehavior.Overdraft);
       expect(account.status).toBe(ELedgerAccountStatus.Active);
@@ -289,6 +292,7 @@ describe('Short Term Loan Liability Entity', () => {
 
       expect(account.code).toBe('200001');
       expect(account.type).toBe(ELedgerType.Liability);
+      expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(ELiabilitySubType.ShortTermDebt);
       expect(account.behavior).toBe(ELiabilityAccountBehavior.ShortTermLoan);
       expect(account.status).toBe(ELedgerAccountStatus.Active);

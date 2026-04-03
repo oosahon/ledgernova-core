@@ -10,6 +10,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
 } from '../../../types/ledger.types';
 
 describe('Asset Suspense Account Entity', () => {
@@ -62,6 +63,7 @@ describe('Asset Suspense Account Entity', () => {
 
       expect(account.code).toBe('199001');
       expect(account.type).toBe(ELedgerType.Asset);
+      expect(account.normalBalance).toBe(ENormalBalance.Debit);
       expect(account.subType).toBe(EAssetSubType.Suspense);
       expect(account.behavior).toBe(EAssetAccountBehavior.Default);
       expect(account.meta).toBeNull();

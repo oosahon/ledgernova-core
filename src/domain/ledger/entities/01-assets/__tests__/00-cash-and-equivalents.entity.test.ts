@@ -15,6 +15,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
 } from '../../../types/ledger.types';
 
 describe('Cash and Cash Equivalent Entity', () => {
@@ -185,6 +186,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
       expect(account.code).toBe('100001');
       expect(account.type).toBe(ELedgerType.Asset);
+      expect(account.normalBalance).toBe(ENormalBalance.Debit);
       expect(account.subType).toBe(EAssetSubType.CashAndCashEquivalent);
       expect(account.behavior).toBe(EAssetAccountBehavior.PettyCash);
       expect(account.status).toBe(ELedgerAccountStatus.Active);
@@ -244,6 +246,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
       expect(account.code).toBe('100001');
       expect(account.type).toBe(ELedgerType.Asset);
+      expect(account.normalBalance).toBe(ENormalBalance.Debit);
       expect(account.subType).toBe(EAssetSubType.CashAndCashEquivalent);
       expect(account.behavior).toBe(EAssetAccountBehavior.Bank);
       expect(account.status).toBe(ELedgerAccountStatus.Active);

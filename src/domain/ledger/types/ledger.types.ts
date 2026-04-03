@@ -11,6 +11,14 @@ export const ELedgerType = {
 
 export type ULedgerType = (typeof ELedgerType)[keyof typeof ELedgerType];
 
+export const ENormalBalance = {
+  Debit: 'debit',
+  Credit: 'credit',
+} as const;
+
+export type UNormalBalance =
+  (typeof ENormalBalance)[keyof typeof ENormalBalance];
+
 export const ELedgerAccountStatus = {
   Active: 'active',
   Archived: 'archived',
@@ -57,6 +65,7 @@ export interface ILedgerAccount {
   code: string;
   accountingEntityId: TEntityId;
   type: ULedgerType;
+  normalBalance: UNormalBalance;
   subType: string;
   behavior: string;
   isControlAccount: boolean;

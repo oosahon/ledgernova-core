@@ -13,7 +13,24 @@ import {
   EContraAccountRule,
   UAdjunctAccountRule,
   EAdjunctAccountRule,
+  ENormalBalance,
+  UNormalBalance,
 } from '../../types/ledger.types';
+
+function getNormalBalance(type: ULedgerType): UNormalBalance {
+  switch (type) {
+    case ELedgerType.Asset:
+    case ELedgerType.Expense:
+      return ENormalBalance.Debit;
+
+    case ELedgerType.Liability:
+    case ELedgerType.Equity:
+    case ELedgerType.Revenue:
+      return ENormalBalance.Credit;
+    default:
+      throw new AppError('Invalid ledger type', { cause: type });
+  }
+}
 
 function validateCode(code: string) {
   if (!/^[1-5][0-9]{5}$/.test(code)) {
@@ -84,7 +101,7 @@ function getSubLedgerCode<T extends string>(
 }
 
 function make<T extends ILedgerAccount>(
-  payload: TCreationOmits<T>
+  payload: TCreationOmits<T, 'normalBalance'>
 ): Readonly<T> {
   validateCode(payload.code);
   stringUtils.validateUUID(payload.accountingEntityId);
@@ -104,11 +121,14 @@ function make<T extends ILedgerAccount>(
   validateSubType(payload.subType);
   validateBehavior(payload.behavior);
 
+  const timestamp = new Date();
+
   const ledgerAccount: ILedgerAccount = {
     id: generateUUID(),
     code: payload.code,
     accountingEntityId: payload.accountingEntityId,
     type: payload.type,
+    normalBalance: getNormalBalance(payload.type),
     subType: payload.subType,
     behavior: payload.behavior,
     isControlAccount: !!payload.isControlAccount,
@@ -121,8 +141,8 @@ function make<T extends ILedgerAccount>(
     // Meta validation is delegated to the specific ledger account entity
     meta: payload.meta,
     createdBy: payload.createdBy,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: timestamp,
+    updatedAt: timestamp,
     deletedAt: null,
   };
 
@@ -138,6 +158,8 @@ const ledgerAccountEntity = Object.freeze({
   validateAdjunctRule,
 
   getSubLedgerCode,
+
+  getNormalBalance,
 });
 
 export default ledgerAccountEntity;

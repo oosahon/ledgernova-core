@@ -10,6 +10,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
 } from '../../../types/ledger.types';
 
 describe('Liability Suspense Account Entity', () => {
@@ -62,6 +63,7 @@ describe('Liability Suspense Account Entity', () => {
 
       expect(account.code).toBe('299001');
       expect(account.type).toBe(ELedgerType.Liability);
+      expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(ELiabilitySubType.Suspense);
       expect(account.behavior).toBe(ELiabilityAccountBehavior.Default);
       expect(account.meta).toBeNull();

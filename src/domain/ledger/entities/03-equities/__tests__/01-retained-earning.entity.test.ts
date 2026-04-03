@@ -10,6 +10,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
 } from '../../../types/ledger.types';
 
 describe('Retained Earning Entity', () => {
@@ -62,6 +63,7 @@ describe('Retained Earning Entity', () => {
 
       expect(account.code).toBe('301001');
       expect(account.type).toBe(ELedgerType.Equity);
+      expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(EEquitySubType.RetainedEarnings);
       expect(account.behavior).toBe(EEquityAccountBehavior.RetainedEarnings);
       expect(account.meta).toBeNull();

@@ -10,6 +10,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
 } from '../../../types/ledger.types';
 
 describe('Share/Owner Capital Entity', () => {
@@ -62,6 +63,7 @@ describe('Share/Owner Capital Entity', () => {
 
       expect(account.code).toBe('300001');
       expect(account.type).toBe(ELedgerType.Equity);
+      expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(EEquitySubType.Capital);
       expect(account.behavior).toBe(EEquityAccountBehavior.OwnerCapital);
       expect(account.meta).toBeNull();

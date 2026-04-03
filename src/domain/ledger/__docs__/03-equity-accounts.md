@@ -14,7 +14,7 @@
 
 Equity ledgers are used to track the residual interest in the assets of the entity after deducting all its liabilities (Net Worth). Per our [accounting philosophy](../../accounting/__doc__/accounting.md#philosophy), our equity ledgers are structured with reporting in mind.
 
-By default, equity accounts carry a credit balance.
+By default, equity accounts carry a **credit** normal balance. This is automatically derived from the account type during creation.
 
 To ensure our system is extensible, we have not baked functionalities into ledger codes or predefined accounts. For non-power users, our ledger accounts bootstrap will handle the creation of accounts and association of behaviors. For power users, they can create accounts and associate behaviors available to the account class.
 
@@ -78,9 +78,9 @@ For an individual, the following accounts will be bootstrapped:
 
 #### Equity
 
-- OwnerCapital: `300000` (control account)
-- RetainedEarnings: `301000` (control account)
-- OpeningBalanceEquity: `399000` (control account)
+- OwnerCapital: `300000`
+- RetainedEarnings: `301000`
+- OpeningBalanceEquity: `399000`
 
 > [!NOTE]
 > Reserves (`302xxx`) are not bootstrapped for individuals. The Revaluation Reserve entity is available for power users or will be created on demand if an individual revalues PPE or long-term investments.

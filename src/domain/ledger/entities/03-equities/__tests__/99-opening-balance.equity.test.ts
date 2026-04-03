@@ -10,6 +10,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
 } from '../../../types/ledger.types';
 
 describe('Opening Balance Equity Entity', () => {
@@ -62,6 +63,7 @@ describe('Opening Balance Equity Entity', () => {
 
       expect(account.code).toBe('399001');
       expect(account.type).toBe(ELedgerType.Equity);
+      expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(EEquitySubType.OpeningBalance);
       expect(account.behavior).toBe(
         EEquityAccountBehavior.OpeningBalanceEquity

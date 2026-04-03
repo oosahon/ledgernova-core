@@ -10,6 +10,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
 } from '../../../types/ledger.types';
 
 describe('Revaluation Reserve Entity', () => {
@@ -62,6 +63,7 @@ describe('Revaluation Reserve Entity', () => {
 
       expect(account.code).toBe('302001');
       expect(account.type).toBe(ELedgerType.Equity);
+      expect(account.normalBalance).toBe(ENormalBalance.Credit);
       expect(account.subType).toBe(EEquitySubType.Reserve);
       expect(account.behavior).toBe(EEquityAccountBehavior.RevaluationReserve);
       expect(account.meta).toBeNull();

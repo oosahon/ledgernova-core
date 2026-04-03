@@ -8,6 +8,7 @@ import {
   EContraAccountRule,
   ELedgerAccountStatus,
   ELedgerType,
+  ENormalBalance,
   ILedgerAccount,
 } from '../../../types/ledger.types';
 
@@ -23,7 +24,7 @@ describe('Ledger Account Shared Entity', () => {
     minorUnit: 2n,
   };
 
-  const validPayload: TCreationOmits<ILedgerAccount> = {
+  const validPayload: TCreationOmits<ILedgerAccount, 'normalBalance'> = {
     code: '101001',
     accountingEntityId: validUUID1,
     type: ELedgerType.Asset,
@@ -171,6 +172,7 @@ describe('Ledger Account Shared Entity', () => {
       expect(account.code).toBe('101001');
       expect(account.accountingEntityId).toBe(validUUID1);
       expect(account.type).toBe(ELedgerType.Asset);
+      expect(account.normalBalance).toBe(ENormalBalance.Debit);
       expect(account.isControlAccount).toBe(false);
       expect(account.controlAccountId).toBeNull();
       expect(account.name).toBe('Main Bank Account');
