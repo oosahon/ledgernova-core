@@ -51,44 +51,33 @@ export type TAssetSuspenseLedgerCode = `${typeof SuspensePrefix}${string}`;
 declare const LiabilityPrefix = '2';
 export type TLiabilityLedgerCode = `${typeof LiabilityPrefix}${string}`;
 
-// declare const ShortTermBorrowingsPrefix = '200';
-// export type TShortTermBorrowingsLedgerCode =
-//   `${typeof ShortTermBorrowingsPrefix}${string}`;
+declare const ShortTermDebtPrefix = '200';
+export type TShortTermDebtLedgerCode = `${typeof ShortTermDebtPrefix}${string}`;
 
-// declare const TradePayablesPrefix = '201';
-// export type TTradePayablesLedgerCode = `${typeof TradePayablesPrefix}${string}`;
+declare const TradePayablePrefix = '201';
+export type TTradePayableLedgerCode = `${typeof TradePayablePrefix}${string}`;
 
-// declare const AccruedExpensesPrefix = '202';
-// export type TAccruedExpensesLedgerCode =
-//   `${typeof AccruedExpensesPrefix}${string}`;
+declare const AccruedExpensePrefix = '202';
+export type TAccruedExpenseLedgerCode =
+  `${typeof AccruedExpensePrefix}${string}`;
 
-// declare const ShortTermLeaseLiabilitiesPrefix = '203';
-// export type TShortTermLeaseLiabilitiesLedgerCode =
-//   `${typeof ShortTermLeaseLiabilitiesPrefix}${string}`;
+declare const StatutoryPayablePrefix = '203';
+export type TStatutoryPayableLedgerCode =
+  `${typeof StatutoryPayablePrefix}${string}`;
 
-// declare const CurrentTaxLiabilitiesPrefix = '204';
-// export type TCurrentTaxLiabilitiesLedgerCode =
-//   `${typeof CurrentTaxLiabilitiesPrefix}${string}`;
+declare const DeferredRevenuePrefix = '204';
+export type TDeferredRevenueLedgerCode =
+  `${typeof DeferredRevenuePrefix}${string}`;
 
-// declare const OtherCurrentLiabilitiesPrefix = '205';
-// export type TOtherCurrentLiabilitiesLedgerCode =
-//   `${typeof OtherCurrentLiabilitiesPrefix}${string}`;
+declare const LongTermLoanPrefix = '205';
+export type TLongTermLoanLedgerCode = `${typeof LongTermLoanPrefix}${string}`;
 
-// declare const LongTermBorrowingsPrefix = '206';
-// export type TLongTermBorrowingsLedgerCode =
-//   `${typeof LongTermBorrowingsPrefix}${string}`;
+declare const LeaseLiabilityPrefix = '206';
+export type TLeaseLiabilityLedgerCode =
+  `${typeof LeaseLiabilityPrefix}${string}`;
 
-// declare const LongTermLeaseLiabilitiesPrefix = '207';
-// export type TLongTermLeaseLiabilitiesLedgerCode =
-//   `${typeof LongTermLeaseLiabilitiesPrefix}${string}`;
-
-// declare const DeferredTaxLiabilitiesPrefix = '208';
-// export type TDeferredTaxLiabilitiesLedgerCode =
-//   `${typeof DeferredTaxLiabilitiesPrefix}${string}`;
-
-// declare const OtherNonCurrentLiabilitiesPrefix = '209';
-// export type TOtherNonCurrentLiabilitiesLedgerCode =
-//   `${typeof OtherNonCurrentLiabilitiesPrefix}${string}`;
+declare const ProvisionPrefix = '207';
+export type TProvisionLedgerCode = `${typeof ProvisionPrefix}${string}`;
 
 declare const LiabilitySuspensePrefix = '299';
 export type TLiabilitySuspenseLedgerCode =

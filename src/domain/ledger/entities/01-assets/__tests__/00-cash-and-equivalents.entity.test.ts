@@ -2,7 +2,7 @@ import { AppError } from '../../../../../shared/value-objects/error';
 import { TCreationOmits } from '../../../../../shared/types/creation-omits.types';
 import { TEntityId } from '../../../../../shared/types/uuid';
 import generateUUID from '../../../../../shared/utils/uuid-generator';
-import cashAndCashEquivalentAssetLedgerEntity from '../00-cash-account.entity';
+import cashAndEquivalentAssetLedgerEntity from '../00-cash-and-equivalents.entity';
 import {
   EAssetAccountBehavior,
   EAssetSubType,
@@ -41,10 +41,10 @@ describe('Cash and Cash Equivalent Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for cash accounts', () => {
-      expect(cashAndCashEquivalentAssetLedgerEntity.getCode('100000')).toBe(
+      expect(cashAndEquivalentAssetLedgerEntity.getCode('100000')).toBe(
         '100001'
       );
-      expect(cashAndCashEquivalentAssetLedgerEntity.getCode('100099')).toBe(
+      expect(cashAndEquivalentAssetLedgerEntity.getCode('100099')).toBe(
         '100100'
       );
     });
@@ -65,7 +65,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should successfully create bank account meta with all valid fields', () => {
       const meta =
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta(validMeta);
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta(validMeta);
       expect(meta).toEqual(validMeta);
       expect(Object.isFrozen(meta)).toBe(true);
     });
@@ -79,7 +79,7 @@ describe('Cash and Cash Equivalent Entity', () => {
         branchCode,
         ...requiredMeta
       } = validMeta;
-      const meta = cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta(
+      const meta = cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta(
         requiredMeta as any
       );
       expect(meta).toEqual({
@@ -95,7 +95,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should throw AppError if bankName is too short', () => {
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta({
           ...validMeta,
           bankName: 'A',
         })
@@ -104,7 +104,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should throw AppError if accountNumber is invalid', () => {
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta({
           ...validMeta,
           accountNumber: '12345',
         })
@@ -113,7 +113,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should throw AppError if accountName is invalid', () => {
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta({
           ...validMeta,
           accountName: 'N',
         })
@@ -122,7 +122,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should throw AppError if sortCode is provided but invalid length', () => {
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta({
           ...validMeta,
           sortCode: '12345',
         })
@@ -131,7 +131,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should throw AppError if swiftCode is provided but invalid length', () => {
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta({
           ...validMeta,
           swiftCode: 'TEST',
         })
@@ -140,7 +140,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should throw AppError if iban is provided but invalid length', () => {
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta({
           ...validMeta,
           iban: 'GB12TEST',
         })
@@ -149,7 +149,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should throw AppError if routingNumber is provided but invalid length', () => {
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta({
           ...validMeta,
           routingNumber: '12345',
         })
@@ -158,7 +158,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should throw AppError if branchCode is provided but invalid length', () => {
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccountMeta({
+        cashAndEquivalentAssetLedgerEntity.makeBankAccountMeta({
           ...validMeta,
           branchCode: '12345678901',
         })
@@ -178,7 +178,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should successfully create a petty cash account', () => {
       const [account, events] =
-        cashAndCashEquivalentAssetLedgerEntity.makePettyCashAccount(
+        cashAndEquivalentAssetLedgerEntity.makePettyCashAccount(
           validPettyCashPayload,
           '100000'
         );
@@ -204,7 +204,7 @@ describe('Cash and Cash Equivalent Entity', () => {
         controlAccountId: 'invalid' as TEntityId,
       };
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makePettyCashAccount(
+        cashAndEquivalentAssetLedgerEntity.makePettyCashAccount(
           invalidPayload as any,
           '100000'
         )
@@ -237,7 +237,7 @@ describe('Cash and Cash Equivalent Entity', () => {
 
     it('should successfully create a bank account', () => {
       const [account, events] =
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccount(
+        cashAndEquivalentAssetLedgerEntity.makeBankAccount(
           validBankPayload,
           '100000'
         );
@@ -262,7 +262,7 @@ describe('Cash and Cash Equivalent Entity', () => {
         controlAccountId: 'invalid' as TEntityId,
       };
       expect(() =>
-        cashAndCashEquivalentAssetLedgerEntity.makeBankAccount(
+        cashAndEquivalentAssetLedgerEntity.makeBankAccount(
           invalidPayload as any,
           '100000'
         )

@@ -111,25 +111,56 @@ For users who migrate from other systems to ours, we will preserve their ledger 
 
 ### Assets
 
-![Assets Chart of Accounts](./assets/coa-assets.svg)
+<figure>
+<img src="./assets/coa-assets.svg" alt="Assets Chart of Accounts"  style="max-width: 100%; width: auto; max-height: 600px;">
+<figcaption>
+
 _Figure 1: View the mermaid sourcecode here:&#x20;_[_coa-assets.mermaid_](./assets/coa-assets.mermaid)
+
+</figcaption>
+</figure>
 
 ## Liabilities
 
-![Liabilities Chart of Accounts](./assets/coa-liabilities.svg)
+<figure>
+<img src="./assets/coa-liabilities.svg" alt="Liabilities Chart of Accounts"  style="max-width: 100%; width: auto; max-height: 600px;">
+<figcaption>
+
+_Figure 2: View the mermaid sourcecode here:&#x20;_[_coa-liabilities.mermaid_](./assets/coa-liabilities.mermaid)
+
+</figcaption>
+</figure>
 _Figure 2: View the mermaid sourcecode here:&#x20;_[_coa-liabilities.mermaid_](./assets/coa-liabilities.mermaid)
 
 ### Equities
 
-![Equities Chart of Accounts](./assets/coa-equities.svg)
+<figure>
+<img src="./assets/coa-equities.svg" alt="Equities Chart of Accounts"  style="max-width: 100%; width: auto; max-height: 600px;">
+<figcaption>
+
 _Figure 3: View the mermaid sourcecode here:&#x20;_[_coa-equities.mermaid_](./assets/coa-equities.mermaid)
+
+</figcaption>
+</figure>
 
 ### Revenues
 
-![Revenues Chart of Accounts](./assets/coa-revenues.svg)
+<figure>
+<img src="./assets/coa-revenues.svg" alt="Revenues Chart of Accounts"  style="max-width: 100%; width: auto; max-height: 600px;">
+<figcaption>
+
 _Figure 4: View the mermaid sourcecode here:&#x20;_[_coa-revenues.mermaid_](./assets/coa-revenues.mermaid)
+
+</figcaption>
+</figure>
 
 ### Expenses
 
-![Expenses Chart of Accounts](./assets/coa-expenses.svg)
+<figure>
+<img src="./assets/coa-expenses.svg" alt="Expenses Chart of Accounts"  style="max-width: 100%; width: auto; max-height: 600px;">
+<figcaption>
+
 _Figure 5: View the mermaid sourcecode here:&#x20;_[_coa-expenses.mermaid_](./assets/coa-expenses.mermaid)
+
+</figcaption>
+</figure>

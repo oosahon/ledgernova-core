@@ -165,11 +165,11 @@ function makeBankAccount(
   return [account, [event]];
 }
 
-const cashAndCashEquivalentAssetLedgerEntity = Object.freeze({
+const cashAndEquivalentAssetLedgerEntity = Object.freeze({
   makeBankAccount,
   makeBankAccountMeta,
   makePettyCashAccount,
   getCode,
 });
 
-export default cashAndCashEquivalentAssetLedgerEntity;
+export default cashAndEquivalentAssetLedgerEntity;
