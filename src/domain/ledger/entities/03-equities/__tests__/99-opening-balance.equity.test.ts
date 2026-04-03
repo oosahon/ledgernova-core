@@ -50,8 +50,6 @@ describe('Opening Balance Equity Entity', () => {
     const validPayload = {
       name: 'System Opening Balances',
       accountingEntityId: validUUID1,
-      isControlAccount: false,
-      controlAccountId: null,
       currency: validCurrency,
       createdBy: validUUID2,
     };
@@ -64,7 +62,7 @@ describe('Opening Balance Equity Entity', () => {
 
       expect(account.code).toBe('399001');
       expect(account.type).toBe(ELedgerType.Equity);
-      expect(account.subType).toBe(EEquitySubType.Default);
+      expect(account.subType).toBe(EEquitySubType.OpeningBalance);
       expect(account.behavior).toBe(
         EEquityAccountBehavior.OpeningBalanceEquity
       );

@@ -48,7 +48,7 @@ export interface IAssetLedgerAccount extends ILedgerAccount {
 
 /**
  * =============== Suspense Accounts =================
- * code: 100xxx
+ * code: 199xxx
  * @see {@link ../__docs__/asset-ledger.md#suspense-accounts} for documentation
  */
 export interface IAssetSuspenseAccount extends ISuspenseLedgerAccount {
@@ -60,7 +60,7 @@ export interface IAssetSuspenseAccount extends ISuspenseLedgerAccount {
 
 /**
  * =============== Cash and Cash Equivalents ===============
- * code: 101xxx
+ * code: 100xxx
  * @see {@link ../__docs__/asset-ledger.md#cash-and-cash-equivalents} for documentation
  */
 
@@ -113,7 +113,7 @@ export interface IPettyCashAccount extends ICashAndCashEquivalentAccount {
 
 /**
  * =============== Short Term Investments ===============
- * code: 102xxx
+ * code: 101xxx
  * @see {@link ../__docs__/asset-ledger.md#short-term-investments} for documentation
  */
 
@@ -154,7 +154,7 @@ export interface IBonds extends IShortTermInvestmentAccount {
 
 /**
  * =============== Receivables ===============
- * code: 103xxx
+ * code: 102xxx
  * @see {@link ../__docs__/asset-ledger.md#receivables} for documentation
  */
 export interface IReceivablesAccount extends IAssetLedgerAccount {
@@ -167,7 +167,7 @@ export interface IReceivablesAccount extends IAssetLedgerAccount {
 
 /**
  * =============== Inventory  ===============
- * code: 104xxx
+ * code: 103xxx
  * @see {@link ../__docs__/asset-ledger.md#inventory} for documentation
  */
 export interface IInventoryAccount extends IAssetLedgerAccount {
@@ -180,33 +180,33 @@ export interface IInventoryAccount extends IAssetLedgerAccount {
 
 /**
  * =============== Accrued Income ===============
- * code: 105xxx
+ * code: 104xxx
  * @see {@link ../__docs__/asset-ledger.md#accrued-income} for documentation
  */
 export interface IAccruedIncomeAccount extends IAssetLedgerAccount {
   code: TAccruedIncomeLedgerCode;
   subType: typeof EAssetSubType.AccruedIncome;
   behavior: typeof EAssetAccountBehavior.Default;
-  contraAccountRule: typeof EContraAccountRule.ContraPermitted;
-  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctPermitted;
+  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
 }
 
 /**
  * =============== Prepayments ===============
- * code: 106xxx
+ * code: 105xxx
  * @see {@link ../__docs__/asset-ledger.md#prepayments} for documentation
  */
 export interface IPrepaymentsAccount extends IAssetLedgerAccount {
   code: TPrepaymentsLedgerCode;
   subType: typeof EAssetSubType.Prepayments;
   behavior: typeof EAssetAccountBehavior.Default;
-  contraAccountRule: typeof EContraAccountRule.ContraPermitted;
-  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctPermitted;
+  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
 }
 
 /**
  * =============== Long Term Investments ===============
- * code: 107xxx
+ * code: 106xxx
  * @see {@link ../__docs__/asset-ledger.md#long-term-investments} for documentation
  */
 export interface ILongTermInvestmentAccount extends IAssetLedgerAccount {
@@ -219,7 +219,7 @@ export interface ILongTermInvestmentAccount extends IAssetLedgerAccount {
 
 /**
  * =============== Property, Plant, and Equipment (PPE) ===============
- * code: 108xxx
+ * code: 107xxx
  * @see {@link ../__docs__/asset-ledger.md#property-plant-and-equipment} for documentation
  */
 export interface IPPEAccount extends IAssetLedgerAccount {
@@ -232,7 +232,7 @@ export interface IPPEAccount extends IAssetLedgerAccount {
 
 /**
  * =============== Intangible Assets ===============
- * code: 109xxx
+ * code: 108xxx
  * @see {@link ../__docs__/asset-ledger.md#intangible-assets} for documentation
  */
 export interface IIntangibleAssetAccount extends IAssetLedgerAccount {
@@ -245,7 +245,7 @@ export interface IIntangibleAssetAccount extends IAssetLedgerAccount {
 
 /**
  * =============== Right of Use (ROU) Assets ===============
- * code: 110xxx
+ * code: 109xxx
  * @see {@link ../__docs__/asset-ledger.md#right-of-use-assets} for documentation
  */
 export interface IROUAssetAccount extends IAssetLedgerAccount {
@@ -258,7 +258,7 @@ export interface IROUAssetAccount extends IAssetLedgerAccount {
 
 /**
  * =============== Goodwill ===============
- * code: 111xxx
+ * code: 110xxx
  * @see {@link ../__docs__/asset-ledger.md#goodwill} for documentation
  */
 export interface IGoodwillAccount extends IAssetLedgerAccount {

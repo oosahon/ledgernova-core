@@ -50,8 +50,6 @@ describe('Retained Earning Entity', () => {
     const validPayload = {
       name: 'Retained Earnings',
       accountingEntityId: validUUID1,
-      isControlAccount: false,
-      controlAccountId: null,
       currency: validCurrency,
       createdBy: validUUID2,
     };
@@ -64,7 +62,7 @@ describe('Retained Earning Entity', () => {
 
       expect(account.code).toBe('301001');
       expect(account.type).toBe(ELedgerType.Equity);
-      expect(account.subType).toBe(EEquitySubType.Default);
+      expect(account.subType).toBe(EEquitySubType.RetainedEarnings);
       expect(account.behavior).toBe(EEquityAccountBehavior.RetainedEarnings);
       expect(account.meta).toBeNull();
       expect(account.isControlAccount).toBe(false);

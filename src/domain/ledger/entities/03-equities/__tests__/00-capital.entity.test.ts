@@ -1,6 +1,6 @@
 import { AppError } from '../../../../../shared/value-objects/error';
 import generateUUID from '../../../../../shared/utils/uuid-generator';
-import shareCapitalLedgerEntity from '../00-share-capital.entity';
+import capitalLedgerEntity from '../00-capital.entity';
 import {
   EEquityAccountBehavior,
   EEquitySubType,
@@ -35,12 +35,12 @@ describe('Share/Owner Capital Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for capital accounts', () => {
-      expect(shareCapitalLedgerEntity.getCode('300000')).toBe('300001');
-      expect(shareCapitalLedgerEntity.getCode('300099')).toBe('300100');
+      expect(capitalLedgerEntity.getCode('300000')).toBe('300001');
+      expect(capitalLedgerEntity.getCode('300099')).toBe('300100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
-      expect(() => shareCapitalLedgerEntity.getCode('400000' as any)).toThrow(
+      expect(() => capitalLedgerEntity.getCode('400000' as any)).toThrow(
         AppError
       );
     });
@@ -50,21 +50,19 @@ describe('Share/Owner Capital Entity', () => {
     const validPayload = {
       name: 'Owner Initial Contribution',
       accountingEntityId: validUUID1,
-      isControlAccount: false,
-      controlAccountId: null,
       currency: validCurrency,
       createdBy: validUUID2,
     };
 
     it('should successfully create a capital account', () => {
-      const [account, events] = shareCapitalLedgerEntity.make(
+      const [account, events] = capitalLedgerEntity.make(
         validPayload,
         '300000'
       );
 
       expect(account.code).toBe('300001');
       expect(account.type).toBe(ELedgerType.Equity);
-      expect(account.subType).toBe(EEquitySubType.Default);
+      expect(account.subType).toBe(EEquitySubType.Capital);
       expect(account.behavior).toBe(EEquityAccountBehavior.OwnerCapital);
       expect(account.meta).toBeNull();
       expect(account.isControlAccount).toBe(false);
@@ -86,9 +84,9 @@ describe('Share/Owner Capital Entity', () => {
 
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' }; // Too short
-      expect(() =>
-        shareCapitalLedgerEntity.make(invalidPayload, '300000')
-      ).toThrow(AppError);
+      expect(() => capitalLedgerEntity.make(invalidPayload, '300000')).toThrow(
+        AppError
+      );
     });
   });
 });

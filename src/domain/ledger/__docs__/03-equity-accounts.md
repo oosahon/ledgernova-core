@@ -47,10 +47,14 @@ The following table shows the behaviors of different equity account classes
 ## Reserves
 
 - **Ledger codes**: 302xxx
+- **Description**: accounts used to track reserves. These accounts are typically used to set aside funds for specific purposes, such as future investments, contingencies, or dividends. They are also used to track the revaluation of assets and liabilities.
+- **Main reporting hierarchy**: Equity / Reserves
 
-> [!INFO]
-> Out of scope for MVP (individual domain).
-> These classes (Revaluation Reserves, etc.) will be scoped when we move to support complex sole traders and corporate entities.
+#### Behaviors
+
+| Sub-Class | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                        |
+| --------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Reserves  | /                   | <ul><li>Automatically updated during period-end closing procedures</li><li>Direct manual journal entries are generally restricted (except for prior period adjustments)</li><li>Contra and Adjunct accounts prohibited</li></ul> |
 
 ## Opening Balance Equity
 
@@ -77,6 +81,9 @@ For an individual, the following accounts will be bootstrapped:
 - OwnerCapital: `300000` (control account)
 - RetainedEarnings: `301000` (control account)
 - OpeningBalanceEquity: `399000` (control account)
+
+> [!NOTE]
+> Reserves (`302xxx`) are not bootstrapped for individuals. The Revaluation Reserve entity is available for power users or will be created on demand if an individual revalues PPE or long-term investments.
 
 > [!NOTE]
 > All asset and liability bootstrapped accounts will automatically post their initial balances against the Opening Balance Equity (`399000`) control account.

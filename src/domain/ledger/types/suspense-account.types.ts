@@ -1,5 +1,4 @@
 import {
-  TAssetLedgerCode,
   TAssetSuspenseLedgerCode,
   TLiabilitySuspenseLedgerCode,
 } from './ledger-code.types';

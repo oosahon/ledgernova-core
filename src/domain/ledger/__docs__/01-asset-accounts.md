@@ -72,11 +72,10 @@ The following table shows the behaviors of different asset account classes
 
 #### Behaviors
 
-| Sub-Class             | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                                                                                                                                          |
-| --------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Trade Receivables     | /                   | <ul><li>Requires invoice or debit note transaction for creation</li><li>Requires payment, credit note, or write-off transaction for settlement</li><li>Supports automated aging</li><li>Supports contra accounts (for doubtful accounts)</li><li>Supports adjunct accounts (for interest on overdue accounts)</li></ul>                            |
-| Statutory Receivables | / Other Receivables | <ul><li>Tax credit note or supplier invoice transaction for creation</li><li>Requires statutory payment transaction for settlement (computed net of payables)</li><li>Does not support contra accounts</li><li>Does not support adjunct accounts</li></ul>                                                                                         |
-| Other Receivables     | / Other Receivables | <ul><li>Requires manual journal entry, direct disbursement, or invoice transaction for creation</li><li>Requires payment, offset, or write-off transaction for settlement</li><li>Supports automated aging</li><li>Supports contra accounts (for doubtful accounts)</li><li>Supports adjunct accounts (for interest on overdue accounts)</li></ul> |
+| Sub-Class             | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                                                                                                               |
+| --------------------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Trade Receivables     | /                   | <ul><li>Requires invoice or debit note transaction for creation</li><li>Requires payment, credit note, or write-off transaction for settlement</li><li>Supports automated aging</li><li>Supports contra accounts (for doubtful accounts)</li><li>Supports adjunct accounts (for interest on overdue accounts)</li></ul> |
+| Statutory Receivables | /                   | <ul><li>Tax credit note or supplier invoice transaction for creation</li><li>Requires statutory payment transaction for settlement (computed net of payables)</li><li>Does not support contra accounts</li><li>Does not support adjunct accounts</li></ul>                                                              |
 
 ### Inventories
 
@@ -176,21 +175,22 @@ For an individual the following accounts will be bootstrapped:
 
 - Cash and Cash Equivalents: `100000` (control account)
 - Short Term Investments: `101000` (control account)
-- TradeReceivables: `102000` (control account)
-- StatutoryReceivables: `103000` (control account)
-- OtherReceivables: `104000` (control account)
-- AccruedIncome: `105000` (control account)
-- Prepayments: `106000` (control account)
-- Suspense Accounts: `199000` (control account)
+- Receivables: `102000` (control account)
+  - Trade Receivables: `102001` (control account)
+  - Statutory Receivables: `102002` (control account)
+- Accrued Income: `104000` (control account)
+- Prepayments: `105000` (control account)
+- Suspense Accounts: `199000`
 
 #### Non Current Assets
 
-- LongTermInvestments: `107000` (control account)
-- DecliningBalanceDepreciableFixedAssets: `108100` (control account)
-- StraightLineDepreciableFixedAssets: `108200` (control account)
-- NonDepreciableFixedAssets: `108300` (control account)
-- AccumulatedDepreciationStraightLine: `108400` (contra account)
-- AccumulatedDepreciationDecliningBalance: `108500` (contra account)
+- Long Term Investments: `106000` (control account)
+- Property Plant and Equipment: `107000` (control account)
+  - Declining Balance Depreciable Fixed Assets: `107001` (control account)
+  - Straight Line Depreciable Fixed Assets: `107002` (control account)
+  - Non Depreciable Fixed Assets: `107003` (control account)
+  - Accumulated Depreciation Straight Line: `107004` (contra account)
+  - Accumulated Depreciation Declining Balance: `107005` (contra account)
 
 > [!NOTE]
 > An opening balance equity account will also be created for each of the control accounts above.

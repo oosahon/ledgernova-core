@@ -50,8 +50,6 @@ describe('Revaluation Reserve Entity', () => {
     const validPayload = {
       name: 'Property Revaluation Reserve',
       accountingEntityId: validUUID1,
-      isControlAccount: false,
-      controlAccountId: null,
       currency: validCurrency,
       createdBy: validUUID2,
     };
@@ -64,7 +62,7 @@ describe('Revaluation Reserve Entity', () => {
 
       expect(account.code).toBe('302001');
       expect(account.type).toBe(ELedgerType.Equity);
-      expect(account.subType).toBe(EEquitySubType.Default);
+      expect(account.subType).toBe(EEquitySubType.Reserve);
       expect(account.behavior).toBe(EEquityAccountBehavior.RevaluationReserve);
       expect(account.meta).toBeNull();
       expect(account.isControlAccount).toBe(false);

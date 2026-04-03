@@ -9,7 +9,10 @@ import {
 import { EAdjunctAccountRule, EContraAccountRule } from './ledger.types';
 
 export const EEquitySubType = {
-  Default: 'default',
+  Capital: 'capital',
+  RetainedEarnings: 'retained_earnings',
+  Reserve: 'reserve',
+  OpeningBalance: 'opening_balance',
 } as const;
 
 export type UEquitySubType =
@@ -28,7 +31,7 @@ export type UEquityAccountBehavior =
 export interface IEquityLedgerAccount extends ILedgerAccount {
   code: TEquityLedgerCode;
   type: typeof ELedgerType.Equity;
-  subType: typeof EEquitySubType.Default;
+  subType: UEquitySubType;
   behavior: UEquityAccountBehavior;
 }
 
@@ -38,6 +41,7 @@ export interface IEquityLedgerAccount extends ILedgerAccount {
  */
 export interface ICapitalAccount extends IEquityLedgerAccount {
   code: TCapitalLedgerCode;
+  subType: typeof EEquitySubType.Capital;
   behavior: typeof EEquityAccountBehavior.OwnerCapital;
   contraAccountRule: typeof EContraAccountRule.ContraPermitted;
   adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctPermitted;
@@ -49,6 +53,7 @@ export interface ICapitalAccount extends IEquityLedgerAccount {
  */
 export interface IRetainedEarningsAccount extends IEquityLedgerAccount {
   code: TRetainedEarningsLedgerCode;
+  subType: typeof EEquitySubType.RetainedEarnings;
   behavior: typeof EEquityAccountBehavior.RetainedEarnings;
   contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
   adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
@@ -60,6 +65,7 @@ export interface IRetainedEarningsAccount extends IEquityLedgerAccount {
  */
 export interface IRevaluationReserveAccount extends IEquityLedgerAccount {
   code: TReservesLedgerCode;
+  subType: typeof EEquitySubType.Reserve;
   behavior: typeof EEquityAccountBehavior.RevaluationReserve;
   contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
   adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
@@ -71,6 +77,7 @@ export interface IRevaluationReserveAccount extends IEquityLedgerAccount {
  */
 export interface IOpeningBalanceEquityAccount extends IEquityLedgerAccount {
   code: TOpeningBalanceEquityLedgerCode;
+  subType: typeof EEquitySubType.OpeningBalance;
   behavior: typeof EEquityAccountBehavior.OpeningBalanceEquity;
   contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
   adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;

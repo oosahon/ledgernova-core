@@ -24,12 +24,7 @@ function getCode(predecessorCode: TCapitalLedgerCode): TCapitalLedgerCode {
 function make(
   payload: Pick<
     ICapitalAccount,
-    | 'name'
-    | 'createdBy'
-    | 'accountingEntityId'
-    | 'currency'
-    | 'isControlAccount'
-    | 'controlAccountId'
+    'name' | 'createdBy' | 'accountingEntityId' | 'currency'
   >,
   predecessorCode: TCapitalLedgerCode
 ): TEntityWithEvents<ICapitalAccount, ICapitalAccount> {
@@ -38,10 +33,10 @@ function make(
     accountingEntityId: payload.accountingEntityId,
     code: getCode(predecessorCode),
     type: ELedgerType.Equity,
-    subType: EEquitySubType.Default,
+    subType: EEquitySubType.Capital,
     behavior: EEquityAccountBehavior.OwnerCapital,
-    isControlAccount: payload.isControlAccount,
-    controlAccountId: payload.controlAccountId,
+    isControlAccount: false,
+    controlAccountId: null,
     currency: payload.currency,
     meta: null,
     status: ELedgerAccountStatus.Active,
@@ -50,13 +45,13 @@ function make(
     createdBy: payload.createdBy,
   });
 
-  const event = equityAccountEvents.ownerCapitalCreated(account);
+  const event = equityAccountEvents.capitalCreated(account);
   return [account, [event]];
 }
 
-const shareCapitalLedgerEntity = Object.freeze({
+const capitalLedgerEntity = Object.freeze({
   make,
   getCode,
 });
 
-export default shareCapitalLedgerEntity;
+export default capitalLedgerEntity;

@@ -7,7 +7,7 @@ import {
 } from '../types/equity-account.types';
 
 export const EEquityLedgerEvent = {
-  OwnerCapitalCreated: 'domain:ledger:equity:account:owner-capital:created',
+  CapitalCreated: 'domain:ledger:equity:account:capital:created',
   RetainedEarningsCreated:
     'domain:ledger:equity:account:retained-earnings:created',
   RevaluationReserveCreated:
@@ -16,9 +16,9 @@ export const EEquityLedgerEvent = {
     'domain:ledger:equity:account:opening-balance-equity:created',
 } as const;
 
-function makeOwnerCapitalCreatedEvent(payload: ICapitalAccount) {
+function makeCapitalCreatedEvent(payload: ICapitalAccount) {
   return eventValue.make<ICapitalAccount>({
-    type: EEquityLedgerEvent.OwnerCapitalCreated,
+    type: EEquityLedgerEvent.CapitalCreated,
     data: payload,
   });
 }
@@ -49,7 +49,7 @@ function makeOpeningBalanceEquityCreatedEvent(
 }
 
 const equityAccountEvents = Object.freeze({
-  ownerCapitalCreated: makeOwnerCapitalCreatedEvent,
+  capitalCreated: makeCapitalCreatedEvent,
   retainedEarningsCreated: makeRetainedEarningsCreatedEvent,
   revaluationReserveCreated: makeRevaluationReserveCreatedEvent,
   openingBalanceEquityCreated: makeOpeningBalanceEquityCreatedEvent,

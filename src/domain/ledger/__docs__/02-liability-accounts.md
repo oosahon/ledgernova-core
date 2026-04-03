@@ -111,7 +111,7 @@ For an individual the following accounts will be bootstrapped:
 
 - ShortTermDebts: `200000` (control account)
 - StatutoryPayables: `203000` (control account)
-- Suspense Accounts: `299000` (control account)
+- Suspense Accounts: `299000`
 
 #### Non Current Liabilities
 

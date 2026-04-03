@@ -26,12 +26,7 @@ function getCode(
 function make(
   payload: Pick<
     IRetainedEarningsAccount,
-    | 'name'
-    | 'createdBy'
-    | 'accountingEntityId'
-    | 'currency'
-    | 'isControlAccount'
-    | 'controlAccountId'
+    'name' | 'createdBy' | 'accountingEntityId' | 'currency'
   >,
   predecessorCode: TRetainedEarningsLedgerCode
 ): TEntityWithEvents<IRetainedEarningsAccount, IRetainedEarningsAccount> {
@@ -40,10 +35,10 @@ function make(
     accountingEntityId: payload.accountingEntityId,
     code: getCode(predecessorCode),
     type: ELedgerType.Equity,
-    subType: EEquitySubType.Default,
+    subType: EEquitySubType.RetainedEarnings,
     behavior: EEquityAccountBehavior.RetainedEarnings,
-    isControlAccount: payload.isControlAccount,
-    controlAccountId: payload.controlAccountId,
+    isControlAccount: false,
+    controlAccountId: null,
     currency: payload.currency,
     meta: null,
     status: ELedgerAccountStatus.Active,

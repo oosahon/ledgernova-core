@@ -24,12 +24,7 @@ function getCode(predecessorCode: TReservesLedgerCode): TReservesLedgerCode {
 function make(
   payload: Pick<
     IRevaluationReserveAccount,
-    | 'name'
-    | 'createdBy'
-    | 'accountingEntityId'
-    | 'currency'
-    | 'isControlAccount'
-    | 'controlAccountId'
+    'name' | 'createdBy' | 'accountingEntityId' | 'currency'
   >,
   predecessorCode: TReservesLedgerCode
 ): TEntityWithEvents<IRevaluationReserveAccount, IRevaluationReserveAccount> {
@@ -38,10 +33,10 @@ function make(
     accountingEntityId: payload.accountingEntityId,
     code: getCode(predecessorCode),
     type: ELedgerType.Equity,
-    subType: EEquitySubType.Default,
+    subType: EEquitySubType.Reserve,
     behavior: EEquityAccountBehavior.RevaluationReserve,
-    isControlAccount: payload.isControlAccount,
-    controlAccountId: payload.controlAccountId,
+    isControlAccount: false,
+    controlAccountId: null,
     currency: payload.currency,
     meta: null,
     status: ELedgerAccountStatus.Active,
