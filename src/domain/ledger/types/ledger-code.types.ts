@@ -82,3 +82,24 @@ export type TProvisionLedgerCode = `${typeof ProvisionPrefix}${string}`;
 declare const LiabilitySuspensePrefix = '299';
 export type TLiabilitySuspenseLedgerCode =
   `${typeof LiabilitySuspensePrefix}${string}`;
+
+/**
+ * ===================== EQUITY LEDGER CODES =====================
+ * @see {@link ../__docs__/03-equity-accounts.md} to understand the structure of equity ledger codes
+ */
+declare const EquityPrefix = '3';
+export type TEquityLedgerCode = `${typeof EquityPrefix}${string}`;
+
+declare const CapitalPrefix = '300';
+export type TCapitalLedgerCode = `${typeof CapitalPrefix}${string}`;
+
+declare const RetainedEarningsPrefix = '301';
+export type TRetainedEarningsLedgerCode =
+  `${typeof RetainedEarningsPrefix}${string}`;
+
+declare const ReservesPrefix = '302';
+export type TReservesLedgerCode = `${typeof ReservesPrefix}${string}`;
+
+declare const OpeningBalanceEquityPrefix = '399';
+export type TOpeningBalanceEquityLedgerCode =
+  `${typeof OpeningBalanceEquityPrefix}${string}`;
