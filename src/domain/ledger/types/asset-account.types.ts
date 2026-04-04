@@ -21,6 +21,7 @@ import {
   TSuspenseSubType,
 } from './suspense-account.types';
 import { TEntityId } from '../../../shared/types/uuid';
+import { UTaxType } from './tax.types';
 
 export const EAssetSubType = {
   CashAndCashEquivalent: 'cash_and_cash_equivalent',
@@ -38,6 +39,46 @@ export const EAssetSubType = {
 } as const;
 
 export type UAssetSubType = (typeof EAssetSubType)[keyof typeof EAssetSubType];
+
+/**
+ ================== Behaviors ==================
+ */
+const ECashBehavior = {
+  Bank: 'bank',
+  PettyCash: 'petty_cash',
+} as const;
+
+type UCashBehavior = (typeof ECashBehavior)[keyof typeof ECashBehavior];
+
+const EReceivableBehavior = {
+  TaxReceivable: 'tax_receivable',
+  TradeReceivable: 'trade_receivable',
+} as const;
+
+type UReceivableBehavior =
+  (typeof EReceivableBehavior)[keyof typeof EReceivableBehavior];
+
+const EShortTermInvestmentBehavior = {
+  StockAndETFs: 'stock_and_etfs',
+  Bonds: 'bonds',
+} as const;
+
+type UShortTermInvestmentBehavior =
+  (typeof EShortTermInvestmentBehavior)[keyof typeof EShortTermInvestmentBehavior];
+
+export const EAssetAccountBehavior = {
+  ...ECashBehavior,
+  ...EShortTermInvestmentBehavior,
+  ...EReceivableBehavior,
+  Default: 'default',
+} as const;
+
+export type UAssetAccountBehavior =
+  (typeof EAssetAccountBehavior)[keyof typeof EAssetAccountBehavior];
+
+/**
+ * =============== Base Asset Ledger Account ===============
+ */
 
 export interface IAssetLedgerAccount extends ILedgerAccount {
   code: TAssetLedgerCode;
@@ -63,18 +104,6 @@ export interface IAssetSuspenseAccount extends ISuspenseLedgerAccount {
  * code: 100xxx
  * @see {@link ../__docs__/asset-ledger.md#cash-and-cash-equivalents} for documentation
  */
-
-const ECashBehavior = {
-  Bank: 'bank',
-  PettyCash: 'petty_cash',
-} as const;
-
-type UCashBehavior = (typeof ECashBehavior)[keyof typeof ECashBehavior];
-
-const EShortTermInvestmentBehavior = {
-  StockAndETFs: 'stock_and_etfs',
-  Bonds: 'bonds',
-} as const;
 
 export interface ICashAndCashEquivalentAccount extends IAssetLedgerAccount {
   code: TCashLedgerCode;
@@ -117,17 +146,6 @@ export interface IPettyCashAccount extends ICashAndCashEquivalentAccount {
  * @see {@link ../__docs__/asset-ledger.md#short-term-investments} for documentation
  */
 
-type UShortTermInvestmentBehavior =
-  (typeof EShortTermInvestmentBehavior)[keyof typeof EShortTermInvestmentBehavior];
-
-export const EAssetAccountBehavior = {
-  ...ECashBehavior,
-  ...EShortTermInvestmentBehavior,
-  Default: 'default',
-} as const;
-
-export type UAssetAccountBehavior =
-  (typeof EAssetAccountBehavior)[keyof typeof EAssetAccountBehavior];
 export interface IShortTermInvestmentAccount extends IAssetLedgerAccount {
   code: TShortTermInvestmentLedgerCode;
   subType: typeof EAssetSubType.ShortTermInvestment;
@@ -157,12 +175,43 @@ export interface IBonds extends IShortTermInvestmentAccount {
  * code: 102xxx
  * @see {@link ../__docs__/asset-ledger.md#receivables} for documentation
  */
+
 export interface IReceivablesAccount extends IAssetLedgerAccount {
   code: TReceivablesLedgerCode;
   subType: typeof EAssetSubType.Receivables;
-  behavior: typeof EAssetAccountBehavior.Default;
+  behavior: UReceivableBehavior;
+  contraAccountRule:
+    | typeof EContraAccountRule.ContraPermitted
+    | typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule:
+    | typeof EAdjunctAccountRule.AdjunctPermitted
+    | typeof EAdjunctAccountRule.AdjunctNotPermitted;
+}
+
+export interface IStatutoryReceivableAccountMeta {
+  taxAuthority: string;
+  taxType: UTaxType;
+}
+
+export interface IStatutoryReceivableAccount extends IReceivablesAccount {
+  controlAccountId: TEntityId;
+  behavior: typeof EReceivableBehavior.TaxReceivable;
+  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
+  meta: IStatutoryReceivableAccountMeta;
+}
+
+export interface ITradeReceivableAccountMeta {
+  customerId: TEntityId;
+  invoiceId: TEntityId;
+}
+
+export interface ITradeReceivableAccount extends IReceivablesAccount {
+  controlAccountId: TEntityId;
+  behavior: typeof EReceivableBehavior.TradeReceivable;
   contraAccountRule: typeof EContraAccountRule.ContraPermitted;
   adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctPermitted;
+  meta: ITradeReceivableAccountMeta;
 }
 
 /**

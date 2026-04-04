@@ -1,5 +1,6 @@
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
 import { TEntityWithEvents } from '../../../../shared/types/event.types';
+import { AppError } from '../../../../shared/value-objects/error';
 import stringUtils from '../../../../shared/utils/string';
 import liabilityAccountEvents from '../../events/liability-account.events';
 import {
@@ -11,6 +12,7 @@ import {
   ITradePayableAccount,
   ITradePayableAccountMeta,
 } from '../../types/liability-account.types';
+import { ETaxType } from '../../types/tax.types';
 import { TPayablesLedgerCode } from '../../types/ledger-code.types';
 import {
   EAdjunctAccountRule,
@@ -80,6 +82,10 @@ function makeStatutoryPayableAccountMeta(meta: IStatutoryPayableAccountMeta) {
     min: 2,
     max: 100,
   });
+
+  if (!Object.values(ETaxType).includes(meta.taxType)) {
+    throw new AppError('Invalid tax type provided', { cause: meta.taxType });
+  }
 
   return Object.freeze<IStatutoryPayableAccountMeta>({
     taxAuthority,
