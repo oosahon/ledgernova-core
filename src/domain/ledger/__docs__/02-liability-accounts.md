@@ -5,8 +5,9 @@
 - [Introduction](#introduction)
 - [Current Liabilities](#current-liabilities)
   - [Short Term Debts](#short-term-debts)
-  - [Statutory Payables](#statutory-payables)
-  - [Trade Payables, Accrued Expenses, & Deferred Revenues](#trade-payables-accrued-expenses--deferred-revenues)
+  - [Payables](#payables)
+  - [Accrued Expenses](#accrued-expenses)
+  - [Deferred Revenues](#deferred-revenues)
 - [Non-Current Liabilities](#non-current-liabilities)
   - [Long Term Loans](#long-term-loans)
   - [Lease Liabilities & Provisions](#lease-liabilities--provisions)
@@ -47,31 +48,40 @@ The following table shows the behaviors of different liability account classes
 | Overdrafts       | /                   | <ul><li>Automatically created if a linked bank account goes negative</li><li>Requires deposit transaction for settlement</li></ul>                                                                                        |
 | Short Term Loans | /                   | <ul><li>Requires funding transaction for creation</li><li>Requires repayment transaction for settlement</li><li>Supports automated interest accrual</li></ul>                                                             |
 
-### Statutory Payables
+### Payables
 
-- **Ledger codes**: 203xxx
-- **Description**: accounts that are used to track statutory obligations, primarily taxes for individuals.
-- **Main reporting hierarchy**: Current Liabilities / Statutory Payables
+- **Ledger codes**: 201xxx
+- **Description**: accounts that are used to track amounts owed to suppliers, vendors, and statutory authorities.
+- **Main reporting hierarchy**: Current Liabilities / Payables
 
 #### Behaviors
 
-| Sub-Class    | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                |
-| ------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Tax Payables | /                   | <ul><li>Requires tax computation or manual entry for creation</li><li>Requires statutory payment transaction for settlement</li><li>Does not support contra accounts</li><li>Does not support adjunct accounts</li></ul> |
+| Sub-Class          | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                                                                                                         |
+| ------------------ | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Trade Payables     | /                   | <ul><li>Requires invoice or credit note transaction for creation</li><li>Requires payment or debit note transaction for settlement</li><li>Supports automated aging</li><li>Supports contra accounts (for early payment discounts)</li><li>Supports adjunct accounts (for interest on overdue accounts)</li></ul> |
+| Statutory Payables | /                   | <ul><li>Requires tax computation or manual entry for creation</li><li>Requires statutory payment transaction for settlement</li><li>Does not support contra accounts</li><li>Does not support adjunct accounts</li></ul>                                                                                          |
 
-### Trade Payables, Accrued Expenses, & Deferred Revenues
+### Accrued Expenses
 
-- **Ledger codes**: 201xxx, 202xxx, 204xxx
+- **Ledger codes**: 202xxx
 
 > [!INFO]
 > Out of scope for MVP (individual domain).
-> These classes will be scoped when we move to support sole traders. Trade payables and deferred revenues are primarily business functions.
+> These classes will be scoped when we move to support sole traders.
+
+### Deferred Revenues
+
+- **Ledger codes**: 203xxx
+
+> [!INFO]
+> Out of scope for MVP (individual domain).
+> These classes will be scoped when we move to support sole traders. Deferred revenues are primarily business functions.
 
 ## Non-Current Liabilities
 
 ### Long Term Loans
 
-- **Ledger codes**: 205xxx
+- **Ledger codes**: 204xxx
 - **Description**: accounts used to track borrowings the entity intends to pay back over a period longer than 12 months (e.g., mortgages, student loans, auto loans).
 - **Main reporting hierarchy**: Non-Current Liabilities / Long Term Loans
 
@@ -84,7 +94,7 @@ The following table shows the behaviors of different liability account classes
 
 ### Lease Liabilities & Provisions
 
-- **Ledger codes**: 206xxx, 207xxx
+- **Ledger codes**: 205xxx, 206xxx
 
 > [!INFO]
 > Out of scope for MVP.
@@ -112,12 +122,14 @@ For an individual the following accounts will be bootstrapped:
 #### Current Liabilities
 
 - ShortTermDebts: `200000` (control account)
-- StatutoryPayables: `203000` (control account)
+- Payables: `201000` (control account)
+  - Statutory Payables: `201001` (control account)
+    - Personal Income Tax: `201002` (sub-ledger)
 - Suspense Accounts: `299000`
 
 #### Non Current Liabilities
 
-- LongTermLoans: `205000` (control account)
+- LongTermLoans: `204000` (control account)
 
 > [!NOTE]
 > An opening balance equity account will also be created for each of the control accounts above.

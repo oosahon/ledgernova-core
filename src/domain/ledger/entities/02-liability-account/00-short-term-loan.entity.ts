@@ -9,6 +9,7 @@ import {
   ICreditCardAccountMeta,
   IOverdraftAccount,
   IOverdraftAccountMeta,
+  IShortTermDebtAccount,
   IShortTermLoanAccount,
   IShortTermLoanAccountMeta,
 } from '../../types/liability-account.types';
@@ -30,6 +31,52 @@ function getCode(
   );
 }
 
+/**
+ * Creates a new short term debt account.
+ * @param payload short term debt account creation payload
+ * @param predecessorCode the ledger code of the most recent Short Term Debt sub ledger.
+ * @returns [IShortTermDebtAccount, IShortTermDebtCreationEvent]
+ */
+function make(
+  payload: Pick<
+    IShortTermDebtAccount,
+    | 'name'
+    | 'createdBy'
+    | 'accountingEntityId'
+    | 'currency'
+    | 'isControlAccount'
+    | 'controlAccountId'
+    | 'behavior'
+    | 'meta'
+  >,
+  predecessorCode: TShortTermDebtLedgerCode
+): TEntityWithEvents<IShortTermDebtAccount, IShortTermDebtAccount> {
+  if (payload.controlAccountId) {
+    stringUtils.validateUUID(payload.controlAccountId);
+  }
+
+  const account = ledgerAccountEntity.make<IShortTermDebtAccount>({
+    name: payload.name,
+    accountingEntityId: payload.accountingEntityId,
+    code: getCode(predecessorCode),
+    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Liability),
+    type: ELedgerType.Liability,
+    subType: ELiabilitySubType.ShortTermDebt,
+    behavior: payload.behavior,
+    isControlAccount: payload.isControlAccount,
+    controlAccountId: payload.controlAccountId,
+    currency: payload.currency,
+    meta: payload.meta,
+    status: ELedgerAccountStatus.Active,
+    contraAccountRule: EContraAccountRule.ContraPermitted,
+    adjunctAccountRule: EAdjunctAccountRule.AdjunctPermitted,
+    createdBy: payload.createdBy,
+  });
+
+  const event = liabilityAccountEvents.shortTermLoanCreated(account);
+  return [account, [event]];
+}
+
 function makeCreditCardAccountMeta(meta: ICreditCardAccountMeta) {
   const cardIssuer = stringUtils.sanitizeAndValidate(meta.cardIssuer, {
     min: 2,
@@ -48,32 +95,29 @@ function makeCreditCardAccountMeta(meta: ICreditCardAccountMeta) {
   });
 }
 
+/**
+ * Creates a new credit card sub ledger.
+ * @param payload credit card creation payload
+ * @param predecessorCode the ledger code of the most recent Short Term Debt sub ledger.
+ * @returns [IShortTermDebtAccount, IShortTermDebtCreationEvent]
+ */
 function makeCreditCardAccount(
   payload: TCreationOmits<ICreditCardAccount>,
   predecessorCode: TShortTermDebtLedgerCode
-): TEntityWithEvents<ICreditCardAccount, ICreditCardAccount> {
-  stringUtils.validateUUID(payload.controlAccountId);
-
-  const account = ledgerAccountEntity.make<ICreditCardAccount>({
-    name: payload.name,
-    accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
-    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Liability),
-    type: ELedgerType.Liability,
-    subType: ELiabilitySubType.ShortTermDebt,
-    behavior: ELiabilityAccountBehavior.CreditCard,
-    isControlAccount: payload.isControlAccount,
-    controlAccountId: payload.controlAccountId,
-    currency: payload.currency,
-    meta: makeCreditCardAccountMeta(payload.meta),
-    status: ELedgerAccountStatus.Active,
-    contraAccountRule: EContraAccountRule.ContraPermitted,
-    adjunctAccountRule: EAdjunctAccountRule.AdjunctPermitted,
-    createdBy: payload.createdBy,
-  });
-
-  const event = liabilityAccountEvents.creditCardCreated(account);
-  return [account, [event]];
+): TEntityWithEvents<IShortTermDebtAccount, IShortTermDebtAccount> {
+  return make(
+    {
+      name: payload.name,
+      accountingEntityId: payload.accountingEntityId,
+      currency: payload.currency,
+      createdBy: payload.createdBy,
+      isControlAccount: payload.isControlAccount,
+      controlAccountId: payload.controlAccountId,
+      behavior: ELiabilityAccountBehavior.CreditCard,
+      meta: makeCreditCardAccountMeta(payload.meta),
+    },
+    predecessorCode
+  );
 }
 
 function makeOverdraftAccountMeta(meta: IOverdraftAccountMeta) {
@@ -84,30 +128,29 @@ function makeOverdraftAccountMeta(meta: IOverdraftAccountMeta) {
   });
 }
 
+/**
+ * Creates a new overdraft sub ledger.
+ * @param payload overdraft creation payload
+ * @param predecessorCode the ledger code of the most recent Short Term Debt sub ledger.
+ * @returns [IShortTermDebtAccount, IShortTermDebtCreationEvent]
+ */
 function makeOverdraftAccount(
   payload: TCreationOmits<IOverdraftAccount>,
   predecessorCode: TShortTermDebtLedgerCode
-): TEntityWithEvents<IOverdraftAccount, IOverdraftAccount> {
-  const account = ledgerAccountEntity.make<IOverdraftAccount>({
-    name: payload.name,
-    accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
-    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Liability),
-    type: ELedgerType.Liability,
-    subType: ELiabilitySubType.ShortTermDebt,
-    behavior: ELiabilityAccountBehavior.Overdraft,
-    isControlAccount: payload.isControlAccount,
-    controlAccountId: payload.controlAccountId,
-    currency: payload.currency,
-    meta: makeOverdraftAccountMeta(payload.meta),
-    status: ELedgerAccountStatus.Active,
-    contraAccountRule: EContraAccountRule.ContraPermitted,
-    adjunctAccountRule: EAdjunctAccountRule.AdjunctPermitted,
-    createdBy: payload.createdBy,
-  });
-
-  const event = liabilityAccountEvents.overdraftCreated(account);
-  return [account, [event]];
+): TEntityWithEvents<IShortTermDebtAccount, IShortTermDebtAccount> {
+  return make(
+    {
+      name: payload.name,
+      accountingEntityId: payload.accountingEntityId,
+      currency: payload.currency,
+      createdBy: payload.createdBy,
+      isControlAccount: payload.isControlAccount,
+      controlAccountId: payload.controlAccountId,
+      behavior: ELiabilityAccountBehavior.Overdraft,
+      meta: makeOverdraftAccountMeta(payload.meta),
+    },
+    predecessorCode
+  );
 }
 
 function makeShortTermLoanAccountMeta(meta: IShortTermLoanAccountMeta) {
@@ -122,33 +165,34 @@ function makeShortTermLoanAccountMeta(meta: IShortTermLoanAccountMeta) {
   });
 }
 
+/**
+ * Creates a new short term loan sub ledger.
+ * @param payload short term loan creation payload
+ * @param predecessorCode the ledger code of the most recent Short Term Debt sub ledger.
+ * @returns [IShortTermDebtAccount, IShortTermDebtCreationEvent]
+ */
 function makeShortTermLoanAccount(
   payload: TCreationOmits<IShortTermLoanAccount>,
   predecessorCode: TShortTermDebtLedgerCode
-): TEntityWithEvents<IShortTermLoanAccount, IShortTermLoanAccount> {
-  const account = ledgerAccountEntity.make<IShortTermLoanAccount>({
-    name: payload.name,
-    accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
-    type: ELedgerType.Liability,
-    subType: ELiabilitySubType.ShortTermDebt,
-    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Liability),
-    behavior: ELiabilityAccountBehavior.ShortTermLoan,
-    isControlAccount: payload.isControlAccount,
-    controlAccountId: payload.controlAccountId,
-    currency: payload.currency,
-    meta: makeShortTermLoanAccountMeta(payload.meta),
-    status: ELedgerAccountStatus.Active,
-    contraAccountRule: EContraAccountRule.ContraPermitted,
-    adjunctAccountRule: EAdjunctAccountRule.AdjunctPermitted,
-    createdBy: payload.createdBy,
-  });
-
-  const event = liabilityAccountEvents.shortTermLoanCreated(account);
-  return [account, [event]];
+): TEntityWithEvents<IShortTermDebtAccount, IShortTermDebtAccount> {
+  return make(
+    {
+      name: payload.name,
+      accountingEntityId: payload.accountingEntityId,
+      currency: payload.currency,
+      createdBy: payload.createdBy,
+      isControlAccount: payload.isControlAccount,
+      controlAccountId: payload.controlAccountId,
+      behavior: ELiabilityAccountBehavior.ShortTermLoan,
+      meta: makeShortTermLoanAccountMeta(payload.meta),
+    },
+    predecessorCode
+  );
 }
 
-const shortTermLoanLiabilityLedgerEntity = Object.freeze({
+const shortTermLoanAccountEntity = Object.freeze({
+  make,
+
   makeCreditCardAccountMeta,
   makeCreditCardAccount,
 
@@ -161,4 +205,4 @@ const shortTermLoanLiabilityLedgerEntity = Object.freeze({
   getCode,
 });
 
-export default shortTermLoanLiabilityLedgerEntity;
+export default shortTermLoanAccountEntity;

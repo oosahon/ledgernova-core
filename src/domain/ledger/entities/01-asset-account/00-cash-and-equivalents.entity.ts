@@ -7,6 +7,7 @@ import {
   EAssetSubType,
   IBankAccount,
   IBankAccountMeta,
+  ICashAndCashEquivalentAccount,
   IPettyCashAccount,
   IPettyCashAccountMeta,
 } from '../../types/asset-account.types';
@@ -27,41 +28,84 @@ function getCode(predecessorCode: TCashLedgerCode): TCashLedgerCode {
 }
 
 /**
- * Creates a new petty cash sub ledger.
- * @param payload petty cash creation payload
+ * Creates a new cash and cash equivalent account.
+ * @param payload cash and cash equivalent account creation payload
  * @param predecessorCode the ledger code of the most recent Cash and Cash Equivalent sub ledger.
- * @returns [IPettyCashAccount, IPettyCashCreationEvent]
+ * @returns [ICashAndCashEquivalentAccount, ICashCreationEvent]
  */
-function makePettyCashAccount(
-  payload: TCreationOmits<IPettyCashAccount>,
+function make(
+  payload: Pick<
+    ICashAndCashEquivalentAccount,
+    | 'name'
+    | 'createdBy'
+    | 'accountingEntityId'
+    | 'currency'
+    | 'isControlAccount'
+    | 'controlAccountId'
+    | 'behavior'
+    | 'meta'
+  >,
   predecessorCode: TCashLedgerCode
-): TEntityWithEvents<IPettyCashAccount, IPettyCashAccount> {
-  stringUtils.validateUUID(payload.controlAccountId);
+): TEntityWithEvents<
+  ICashAndCashEquivalentAccount,
+  ICashAndCashEquivalentAccount
+> {
+  if (payload.controlAccountId) {
+    stringUtils.validateUUID(payload.controlAccountId);
+  }
 
-  const meta: IPettyCashAccountMeta = Object.freeze({
-    lastReconciliationDate: null,
-  });
-
-  const account = ledgerAccountEntity.make<IPettyCashAccount>({
+  const account = ledgerAccountEntity.make<ICashAndCashEquivalentAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    meta,
     code: getCode(predecessorCode),
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Asset),
     type: ELedgerType.Asset,
     subType: EAssetSubType.CashAndCashEquivalent,
-    behavior: EAssetAccountBehavior.PettyCash,
+    behavior: payload.behavior,
     isControlAccount: payload.isControlAccount,
     controlAccountId: payload.controlAccountId,
     currency: payload.currency,
+    meta: payload.meta,
     status: ELedgerAccountStatus.Active,
     contraAccountRule: EContraAccountRule.ContraPermitted,
     adjunctAccountRule: EAdjunctAccountRule.AdjunctPermitted,
     createdBy: payload.createdBy,
   });
 
-  const event = assetAccountEvents.pettyCashCreated(account);
+  const event = assetAccountEvents.cashAndEquivalentCreated(account);
   return [account, [event]];
+}
+
+/**
+ * Creates a new petty cash sub ledger.
+ * @param payload petty cash creation payload
+ * @param predecessorCode the ledger code of the most recent Cash and Cash Equivalent sub ledger.
+ * @returns [ICashAndCashEquivalentAccount, ICashCreationEvent]
+ */
+function makePettyCashAccount(
+  payload: TCreationOmits<IPettyCashAccount>,
+  predecessorCode: TCashLedgerCode
+): TEntityWithEvents<
+  ICashAndCashEquivalentAccount,
+  ICashAndCashEquivalentAccount
+> {
+  const meta: IPettyCashAccountMeta = Object.freeze({
+    lastReconciliationDate: null,
+  });
+
+  return make(
+    {
+      name: payload.name,
+      accountingEntityId: payload.accountingEntityId,
+      currency: payload.currency,
+      createdBy: payload.createdBy,
+      isControlAccount: payload.isControlAccount,
+      controlAccountId: payload.controlAccountId,
+      behavior: EAssetAccountBehavior.PettyCash,
+      meta,
+    },
+    predecessorCode
+  );
 }
 
 function makeBankAccountMeta(meta: IBankAccountMeta) {
@@ -134,44 +178,42 @@ function makeBankAccountMeta(meta: IBankAccountMeta) {
 }
 
 /**
- * Creates a new bank account.
+ * Creates a new bank account sub ledger.
  * @param payload bank account creation payload
  * @param predecessorCode the ledger code of the most recent Cash and Cash Equivalent sub ledger.
- * @returns bank account
+ * @returns [ICashAndCashEquivalentAccount, ICashCreationEvent]
  */
 function makeBankAccount(
   payload: TCreationOmits<IBankAccount>,
   predecessorCode: TCashLedgerCode
-): TEntityWithEvents<IBankAccount, IBankAccount> {
-  stringUtils.validateUUID(payload.controlAccountId);
-
-  const account = ledgerAccountEntity.make<IBankAccount>({
-    name: payload.name,
-    accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
-    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Asset),
-    type: ELedgerType.Asset,
-    subType: EAssetSubType.CashAndCashEquivalent,
-    behavior: EAssetAccountBehavior.Bank,
-    isControlAccount: payload.isControlAccount,
-    controlAccountId: payload.controlAccountId,
-    currency: payload.currency,
-    meta: makeBankAccountMeta(payload.meta),
-    status: ELedgerAccountStatus.Active,
-    contraAccountRule: EContraAccountRule.ContraPermitted,
-    adjunctAccountRule: EAdjunctAccountRule.AdjunctPermitted,
-    createdBy: payload.createdBy,
-  });
-
-  const event = assetAccountEvents.bankAccountCreated(account);
-  return [account, [event]];
+): TEntityWithEvents<
+  ICashAndCashEquivalentAccount,
+  ICashAndCashEquivalentAccount
+> {
+  return make(
+    {
+      name: payload.name,
+      accountingEntityId: payload.accountingEntityId,
+      currency: payload.currency,
+      createdBy: payload.createdBy,
+      isControlAccount: payload.isControlAccount,
+      controlAccountId: payload.controlAccountId,
+      behavior: EAssetAccountBehavior.Bank,
+      meta: makeBankAccountMeta(payload.meta),
+    },
+    predecessorCode
+  );
 }
 
-const cashAndEquivalentAssetLedgerEntity = Object.freeze({
-  makeBankAccount,
-  makeBankAccountMeta,
+const cashAndEquivalentAccountEntity = Object.freeze({
+  make,
+
   makePettyCashAccount,
+
+  makeBankAccountMeta,
+  makeBankAccount,
+
   getCode,
 });
 
-export default cashAndEquivalentAssetLedgerEntity;
+export default cashAndEquivalentAccountEntity;

@@ -1,14 +1,13 @@
 import eventValue from '../../../shared/value-objects/event.vo';
 import {
   IAssetSuspenseAccount,
-  IBankAccount,
-  IPettyCashAccount,
+  ICashAndCashEquivalentAccount,
 } from '../types/asset-account.types';
 
 export const EAssetLedgerEvent = {
   SuspenseCreated: 'domain:ledger:asset:account:suspense:created',
-  PettyCashCreated: 'domain:ledger:asset:account:petty-cash:created',
-  BankAccountCreated: 'domain:ledger:asset:account:bank:created',
+  CashAndEquivalentCreated:
+    'domain:ledger:asset:account:cash-and-equivalent:created',
 } as const;
 
 function makeSuspenseAccountCreatedEvent(payload: IAssetSuspenseAccount) {
@@ -18,24 +17,18 @@ function makeSuspenseAccountCreatedEvent(payload: IAssetSuspenseAccount) {
   });
 }
 
-function makePettyCashAccountCreatedEvent(payload: IPettyCashAccount) {
-  return eventValue.make<IPettyCashAccount>({
-    type: EAssetLedgerEvent.PettyCashCreated,
-    data: payload,
-  });
-}
-
-function makeBankAccountCreatedEvent(payload: IBankAccount) {
-  return eventValue.make<IBankAccount>({
-    type: EAssetLedgerEvent.BankAccountCreated,
+function makeCashAndEquivalentCreatedEvent(
+  payload: ICashAndCashEquivalentAccount
+) {
+  return eventValue.make<ICashAndCashEquivalentAccount>({
+    type: EAssetLedgerEvent.CashAndEquivalentCreated,
     data: payload,
   });
 }
 
 const assetAccountEvents = Object.freeze({
   suspenseCreated: makeSuspenseAccountCreatedEvent,
-  pettyCashCreated: makePettyCashAccountCreatedEvent,
-  bankAccountCreated: makeBankAccountCreatedEvent,
+  cashAndEquivalentCreated: makeCashAndEquivalentCreatedEvent,
 });
 
 export default assetAccountEvents;

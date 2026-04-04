@@ -3,9 +3,8 @@ import {
   TLiabilityLedgerCode,
   TLiabilitySuspenseLedgerCode,
   TShortTermDebtLedgerCode,
-  TTradePayableLedgerCode,
+  TPayablesLedgerCode,
   TAccruedExpenseLedgerCode,
-  TStatutoryPayableLedgerCode,
   TDeferredRevenueLedgerCode,
   TLongTermLoanLedgerCode,
   TLeaseLiabilityLedgerCode,
@@ -21,9 +20,8 @@ import { TEntityId } from '../../../shared/types/uuid';
 
 export const ELiabilitySubType = {
   ShortTermDebt: 'short_term_debt',
-  TradePayable: 'trade_payable',
+  Payable: 'payable',
   AccruedExpense: 'accrued_expense',
-  StatutoryPayable: 'statutory_payable',
   DeferredRevenue: 'deferred_revenue',
   LongTermLoan: 'long_term_loan',
   LeaseLiability: 'lease_liability',
@@ -43,12 +41,13 @@ const EShortTermDebtBehavior = {
 type UShortTermDebtBehavior =
   (typeof EShortTermDebtBehavior)[keyof typeof EShortTermDebtBehavior];
 
-const EStatutoryPayableBehavior = {
+const EPayableBehavior = {
   TaxPayable: 'tax_payable',
+  TradePayable: 'trade_payable',
 } as const;
 
-type UStatutoryPayableBehavior =
-  (typeof EStatutoryPayableBehavior)[keyof typeof EStatutoryPayableBehavior];
+type UPayableBehavior =
+  (typeof EPayableBehavior)[keyof typeof EPayableBehavior];
 
 const ELongTermLoanBehavior = {
   Mortgage: 'mortgage',
@@ -60,7 +59,7 @@ type ULongTermLoanBehavior =
 
 export const ELiabilityAccountBehavior = {
   ...EShortTermDebtBehavior,
-  ...EStatutoryPayableBehavior,
+  ...EPayableBehavior,
   ...ELongTermLoanBehavior,
   Default: 'default',
 } as const;
@@ -133,15 +132,61 @@ export interface IShortTermLoanAccount extends IShortTermDebtAccount {
 }
 
 /**
- * =============== Trade Payables ===============
+ * =============== Payables ===============
  * code: 201xxx
+ * @see {@link ../__docs__/02-liability-accounts.md#payables} for documentation
  */
-export interface ITradePayableAccount extends ILiabilityLedgerAccount {
-  code: TTradePayableLedgerCode;
-  subType: typeof ELiabilitySubType.TradePayable;
-  behavior: typeof ELiabilityAccountBehavior.Default;
-  contraAccountRule: typeof EContraAccountRule.ContraPermitted;
-  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctPermitted;
+export interface IPayableAccount extends ILiabilityLedgerAccount {
+  code: TPayablesLedgerCode;
+  subType: typeof ELiabilitySubType.Payable;
+  behavior: UPayableBehavior | typeof ELiabilityAccountBehavior.Default;
+  contraAccountRule:
+    | typeof EContraAccountRule.ContraPermitted
+    | typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule:
+    | typeof EAdjunctAccountRule.AdjunctPermitted
+    | typeof EAdjunctAccountRule.AdjunctNotPermitted;
+}
+
+/**
+ * Based on the Nigerian Tax Act (NTA) 2025
+ * @see {@link /public/Nigeria-Tax-Act-2025.pdf} for the act
+ */
+const ETaxType = {
+  ValueAddedTax: 'value_added_tax',
+  WithholdingTax: 'withholding_tax',
+  PayAsYouEarn: 'pay_as_you_earn',
+  CorporateIncomeTax: 'corporate_income_tax',
+  PersonalIncomeTax: 'personal_income_tax',
+  DevelopmentLevy: 'development_levy',
+  StampDuty: 'stamp_duty',
+  OtherDeductionsAndLevies: 'other_deductions_and_levies',
+} as const;
+
+type UTaxType = (typeof ETaxType)[keyof typeof ETaxType];
+
+export interface IStatutoryPayableAccountMeta {
+  taxAuthority: string;
+  taxType: UTaxType;
+}
+
+export interface IStatutoryPayableAccount extends IPayableAccount {
+  controlAccountId: TEntityId;
+  behavior: typeof EPayableBehavior.TaxPayable;
+  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
+  meta: IStatutoryPayableAccountMeta;
+}
+
+export interface ITradePayableAccountMeta {
+  vendorId: TEntityId;
+  invoiceId: TEntityId;
+}
+
+export interface ITradePayableAccount extends IPayableAccount {
+  controlAccountId: TEntityId;
+  behavior: typeof EPayableBehavior.TradePayable;
+  meta: ITradePayableAccountMeta;
 }
 
 /**
@@ -157,31 +202,8 @@ export interface IAccruedExpenseAccount extends ILiabilityLedgerAccount {
 }
 
 /**
- * =============== Statutory Payables ===============
- * code: 203xxx
- * @see {@link ../__docs__/02-liability-accounts.md#statutory-payables} for documentation
- */
-export interface IStatutoryPayableAccount extends ILiabilityLedgerAccount {
-  code: TStatutoryPayableLedgerCode;
-  subType: typeof ELiabilitySubType.StatutoryPayable;
-  behavior: UStatutoryPayableBehavior;
-  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
-  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
-}
-
-export interface ITaxPayableAccountMeta {
-  taxAuthority: string;
-  taxType: string;
-}
-
-export interface ITaxPayableAccount extends IStatutoryPayableAccount {
-  behavior: typeof EStatutoryPayableBehavior.TaxPayable;
-  meta: ITaxPayableAccountMeta;
-}
-
-/**
  * =============== Deferred Revenues ===============
- * code: 204xxx
+ * code: 203xxx
  */
 export interface IDeferredRevenueAccount extends ILiabilityLedgerAccount {
   code: TDeferredRevenueLedgerCode;
@@ -193,7 +215,7 @@ export interface IDeferredRevenueAccount extends ILiabilityLedgerAccount {
 
 /**
  * =============== Long Term Loans ===============
- * code: 205xxx
+ * code: 204xxx
  * @see {@link ../__docs__/02-liability-accounts.md#long-term-loans} for documentation
  */
 export interface ILongTermLoanAccount extends ILiabilityLedgerAccount {
@@ -227,7 +249,7 @@ export interface IOtherLongTermLoanAccount extends ILongTermLoanAccount {
 
 /**
  * =============== Lease Liabilities ===============
- * code: 206xxx
+ * code: 205xxx
  */
 export interface ILeaseLiabilityAccount extends ILiabilityLedgerAccount {
   code: TLeaseLiabilityLedgerCode;
@@ -239,7 +261,7 @@ export interface ILeaseLiabilityAccount extends ILiabilityLedgerAccount {
 
 /**
  * =============== Provisions ===============
- * code: 207xxx
+ * code: 206xxx
  */
 export interface IProvisionAccount extends ILiabilityLedgerAccount {
   code: TProvisionLedgerCode;
