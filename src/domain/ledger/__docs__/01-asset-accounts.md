@@ -33,6 +33,26 @@ By default, asset accounts carry a **debit** normal balance. This is automatical
 
 To ensure our system is extensible, we have not baked functionalities into ledger codes or predefined accounts. For non-power users, our ledger accounts bootstrap will handle the creation of accounts and association of behaviors. For power users, they can create accounts and associate behaviors available to the account class.
 
+### Implementation Status
+
+| Account Group             | Code Block | Entity File                                                                                           | Status         |
+| ------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- | -------------- |
+| Cash and Cash Equivalents | `100xxx`   | [`00-cash-and-equivalents.entity.ts`](../entities/01-asset-account/00-cash-and-equivalents.entity.ts) | ✅ Implemented |
+| Short Term Investments    | `101xxx`   | —                                                                                                     | 🔲 Types only  |
+| Receivables               | `102xxx`   | [`02-receivables.entity.ts`](../entities/01-asset-account/02-receivables.entity.ts)                   | ✅ Implemented |
+| Inventories               | `103xxx`   | —                                                                                                     | 🔲 Types only  |
+| Accrued Income            | `104xxx`   | —                                                                                                     | 🔲 Types only  |
+| Prepayments               | `105xxx`   | —                                                                                                     | 🔲 Types only  |
+| Long Term Investments     | `106xxx`   | —                                                                                                     | 🔲 Types only  |
+| PPE                       | `107xxx`   | —                                                                                                     | 🔲 Types only  |
+| Intangible Assets         | `108xxx`   | —                                                                                                     | 🔲 Types only  |
+| Right-of-Use Assets       | `109xxx`   | —                                                                                                     | 🔲 Types only  |
+| Goodwill                  | `110xxx`   | —                                                                                                     | 🔲 Types only  |
+| Suspense                  | `199xxx`   | [`99-suspense-account.entity.ts`](../entities/01-asset-account/99-suspense-account.entity.ts)         | ✅ Implemented |
+
+> [!NOTE]
+> Entity files are named by their COA prefix (e.g. `00-` = `100xxx`, `02-` = `102xxx`) to make it explicit which accounts have been implemented and which are pending.
+
 The following table shows the behaviors of different asset account classes
 
 ## Current Assets
@@ -50,11 +70,22 @@ The following table shows the behaviors of different asset account classes
 | Petty Cash   | /                   | <ul><li>Supports adjunct and contra accounts (strictly for Unrealized FX Revaluation on multi-currency accounts)</li><li>Requires reconciliation</li> <li>Allows manual reconciliations</li> <li>FX accounts support sale & purchase transactions</li> </ul>                                                             | [Petty Cash Flow](./petty-cash-flow.md) |
 | Bank Account | /                   | <ul><li>Supports adjunct and contra accounts (strictly for Unrealized FX Revaluation on multi-currency accounts)</li><li>Requires reconciliation</li> <li>Allows reconciliation with bank statements</li> <li>Overdrafts are recorded as liabilities</li><li>FX accounts support sale & purchase transactions</li> </ul> | [Bank Flow](./bank-flow.md)             |
 
+#### Entity Details
+
+The `CashAndCashEquivalents` entity ([`00-cash-and-equivalents.entity.ts`](../entities/01-asset-account/00-cash-and-equivalents.entity.ts)) exposes:
+
+- `make()` — base factory accepting a `behavior` parameter
+- `makeBankAccount()` — validates `IBankAccountMeta` (bankName, accountNumber, accountName, sortCode, swiftCode, iban, routingNumber, branchCode)
+- `makePettyCashAccount()` — creates with `IPettyCashAccountMeta` (lastReconciliationDate)
+
 ### Short Term Investments
 
 - **Ledger codes**: 101xxx
 - **Description**: accounts that are used to track short term investments.
 - **Main reporting hierarchy**: Current Assets / Short Term Investments
+
+> [!NOTE]
+> Entity implementation pending. Types defined in [`asset-account.types.ts`](../types/asset-account.types.ts) with behaviors: `StockAndETFs`, `Bonds`.
 
 #### Behaviors
 
@@ -79,19 +110,30 @@ The following table shows the behaviors of different asset account classes
 | Trade Receivables     | /                   | <ul><li>Requires invoice or debit note transaction for creation</li><li>Requires payment, credit note, or write-off transaction for settlement</li><li>Supports automated aging</li><li>Supports contra accounts (for doubtful accounts)</li><li>Supports adjunct accounts (for interest on overdue accounts)</li></ul> |
 | Statutory Receivables | /                   | <ul><li>Tax credit note or supplier invoice transaction for creation</li><li>Requires statutory payment transaction for settlement (computed net of payables)</li><li>Does not support contra accounts</li><li>Does not support adjunct accounts</li></ul>                                                              |
 
+#### Entity Details
+
+The `Receivables` entity ([`02-receivables.entity.ts`](../entities/01-asset-account/02-receivables.entity.ts)) exposes:
+
+- `make()` — base factory accepting `behavior`, `contraAccountRule`, and `adjunctAccountRule` parameters
+- `makeStatutoryReceivableAccount()` — validates `IStatutoryReceivableAccountMeta` (taxAuthority, taxType per [`tax.types.ts`](../types/tax.types.ts))
+- `makeTradeReceivableAccount()` — validates `ITradeReceivableAccountMeta` (customerId, invoiceId)
+
 ### Inventories
 
 - **Ledger codes**: 103xxx
 
-> [!INFO]
+> [!NOTE]
 > Out of scope for MVP (individual domain).\
-> Inventories will be scoped when we move to support sole traders
+> Inventories will be scoped when we move to support sole traders.
 
 ### Accrued Income
 
 - **Ledger codes**: 104xxx
 - **Description**: accounts that are used to track revenue that has been earned by providing goods or services, but has not yet been formally billed to the customer (e.g., unbilled project milestones, unbilled subscriptions).
 - **Main reporting hierarchy**: Current Assets / Accrued Income
+
+> [!NOTE]
+> Entity implementation pending. Types defined in [`asset-account.types.ts`](../types/asset-account.types.ts).
 
 #### Behaviors
 
@@ -104,6 +146,9 @@ The following table shows the behaviors of different asset account classes
 - **Ledger codes**: 105xxx
 - **Description**: accounts that are used to track payments made in advance for goods or services to be received in the future (e.g., prepaid software, prepaid insurance).
 - **Main reporting hierarchy**: Current Assets / Prepayments
+
+> [!NOTE]
+> Entity implementation pending. Types defined in [`asset-account.types.ts`](../types/asset-account.types.ts).
 
 #### Behaviors
 
@@ -119,6 +164,9 @@ The following table shows the behaviors of different asset account classes
 - **Description**: accounts that are used to track investments the entity intends to hold for longer than 12 months (e.g., equity investments in other companies, long-term bonds).
 - **Main reporting hierarchy**: Non-Current Assets / Long Term Investments
 
+> [!NOTE]
+> Entity implementation pending. Types defined in [`asset-account.types.ts`](../types/asset-account.types.ts).
+
 #### Behaviors
 
 | Sub-Class                   | Reporting Hierarchy | Behaviors                                                                                                                                                                                                                                                                                                    |
@@ -133,7 +181,10 @@ The following table shows the behaviors of different asset account classes
 - **Description**: accounts that track tangible, long-term assets used in business operations with a useful life of more than one year (e.g., buildings, machinery, vehicles, land).
 - **Main reporting hierarchy**: Non-Current Assets / Property, Plant & Equipment
 
-> [!INFO]
+> [!NOTE]
+> Entity implementation pending. Types defined in [`asset-account.types.ts`](../types/asset-account.types.ts).
+
+> [!NOTE]
 > **Sub-class automation:**
 >
 > - **Power Users** can explicitly create custom sub-classes under PPE to bind default depreciation methods and useful life rules.
@@ -150,14 +201,24 @@ The following table shows the behaviors of different asset account classes
 
 - **Ledger codes**: 108xxx, 109xxx, 110xxx
 
-> [!INFO]
+> [!NOTE]
 > Out of scope for MVP.\
 > These advanced asset classes are purposefully excluded from the initial release to maintain system simplicity for non-power users. The ledger code blocks are permanently reserved for future enterprise compliance features.
 
 ## Suspense Accounts:
 
 - **Ledger codes**: 199xxx
-- **Description**: See [Suspense Accounts](./suspense-accounts.md) for more information.
+- **Description**: See [Suspense Accounts](./99-suspense-accounts.md) for more information.
+
+#### Entity Details
+
+The `AssetSuspense` entity ([`99-suspense-account.entity.ts`](../entities/01-asset-account/99-suspense-account.entity.ts)) creates accounts with:
+
+- `subType: 'suspense'` / `behavior: 'default'`
+- `isControlAccount: false` / `controlAccountId: null`
+- Contra and adjunct accounts: **not permitted**
+- `meta: null`
+- Distinguished from liability suspense by the ledger code prefix (`199xxx` vs `299xxx`)
 
 #### Behaviors
 
@@ -171,28 +232,19 @@ For non-power users, we want to bootstrap their ledger accounts with a set of de
 
 ### Individual
 
-For an individual the following accounts will be bootstrapped:
+For the individual MVP, the following asset accounts will be bootstrapped:
 
 #### Current Assets
 
 - Cash and Cash Equivalents: `100000` (control account)
-- Short Term Investments: `101000` (control account)
 - Receivables: `102000` (control account)
-  - Trade Receivables: `102001` (control account)
-  - Statutory Receivables: `102002` (control account)
-- Accrued Income: `104000` (control account)
-- Prepayments: `105000` (control account)
 - Suspense Accounts: `199000`
 
-#### Non Current Assets
+> [!NOTE]
+> Short Term Investments (`101xxx`), Accrued Income (`104xxx`), and Prepayments (`105xxx`) are **not** bootstrapped for the individual MVP. Type definitions exist for future use.
 
-- Long Term Investments: `106000` (control account)
-- Property Plant and Equipment: `107000` (control account)
-  - Declining Balance Depreciable Fixed Assets: `107001` (control account)
-  - Straight Line Depreciable Fixed Assets: `107002` (control account)
-  - Non Depreciable Fixed Assets: `107003` (control account)
-  - Accumulated Depreciation Straight Line: `107004` (contra account)
-  - Accumulated Depreciation Declining Balance: `107005` (contra account)
+> [!NOTE]
+> Non-Current Assets (Long Term Investments, PPE, Intangible Assets, ROU, Goodwill) are **not** bootstrapped for the individual MVP.
 
 > [!NOTE]
 > An opening balance equity account will also be created for each of the control accounts above.

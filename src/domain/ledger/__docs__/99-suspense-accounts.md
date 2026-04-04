@@ -3,8 +3,9 @@
 ## Table of Contents
 
 - [Introduction](#introduction)
-- [Asset Accounts](#asset-accounts)
-- [Liability Accounts](#liability-accounts)
+- [Asset Suspense Accounts](#asset-suspense-accounts-199xxx)
+- [Liability Suspense Accounts](#liability-suspense-accounts-299xxx)
+- [Shared Architecture](#shared-architecture)
 
 ## Introduction
 
@@ -14,21 +15,41 @@ Suspense accounts are temporary balance sheet accounts that are used to hold tra
 - Trial Balance Adjustments (for power users)
 - Uncategorized transactions
 
-> [!INFO]
-> It is important to note that by the end of the reporting year, all suspense accounts should be cleared.
+> [!IMPORTANT]
+> By the end of the reporting period, all suspense accounts should be cleared to a zero balance.
 
 In LedgerNova, we use one liability/asset suspense account per accounting entity, per operating currency. That is, if the accounting entity has multiple operating currencies, it will have multiple liability/asset suspense accounts.
 
-## Asset Accounts (199xxx)
+## Asset Suspense Accounts (199xxx)
 
-In the Asset ledger, a suspense account typically carries a debit balance. It represents a "pre-classification" of value that the company currently controls or has initiated. Here are some example use cases:
+In the Asset ledger, a suspense account typically carries a debit balance. It represents a "pre-classification" of value that the entity currently controls or has initiated. Here are some example use cases:
 
 - Uncategorized credit transactions during bank reconciliation
 - Uncleared/unidentified outgoing payments
 
-## Liability Accounts (299xxx)
+**Entity**: [`99-suspense-account.entity.ts`](../entities/01-asset-account/99-suspense-account.entity.ts)
 
-In the Liability ledger, a suspense account typically carries a credit balance. It represents an obligation that the company has incurred but has not yet classified to a specific liability account. Here are some example use cases:
+## Liability Suspense Accounts (299xxx)
+
+In the Liability ledger, a suspense account typically carries a credit balance. It represents an obligation that the entity has incurred but has not yet classified to a specific liability account. Here are some example use cases:
 
 - Uncategorized debit transactions during bank reconciliation
 - Uncleared/unidentified incoming payments
+
+**Entity**: [`99-suspense-account.entity.ts`](../entities/02-liability-account/99-suspense-account.entity.ts)
+
+## Shared Architecture
+
+Both asset and liability suspense accounts share a common base interface defined in [`suspense-account.types.ts`](../types/suspense-account.types.ts):
+
+| Property             | Value                     |
+| -------------------- | ------------------------- |
+| `subType`            | `'suspense'`              |
+| `behavior`           | `'default'`               |
+| `isControlAccount`   | `false`                   |
+| `controlAccountId`   | `null`                    |
+| `contraAccountRule`  | `'contra_not_permitted'`  |
+| `adjunctAccountRule` | `'adjunct_not_permitted'` |
+| `meta`               | `null`                    |
+
+Asset and liability suspense accounts are distinguished by their ledger code prefix: asset suspense starts with `1` (`199xxx`) while liability suspense starts with `2` (`299xxx`).

@@ -37,9 +37,30 @@ Expense ledgers come in five reporting hierarchies:
 
 When an expense ledger/sub-ledger is created, it MUST be associated with one of the reporting hierarchies.
 
-By default, standard expense accounts carry a **debit** normal balance. **Contra-expense accounts** (like Purchase Returns and Purchase Discounts) carry a **credit** normal balance as they act to reduce gross expenses without erasing historical audit trails. Contra-expense accounts are created relationally within their parent's code range and are distinguished by their flipped `normalBalance` and `IAdjustmentMetaData`. See [ADR-0012](../../../../docs/adrs/0012-relational-contra-adjunct-accounts.md) for the full design rationale.
+By default, standard expense accounts carry a **debit** normal balance. **Contra-expense accounts** (like Purchase Returns and Purchase Discounts) carry a **credit** normal balance as they act to reduce gross expenses without erasing historical audit trails. Contra-expense accounts are created relationally within their parent's code range and are distinguished by their flipped `normalBalance` and `IAdjustmentMetaData`.
 
 To ensure our system is extensible, we have not baked functionalities into ledger codes or predefined accounts. For non-power users, our ledger accounts bootstrap will handle the creation of accounts and association of behaviors. For power users, they can create accounts and associate behaviors available to the account class.
+
+### Implementation Status
+
+| Account Group               | Code Block | Entity File                                                                                           | Status         |
+| --------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- | -------------- |
+| Direct Costs                | `500xxx`   | [`00-direct-costs.entity.ts`](../entities/05-expense-account/00-direct-costs.entity.ts)               | ✅ Implemented |
+| Payroll & Personnel         | `501xxx`   | —                                                                                                     | 🔲 Types only  |
+| Rent & Utilities            | `502xxx`   | [`03-rent-and-utilities.entity.ts`](../entities/05-expense-account/03-rent-and-utilities.entity.ts)   | ✅ Implemented |
+| Admin & General             | `503xxx`   | —                                                                                                     | 🔲 Types only  |
+| Marketing & Selling         | `504xxx`   | —                                                                                                     | 🔲 Types only  |
+| Research & Development      | `505xxx`   | —                                                                                                     | 🔲 Types only  |
+| Depreciation & Amortization | `506xxx`   | —                                                                                                     | 🔲 Types only  |
+| Interest & Finance Charges  | `507xxx`   | [`07-finance-costs.entity.ts`](../entities/05-expense-account/07-finance-costs.entity.ts)             | ✅ Implemented |
+| Income Tax Expense          | `508xxx`   | [`08-tax-expense.entity.ts`](../entities/05-expense-account/08-tax-expense.entity.ts)                 | ✅ Implemented |
+| Unrealized Loss             | `509xxx`   | [`09-unrealized-loss.entity.ts`](../entities/05-expense-account/09-unrealized-loss.entity.ts)         | ✅ Implemented |
+| Loss on Asset Disposal      | `510xxx`   | [`10-asset-disposal-loss.entity.ts`](../entities/05-expense-account/10-asset-disposal-loss.entity.ts) | ✅ Implemented |
+| Impairment Losses           | `511xxx`   | —                                                                                                     | 🔲 Types only  |
+| Other Losses                | `512xxx`   | —                                                                                                     | 🔲 Types only  |
+
+> [!NOTE]
+> Entity files are named by their COA prefix (e.g. `00-` = `500xxx`, `03-` = `502xxx`, `07-` = `507xxx`) to make it explicit which accounts have been implemented and which are pending.
 
 The following table shows the behaviors of different expense account classes:
 
@@ -59,6 +80,14 @@ Direct costs are directly attributable to the production of goods or delivery of
 | Cost of Services   | /                   | <ul><li>Captures direct subcontractor labor, platform fees, or service-specific materials</li><li>Automatically closed to Retained Earnings at period-end</li></ul> |
 | Cost of Revenue    | /                   | <ul><li>General direct cost category for individuals</li><li>Automatically closed to Retained Earnings at period-end</li></ul>                                      |
 
+#### Entity Details
+
+The `DirectCosts` entity ([`00-direct-costs.entity.ts`](../entities/05-expense-account/00-direct-costs.entity.ts)) creates accounts with:
+
+- `subType: 'direct_costs'` — accepts `behavior` via payload (COGS, Cost of Services, Cost of Revenue)
+- `contraAccountRule: 'contra_not_permitted'` / `adjunctAccountRule: 'adjunct_not_permitted'`
+- Accepts `isControlAccount`, `controlAccountId`, and `meta` via payload
+
 ## Operating Expenses (OPEX)
 
 OPEX are the day-to-day costs incurred to maintain business operations, distinct from direct costs (COGS/COS).
@@ -68,6 +97,10 @@ OPEX are the day-to-day costs incurred to maintain business operations, distinct
 - **Ledger codes**: 501xxx
 - **Description**: costs associated with employee compensation, benefits, payroll taxes, and training.
 - **Main reporting hierarchy**: Operating Expenses / Payroll & Personnel
+
+> [!NOTE]
+> Entity implementation pending. Types defined in [`expense-account.types.ts`](../types/expense-account.types.ts).\
+> Not in scope for individual MVP.
 
 #### Behaviors
 
@@ -87,11 +120,23 @@ OPEX are the day-to-day costs incurred to maintain business operations, distinct
 | ---------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Rent & Utilities | /                   | <ul><li>Often acts as the counterpart for prepaid rent amortization journals</li><li>Automatically closed to Retained Earnings at period-end</li></ul> |
 
+#### Entity Details
+
+The `RentAndUtilities` entity ([`03-rent-and-utilities.entity.ts`](../entities/05-expense-account/03-rent-and-utilities.entity.ts)) creates accounts with:
+
+- Fixed `behavior: 'rent_and_utilities'` / `subType: 'rent_and_utilities'`
+- `contraAccountRule: 'contra_not_permitted'` / `adjunctAccountRule: 'adjunct_not_permitted'`
+- Accepts `isControlAccount`, `controlAccountId`, and `meta` via payload
+
 ### Admin & General
 
 - **Ledger codes**: 503xxx
 - **Description**: broad overhead costs required to run the enterprise, including software subscriptions, banking fees, legal fees, and basic office supplies.
 - **Main reporting hierarchy**: Operating Expenses / Admin & General
+
+> [!NOTE]
+> Entity implementation pending. Types defined in [`expense-account.types.ts`](../types/expense-account.types.ts).\
+> Not in scope for individual MVP.
 
 #### Behaviors
 
@@ -105,6 +150,10 @@ OPEX are the day-to-day costs incurred to maintain business operations, distinct
 - **Description**: costs associated with acquiring customers, advertising, travel, and sales collateral.
 - **Main reporting hierarchy**: Operating Expenses / Marketing & Selling
 
+> [!NOTE]
+> Entity implementation pending. Types defined in [`expense-account.types.ts`](../types/expense-account.types.ts).\
+> Not in scope for individual MVP.
+
 #### Behaviors
 
 | Sub-Class           | Reporting Hierarchy | Behaviors                                                                 |
@@ -117,6 +166,10 @@ OPEX are the day-to-day costs incurred to maintain business operations, distinct
 - **Description**: explicit costs incurred during research phases of product creation (expensed as incurred under IFRS/GAAP).
 - **Main reporting hierarchy**: Operating Expenses / Research & Development
 
+> [!NOTE]
+> Entity implementation pending. Types defined in [`expense-account.types.ts`](../types/expense-account.types.ts).\
+> Not in scope for individual MVP.
+
 #### Behaviors
 
 | Sub-Class      | Reporting Hierarchy | Behaviors                                                                                                                                       |
@@ -128,6 +181,10 @@ OPEX are the day-to-day costs incurred to maintain business operations, distinct
 - **Ledger codes**: 506xxx
 - **Description**: the systematic allocation of the cost of tangible and intangible assets over their useful lives.
 - **Main reporting hierarchy**: Operating Expenses / Depreciation & Amortization
+
+> [!NOTE]
+> Entity implementation pending. Types defined in [`expense-account.types.ts`](../types/expense-account.types.ts).\
+> Not in scope for individual MVP.
 
 #### Behaviors
 
@@ -151,6 +208,14 @@ Expenses incurred outside the central operations of the entity.
 | ------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Finance Costs | /                   | <ul><li>Excludes operational bank processing fees (which sit in Admin & General)</li><li>Automatically closed to Retained Earnings at period-end</li></ul> |
 
+#### Entity Details
+
+The `FinanceCosts` entity ([`07-finance-costs.entity.ts`](../entities/05-expense-account/07-finance-costs.entity.ts)) creates accounts with:
+
+- Fixed `behavior: 'finance_costs'` / `subType: 'interest_and_finance_charges'`
+- `contraAccountRule: 'contra_not_permitted'` / `adjunctAccountRule: 'adjunct_not_permitted'`
+- Accepts `isControlAccount`, `controlAccountId`, and `meta` via payload
+
 ## Tax Expense
 
 ### Income Tax Expense
@@ -164,6 +229,14 @@ Expenses incurred outside the central operations of the entity.
 | Sub-Class   | Reporting Hierarchy | Behaviors                                                                                                                 |
 | ----------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Tax Expense | /                   | <ul><li>Requires tax calculation processing run</li><li>Automatically closed to Retained Earnings at period-end</li></ul> |
+
+#### Entity Details
+
+The `TaxExpense` entity ([`08-tax-expense.entity.ts`](../entities/05-expense-account/08-tax-expense.entity.ts)) creates accounts with:
+
+- Fixed `behavior: 'tax_expense'` / `subType: 'income_tax_expense'`
+- `contraAccountRule: 'contra_not_permitted'` / `adjunctAccountRule: 'adjunct_not_permitted'`
+- Accepts `isControlAccount`, `controlAccountId`, and `meta` via payload
 
 ## Losses & Adjustments
 
@@ -181,6 +254,14 @@ Distinct charges resulting from adverse market shifts or asset devaluation, isol
 | --------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Unrealized Loss | /                   | <ul><li>Tracks negative mark-to-market shifts on trading/short-term assets</li><li>Counterpart to asset adjunct/contra accounts</li><li>Automatically closed to Retained Earnings at period-end</li></ul> |
 
+#### Entity Details
+
+The `UnrealizedLoss` entity ([`09-unrealized-loss.entity.ts`](../entities/05-expense-account/09-unrealized-loss.entity.ts)) creates accounts with:
+
+- Fixed `behavior: 'unrealized_loss'` / `subType: 'unrealized_loss'`
+- `contraAccountRule: 'contra_not_permitted'` / `adjunctAccountRule: 'adjunct_not_permitted'`
+- Accepts `isControlAccount`, `controlAccountId`, and `meta` via payload
+
 ### Loss on Asset Disposal
 
 - **Ledger codes**: 510xxx
@@ -193,11 +274,23 @@ Distinct charges resulting from adverse market shifts or asset devaluation, isol
 | ------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Asset Disposal Loss | /                   | <ul><li>Calculates net loss when an asset is sold below its net book value</li><li>Automatically closed to Retained Earnings at period-end</li></ul> |
 
+#### Entity Details
+
+The `AssetDisposalLoss` entity ([`10-asset-disposal-loss.entity.ts`](../entities/05-expense-account/10-asset-disposal-loss.entity.ts)) creates accounts with:
+
+- Fixed `behavior: 'asset_disposal_loss'` / `subType: 'loss_on_asset_disposal'`
+- `contraAccountRule: 'contra_not_permitted'` / `adjunctAccountRule: 'adjunct_not_permitted'`
+- Accepts `isControlAccount`, `controlAccountId`, and `meta` via payload
+
 ### Impairment Losses
 
 - **Ledger codes**: 511xxx
 - **Description**: non-cash charges recognized when an asset's carrying value structurally drops below its recoverable value.
 - **Main reporting hierarchy**: Losses & Adjustments / Impairment Losses
+
+> [!NOTE]
+> Entity implementation pending. Types defined in [`expense-account.types.ts`](../types/expense-account.types.ts).\
+> Not in scope for individual MVP.
 
 #### Behaviors
 
@@ -211,6 +304,10 @@ Distinct charges resulting from adverse market shifts or asset devaluation, isol
 - **Description**: accounts used to track realized market losses (such as realized FX trading losses) or other miscellaneous losses.
 - **Main reporting hierarchy**: Losses & Adjustments / Other Losses
 
+> [!NOTE]
+> Entity implementation pending. Types defined in [`expense-account.types.ts`](../types/expense-account.types.ts).\
+> Not in scope for individual MVP.
+
 #### Behaviors
 
 | Sub-Class    | Reporting Hierarchy | Behaviors                                                                                                                                         |
@@ -223,18 +320,15 @@ For non-power users, we want to bootstrap their ledger accounts with a set of de
 
 ### Individual
 
-For an individual, the following expense accounts will be bootstrapped:
+For the individual MVP, the following expense accounts will be bootstrapped:
 
 #### Direct Costs
 
-- Cost of Revenue: `500000` (control account)
+- Direct Costs: `500000` (control account)
 
 #### Operating Expenses
 
 - Rent & Utilities: `502000` (control account)
-- Admin & General: `503000` (control account)
-- Marketing & Selling: `504000` (control account)
-- Depreciation & Amortization: `506000` (control account)
 
 #### Non-Operating Expenses
 
@@ -247,7 +341,10 @@ For an individual, the following expense accounts will be bootstrapped:
 #### Losses & Adjustments
 
 - Unrealized Loss: `509000` (control account)
-- Other Losses: `512000` (control account)
+- Loss on Asset Disposal: `510000` (control account)
+
+> [!NOTE]
+> Payroll (`501xxx`), Admin & General (`503xxx`), Marketing & Selling (`504xxx`), R&D (`505xxx`), Depreciation (`506xxx`), Impairment Losses (`511xxx`), and Other Losses (`512xxx`) are **not** bootstrapped for the individual MVP. Type definitions exist for future use.
 
 > [!NOTE]
 > All expense ledgers are automatically cleared and closed out to `RetainedEarnings (301000)` at the end of the financial/accounting period.
