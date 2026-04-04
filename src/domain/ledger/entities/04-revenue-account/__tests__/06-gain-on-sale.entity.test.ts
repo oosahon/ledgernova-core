@@ -1,6 +1,6 @@
 import { AppError } from '../../../../../shared/value-objects/error';
 import generateUUID from '../../../../../shared/utils/uuid-generator';
-import gainOnSaleLedgerEntity from '../06-gain-on-sale.entity';
+import gainOnSaleAccountEntity from '../06-gain-on-sale.entity';
 import {
   ERevenueAccountBehavior,
   ERevenueSubType,
@@ -36,12 +36,12 @@ describe('Gain on Sale Revenue Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for gain on sale accounts', () => {
-      expect(gainOnSaleLedgerEntity.getCode('405000')).toBe('405001');
-      expect(gainOnSaleLedgerEntity.getCode('405099')).toBe('405100');
+      expect(gainOnSaleAccountEntity.getCode('405000')).toBe('405001');
+      expect(gainOnSaleAccountEntity.getCode('405099')).toBe('405100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
-      expect(() => gainOnSaleLedgerEntity.getCode('400000' as any)).toThrow(
+      expect(() => gainOnSaleAccountEntity.getCode('400000' as any)).toThrow(
         AppError
       );
     });
@@ -53,10 +53,13 @@ describe('Gain on Sale Revenue Entity', () => {
       accountingEntityId: validUUID1,
       currency: validCurrency,
       createdBy: validUUID2,
+      isControlAccount: false,
+      controlAccountId: null,
+      meta: null,
     };
 
     it('should successfully create a gain on sale account', () => {
-      const [account, events] = gainOnSaleLedgerEntity.make(
+      const [account, events] = gainOnSaleAccountEntity.make(
         validPayload,
         '405000'
       );
@@ -87,7 +90,7 @@ describe('Gain on Sale Revenue Entity', () => {
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' };
       expect(() =>
-        gainOnSaleLedgerEntity.make(invalidPayload, '405000')
+        gainOnSaleAccountEntity.make(invalidPayload, '405000')
       ).toThrow(AppError);
     });
   });

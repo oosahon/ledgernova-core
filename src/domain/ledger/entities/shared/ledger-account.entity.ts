@@ -91,6 +91,20 @@ function validateBehavior(behavior: string) {
   }
 }
 
+function validateIsControlAccount(isControlAccount: boolean) {
+  if (typeof isControlAccount !== 'boolean') {
+    throw new AppError('Control account status must be a boolean', {
+      cause: isControlAccount,
+    });
+  }
+}
+
+function validateMeta(meta: unknown) {
+  if (meta !== null && typeof meta !== 'object') {
+    throw new AppError('Invalid meta', { cause: meta });
+  }
+}
+
 function getSubLedgerCode<T extends string>(
   headerCode: string,
   predecessorCode: T
@@ -139,6 +153,9 @@ function make<T extends ILedgerAccount>(
   validateBehavior(payload.behavior);
   validateNormalBalance(payload.normalBalance);
 
+  validateIsControlAccount(payload.isControlAccount);
+  validateMeta(payload.meta);
+
   const timestamp = new Date();
 
   const ledgerAccount: ILedgerAccount = {
@@ -156,7 +173,7 @@ function make<T extends ILedgerAccount>(
     status: payload.status,
     contraAccountRule: payload.contraAccountRule,
     adjunctAccountRule: payload.adjunctAccountRule,
-    // Meta validation is delegated to the specific ledger account entity
+    // Proper meta validation is delegated to the specific ledger account entity
     meta: payload.meta,
     createdBy: payload.createdBy,
     createdAt: timestamp,

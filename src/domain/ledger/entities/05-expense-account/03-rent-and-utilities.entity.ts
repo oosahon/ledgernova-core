@@ -1,11 +1,11 @@
 import { TEntityWithEvents } from '../../../../shared/types/event.types';
-import revenueAccountEvents from '../../events/revenue-account.events';
+import expenseAccountEvents from '../../events/expense-account.events';
 import {
-  ERevenueAccountBehavior,
-  ERevenueSubType,
-  IGainOnSaleAccount,
-} from '../../types/revenue-account.types';
-import { TGainOnSaleLedgerCode } from '../../types/ledger-code.types';
+  EExpenseAccountBehavior,
+  EExpenseSubType,
+  IRentUtilitiesAccount,
+} from '../../types/expense-account.types';
+import { TRentUtilitiesLedgerCode } from '../../types/ledger-code.types';
 import {
   EAdjunctAccountRule,
   EContraAccountRule,
@@ -15,17 +15,17 @@ import {
 import ledgerAccountEntity from '../shared/ledger-account.entity';
 
 function getCode(
-  predecessorCode: TGainOnSaleLedgerCode
-): TGainOnSaleLedgerCode {
-  return ledgerAccountEntity.getSubLedgerCode<TGainOnSaleLedgerCode>(
-    '405',
+  predecessorCode: TRentUtilitiesLedgerCode
+): TRentUtilitiesLedgerCode {
+  return ledgerAccountEntity.getSubLedgerCode<TRentUtilitiesLedgerCode>(
+    '502',
     predecessorCode
   );
 }
 
 function make(
   payload: Pick<
-    IGainOnSaleAccount,
+    IRentUtilitiesAccount,
     | 'name'
     | 'createdBy'
     | 'accountingEntityId'
@@ -34,16 +34,16 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TGainOnSaleLedgerCode
-): TEntityWithEvents<IGainOnSaleAccount, IGainOnSaleAccount> {
-  const account = ledgerAccountEntity.make<IGainOnSaleAccount>({
+  predecessorCode: TRentUtilitiesLedgerCode
+): TEntityWithEvents<IRentUtilitiesAccount, IRentUtilitiesAccount> {
+  const account = ledgerAccountEntity.make<IRentUtilitiesAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
     code: getCode(predecessorCode),
-    type: ELedgerType.Revenue,
-    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue),
-    subType: ERevenueSubType.GainOnSale,
-    behavior: ERevenueAccountBehavior.GainOnSale,
+    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Expense),
+    type: ELedgerType.Expense,
+    subType: EExpenseSubType.RentAndUtilities,
+    behavior: EExpenseAccountBehavior.RentAndUtilities,
     isControlAccount: payload.isControlAccount,
     controlAccountId: payload.controlAccountId,
     currency: payload.currency,
@@ -54,13 +54,13 @@ function make(
     createdBy: payload.createdBy,
   });
 
-  const event = revenueAccountEvents.gainOnSaleCreated(account);
+  const event = expenseAccountEvents.rentAndUtilitiesCreated(account);
   return [account, [event]];
 }
 
-const gainOnSaleAccountEntity = Object.freeze({
+const rentAndUtilitiesAccountEntity = Object.freeze({
   make,
   getCode,
 });
 
-export default gainOnSaleAccountEntity;
+export default rentAndUtilitiesAccountEntity;

@@ -241,5 +241,24 @@ describe('Ledger Account Shared Entity', () => {
       };
       expect(() => ledgerAccountEntity.make(invalidPayload)).toThrow(AppError);
     });
+
+    it('should throw if isControlAccount is not a boolean', () => {
+      const invalidPayload = {
+        ...validPayload,
+        isControlAccount: 'yes' as any,
+      };
+      expect(() => ledgerAccountEntity.make(invalidPayload)).toThrow(AppError);
+    });
+
+    it('should pass if meta is null', () => {
+      const payload = { ...validPayload, meta: null };
+      const account = ledgerAccountEntity.make(payload);
+      expect(account.meta).toBeNull();
+    });
+
+    it('should throw if meta is invalid (e.g. string)', () => {
+      const invalidPayload = { ...validPayload, meta: 'invalid string' as any };
+      expect(() => ledgerAccountEntity.make(invalidPayload)).toThrow(AppError);
+    });
   });
 });

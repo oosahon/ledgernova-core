@@ -1,11 +1,11 @@
 import { TEntityWithEvents } from '../../../../shared/types/event.types';
-import revenueAccountEvents from '../../events/revenue-account.events';
+import expenseAccountEvents from '../../events/expense-account.events';
 import {
-  ERevenueAccountBehavior,
-  ERevenueSubType,
-  IServicesAccount,
-} from '../../types/revenue-account.types';
-import { TServicesLedgerCode } from '../../types/ledger-code.types';
+  EExpenseAccountBehavior,
+  EExpenseSubType,
+  IIncomeTaxExpenseAccount,
+} from '../../types/expense-account.types';
+import { TIncomeTaxLedgerCode } from '../../types/ledger-code.types';
 import {
   EAdjunctAccountRule,
   EContraAccountRule,
@@ -14,16 +14,16 @@ import {
 } from '../../types/ledger.types';
 import ledgerAccountEntity from '../shared/ledger-account.entity';
 
-function getCode(predecessorCode: TServicesLedgerCode): TServicesLedgerCode {
-  return ledgerAccountEntity.getSubLedgerCode<TServicesLedgerCode>(
-    '401',
+function getCode(predecessorCode: TIncomeTaxLedgerCode): TIncomeTaxLedgerCode {
+  return ledgerAccountEntity.getSubLedgerCode<TIncomeTaxLedgerCode>(
+    '508',
     predecessorCode
   );
 }
 
 function make(
   payload: Pick<
-    IServicesAccount,
+    IIncomeTaxExpenseAccount,
     | 'name'
     | 'createdBy'
     | 'accountingEntityId'
@@ -32,16 +32,16 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TServicesLedgerCode
-): TEntityWithEvents<IServicesAccount, IServicesAccount> {
-  const account = ledgerAccountEntity.make<IServicesAccount>({
+  predecessorCode: TIncomeTaxLedgerCode
+): TEntityWithEvents<IIncomeTaxExpenseAccount, IIncomeTaxExpenseAccount> {
+  const account = ledgerAccountEntity.make<IIncomeTaxExpenseAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
     code: getCode(predecessorCode),
-    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue),
-    type: ELedgerType.Revenue,
-    subType: ERevenueSubType.Services,
-    behavior: ERevenueAccountBehavior.Services,
+    normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Expense),
+    type: ELedgerType.Expense,
+    subType: EExpenseSubType.IncomeTaxExpense,
+    behavior: EExpenseAccountBehavior.TaxExpense,
     isControlAccount: payload.isControlAccount,
     controlAccountId: payload.controlAccountId,
     currency: payload.currency,
@@ -52,13 +52,13 @@ function make(
     createdBy: payload.createdBy,
   });
 
-  const event = revenueAccountEvents.servicesCreated(account);
+  const event = expenseAccountEvents.taxExpenseCreated(account);
   return [account, [event]];
 }
 
-const servicesAccountEntity = Object.freeze({
+const taxExpenseAccountEntity = Object.freeze({
   make,
   getCode,
 });
 
-export default servicesAccountEntity;
+export default taxExpenseAccountEntity;

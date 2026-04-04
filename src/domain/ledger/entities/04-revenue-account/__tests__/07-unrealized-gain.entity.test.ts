@@ -1,6 +1,6 @@
 import { AppError } from '../../../../../shared/value-objects/error';
 import generateUUID from '../../../../../shared/utils/uuid-generator';
-import unrealizedGainsLedgerEntity from '../07-unrealized-gains.entity';
+import unrealizedGainAccountEntity from '../07-unrealized-gain.entity';
 import {
   ERevenueAccountBehavior,
   ERevenueSubType,
@@ -36,13 +36,13 @@ describe('Unrealized Gains Revenue Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for unrealized gains accounts', () => {
-      expect(unrealizedGainsLedgerEntity.getCode('406000')).toBe('406001');
-      expect(unrealizedGainsLedgerEntity.getCode('406099')).toBe('406100');
+      expect(unrealizedGainAccountEntity.getCode('406000')).toBe('406001');
+      expect(unrealizedGainAccountEntity.getCode('406099')).toBe('406100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
       expect(() =>
-        unrealizedGainsLedgerEntity.getCode('400000' as any)
+        unrealizedGainAccountEntity.getCode('400000' as any)
       ).toThrow(AppError);
     });
   });
@@ -53,10 +53,13 @@ describe('Unrealized Gains Revenue Entity', () => {
       accountingEntityId: validUUID1,
       currency: validCurrency,
       createdBy: validUUID2,
+      isControlAccount: false,
+      controlAccountId: null,
+      meta: null,
     };
 
     it('should successfully create an unrealized gains account', () => {
-      const [account, events] = unrealizedGainsLedgerEntity.make(
+      const [account, events] = unrealizedGainAccountEntity.make(
         validPayload,
         '406000'
       );
@@ -87,7 +90,7 @@ describe('Unrealized Gains Revenue Entity', () => {
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' };
       expect(() =>
-        unrealizedGainsLedgerEntity.make(invalidPayload, '406000')
+        unrealizedGainAccountEntity.make(invalidPayload, '406000')
       ).toThrow(AppError);
     });
   });

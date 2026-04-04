@@ -1,6 +1,6 @@
 import { AppError } from '../../../../../shared/value-objects/error';
 import generateUUID from '../../../../../shared/utils/uuid-generator';
-import servicesLedgerEntity from '../02-services.entity';
+import servicesAccountEntity from '../02-services.entity';
 import {
   ERevenueAccountBehavior,
   ERevenueSubType,
@@ -36,12 +36,12 @@ describe('Services Revenue Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for services accounts', () => {
-      expect(servicesLedgerEntity.getCode('401000')).toBe('401001');
-      expect(servicesLedgerEntity.getCode('401099')).toBe('401100');
+      expect(servicesAccountEntity.getCode('401000')).toBe('401001');
+      expect(servicesAccountEntity.getCode('401099')).toBe('401100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
-      expect(() => servicesLedgerEntity.getCode('400000' as any)).toThrow(
+      expect(() => servicesAccountEntity.getCode('400000' as any)).toThrow(
         AppError
       );
     });
@@ -53,10 +53,13 @@ describe('Services Revenue Entity', () => {
       accountingEntityId: validUUID1,
       currency: validCurrency,
       createdBy: validUUID2,
+      isControlAccount: false,
+      controlAccountId: null,
+      meta: null,
     };
 
     it('should successfully create a services account', () => {
-      const [account, events] = servicesLedgerEntity.make(
+      const [account, events] = servicesAccountEntity.make(
         validPayload,
         '401000'
       );
@@ -86,9 +89,9 @@ describe('Services Revenue Entity', () => {
 
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' };
-      expect(() => servicesLedgerEntity.make(invalidPayload, '401000')).toThrow(
-        AppError
-      );
+      expect(() =>
+        servicesAccountEntity.make(invalidPayload, '401000')
+      ).toThrow(AppError);
     });
   });
 });

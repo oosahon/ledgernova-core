@@ -26,7 +26,13 @@ function getCode(
 function make(
   payload: Pick<
     IUnrealizedGainAccount,
-    'name' | 'createdBy' | 'accountingEntityId' | 'currency'
+    | 'name'
+    | 'createdBy'
+    | 'accountingEntityId'
+    | 'currency'
+    | 'isControlAccount'
+    | 'controlAccountId'
+    | 'meta'
   >,
   predecessorCode: TUnrealizedGainLedgerCode
 ): TEntityWithEvents<IUnrealizedGainAccount, IUnrealizedGainAccount> {
@@ -38,10 +44,10 @@ function make(
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue),
     subType: ERevenueSubType.UnrealizedGains,
     behavior: ERevenueAccountBehavior.UnrealizedGains,
-    isControlAccount: false,
-    controlAccountId: null,
+    isControlAccount: payload.isControlAccount,
+    controlAccountId: payload.controlAccountId,
     currency: payload.currency,
-    meta: null,
+    meta: payload.meta,
     status: ELedgerAccountStatus.Active,
     contraAccountRule: EContraAccountRule.ContraNotPermitted,
     adjunctAccountRule: EAdjunctAccountRule.AdjunctNotPermitted,
@@ -52,9 +58,9 @@ function make(
   return [account, [event]];
 }
 
-const unrealizedGainsLedgerEntity = Object.freeze({
+const unrealizedGainAccountEntity = Object.freeze({
   make,
   getCode,
 });
 
-export default unrealizedGainsLedgerEntity;
+export default unrealizedGainAccountEntity;

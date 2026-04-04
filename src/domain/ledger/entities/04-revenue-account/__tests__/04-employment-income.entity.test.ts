@@ -1,6 +1,6 @@
 import { AppError } from '../../../../../shared/value-objects/error';
 import generateUUID from '../../../../../shared/utils/uuid-generator';
-import employmentIncomeLedgerEntity from '../04-employment-income.entity';
+import employmentIncomeAccountEntity from '../04-employment-income.entity';
 import {
   ERevenueAccountBehavior,
   ERevenueSubType,
@@ -36,13 +36,13 @@ describe('Employment Income Revenue Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for employment income accounts', () => {
-      expect(employmentIncomeLedgerEntity.getCode('403000')).toBe('403001');
-      expect(employmentIncomeLedgerEntity.getCode('403099')).toBe('403100');
+      expect(employmentIncomeAccountEntity.getCode('403000')).toBe('403001');
+      expect(employmentIncomeAccountEntity.getCode('403099')).toBe('403100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
       expect(() =>
-        employmentIncomeLedgerEntity.getCode('400000' as any)
+        employmentIncomeAccountEntity.getCode('400000' as any)
       ).toThrow(AppError);
     });
   });
@@ -53,10 +53,13 @@ describe('Employment Income Revenue Entity', () => {
       accountingEntityId: validUUID1,
       currency: validCurrency,
       createdBy: validUUID2,
+      isControlAccount: false,
+      controlAccountId: null,
+      meta: null,
     };
 
     it('should successfully create an employment income account', () => {
-      const [account, events] = employmentIncomeLedgerEntity.make(
+      const [account, events] = employmentIncomeAccountEntity.make(
         validPayload,
         '403000'
       );
@@ -87,7 +90,7 @@ describe('Employment Income Revenue Entity', () => {
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' };
       expect(() =>
-        employmentIncomeLedgerEntity.make(invalidPayload, '403000')
+        employmentIncomeAccountEntity.make(invalidPayload, '403000')
       ).toThrow(AppError);
     });
   });

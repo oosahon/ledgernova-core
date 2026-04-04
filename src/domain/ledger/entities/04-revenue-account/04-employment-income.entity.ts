@@ -26,7 +26,13 @@ function getCode(
 function make(
   payload: Pick<
     IEmploymentIncomeAccount,
-    'name' | 'createdBy' | 'accountingEntityId' | 'currency'
+    | 'name'
+    | 'createdBy'
+    | 'accountingEntityId'
+    | 'currency'
+    | 'isControlAccount'
+    | 'controlAccountId'
+    | 'meta'
   >,
   predecessorCode: TEmploymentIncomeLedgerCode
 ): TEntityWithEvents<IEmploymentIncomeAccount, IEmploymentIncomeAccount> {
@@ -38,10 +44,10 @@ function make(
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue),
     subType: ERevenueSubType.EmploymentIncome,
     behavior: ERevenueAccountBehavior.EmploymentIncome,
-    isControlAccount: false,
-    controlAccountId: null,
+    isControlAccount: payload.isControlAccount,
+    controlAccountId: payload.controlAccountId,
     currency: payload.currency,
-    meta: null,
+    meta: payload.meta,
     status: ELedgerAccountStatus.Active,
     contraAccountRule: EContraAccountRule.ContraNotPermitted,
     adjunctAccountRule: EAdjunctAccountRule.AdjunctNotPermitted,
@@ -52,9 +58,9 @@ function make(
   return [account, [event]];
 }
 
-const employmentIncomeLedgerEntity = Object.freeze({
+const employmentIncomeAccountEntity = Object.freeze({
   make,
   getCode,
 });
 
-export default employmentIncomeLedgerEntity;
+export default employmentIncomeAccountEntity;
