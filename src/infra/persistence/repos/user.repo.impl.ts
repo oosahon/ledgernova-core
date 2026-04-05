@@ -3,7 +3,7 @@ import userMapper from '../../../app/mappers/user.mapper';
 import IUserRepo from '../../../domain/user/repos/user.repo';
 import { IUser } from '../../../domain/user/types/user.types';
 import { usersInCore as users } from '../drizzle/schema';
-import getDbQuery from './query';
+import getDbQuery from './helpers/query';
 
 const userRepo: IUserRepo = {
   save: async (user, options) => {

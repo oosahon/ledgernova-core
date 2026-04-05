@@ -1,5 +1,5 @@
-import { IRepoOptions } from '../../../app/contracts/infra/repo.contract';
-import { postgres } from '../../config/postgres.config';
+import { IRepoOptions } from '../../../../app/contracts/infra/repo.contract';
+import { postgres } from '../../../config/postgres.config';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 
