@@ -31,7 +31,7 @@ export const EContraAccountRule = {
   ContraPermitted: 'contra_permitted',
   ContraNotPermitted: 'contra_not_permitted',
   ContraOnly: 'contra_only',
-  NotApplicable: 'not_applicable',
+  NotApplicable: 'contra_not_applicable',
 } as const;
 
 export type UContraAccountRule =
@@ -41,7 +41,7 @@ export const EAdjunctAccountRule = {
   AdjunctPermitted: 'adjunct_permitted',
   AdjunctNotPermitted: 'adjunct_not_permitted',
   AdjunctOnly: 'adjunct_only',
-  NotApplicable: 'not_applicable',
+  NotApplicable: 'adjunct_not_applicable',
 } as const;
 
 export type UAdjunctAccountRule =
