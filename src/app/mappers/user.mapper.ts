@@ -1,6 +1,6 @@
 import { InferSelectModel } from 'drizzle-orm';
 import { IUser, IUserWithPassword } from '../../domain/user/types/user.types';
-import { usersInCore } from '../../infra/db/drizzle/schema';
+import { usersInCore } from '../../infra/persistence/drizzle/schema';
 import { fromCommonRepoDates, toCommonRepoDates } from './date';
 import { TEntityId } from '../../shared/types/uuid';
 

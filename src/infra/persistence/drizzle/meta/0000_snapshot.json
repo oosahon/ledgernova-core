@@ -69,9 +69,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_email_key": {
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "nullsNotDistinct": false,
           "name": "users_email_key"
         }
@@ -291,12 +289,8 @@
           "tableFrom": "categories",
           "tableTo": "users",
           "schemaTo": "core",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -305,12 +299,8 @@
           "tableFrom": "categories",
           "tableTo": "categories",
           "schemaTo": "core",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -318,9 +308,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "categories_tax_key_key": {
-          "columns": [
-            "tax_key"
-          ],
+          "columns": ["tax_key"],
           "nullsNotDistinct": false,
           "name": "categories_tax_key_key"
         }
@@ -364,18 +352,12 @@
   "enums": {
     "public.category_status": {
       "name": "category_status",
-      "values": [
-        "active",
-        "inactive"
-      ],
+      "values": ["active", "inactive"],
       "schema": "public"
     },
     "public.category_type": {
       "name": "category_type",
-      "values": [
-        "income",
-        "expense"
-      ],
+      "values": ["income", "expense"],
       "schema": "public"
     }
   },

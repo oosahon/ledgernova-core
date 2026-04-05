@@ -1,6 +1,6 @@
 import { InferSelectModel } from 'drizzle-orm';
 import { IAccountingEntity } from '../../domain/accounting/types/accounting.types';
-import { accountingEntitiesInCore } from '../../infra/db/drizzle/schema';
+import { accountingEntitiesInCore } from '../../infra/persistence/drizzle/schema';
 import { fromCommonRepoDates, toCommonRepoDates } from './date';
 import currencyMapper, { ICurrencyModel } from './currency.mapper';
 import { TEntityId } from '../../shared/types/uuid';

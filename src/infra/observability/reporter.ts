@@ -6,17 +6,6 @@ import IReporter from '../../app/contracts/infra/reporter.contract';
 Sentry.init({ dsn: SENTRY_DSN, sendDefaultPii: true, environment: NODE_ENV });
 
 const reporter: IReporter = {
-  reportAppError(app) {
-    try {
-      if (NODE_ENV === 'development') {
-        return;
-      }
-      return Sentry.setupExpressErrorHandler(app);
-    } catch (error) {
-      logger.error(error);
-    }
-  },
-
   report(error, context) {
     try {
       if (NODE_ENV === 'development') {

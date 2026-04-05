@@ -1,7 +1,7 @@
-import { ICacheStorage } from '../../app/contracts/infra/cache-storage.contract';
-import { redis } from '../config/redis.config';
+import { ICacheStorage } from '../../../app/contracts/infra/cache-storage.contract';
+import { redis } from '../../config/redis.config';
 
-const redisCacheStorage: ICacheStorage = {
+const cacheStorage: ICacheStorage = {
   set: async (key, value, ttl) => {
     const stringValue = JSON.stringify(value);
     if (ttl) {
@@ -21,4 +21,4 @@ const redisCacheStorage: ICacheStorage = {
   },
 };
 
-export default redisCacheStorage;
+export default cacheStorage;

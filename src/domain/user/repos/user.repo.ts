@@ -1,4 +1,4 @@
-import IRepoOptions from '../../../shared/types/repo-options.types';
+import { IRepoOptions } from '../../../app/contracts/infra/repo.contract';
 import { IUser, IUserWithPassword } from '../types/user.types';
 
 interface IUserRepo {

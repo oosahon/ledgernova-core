@@ -1,4 +1,4 @@
-import repos from '../../infra/db/repos';
+import repos from '../../infra/persistence/repos';
 import logger from '../../infra/observability/logger';
 import setupServer from '../../infra/server';
 import bootstrapCurrencies from './setup-currencies';

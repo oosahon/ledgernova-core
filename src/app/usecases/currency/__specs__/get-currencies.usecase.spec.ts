@@ -1,8 +1,8 @@
 import getCurrenciesUseCase from '../get-currencies.usecase';
-import { MockCurrencyRepo } from '../../../../infra/db/repos/__mocks__/currency.repo.impl.mock';
+import { MockCurrencyRepo } from '../../../../infra/persistence/repos/__mocks__/currency.repo.impl.mock';
 import MockRequestContext from '../../../contracts/app/__mocks__/request-context.mock';
 import { ICurrency } from '../../../../domain/currency/types/currency.types';
-import IRequestContext from '../../../../shared/types/request-context.types';
+import { IRequestContextData } from '../../../contracts/app/request-context.contract';
 
 /**
  * ========= USECASE TESTS =========
@@ -21,7 +21,7 @@ describe('getCurrenciesUseCase', () => {
 
     MockRequestContext.get.mockReturnValue({
       correlationId,
-    } as IRequestContext);
+    } as IRequestContextData);
 
     const mockCurrencies = [
       { code: 'USD', symbol: '$', name: 'US Dollar', minorUnit: 2n },

@@ -1,5 +1,5 @@
 import { ICurrency } from '../../../currency/types/currency.types';
-import mockLedgerAccountRepo from '../../../../infra/db/repos/__mocks__/ledger-account.repo.impl.mock';
+import mockLedgerAccountRepo from '../../../../infra/persistence/repos/__mocks__/ledger-account.repo.impl.mock';
 import ledgerService from '../ledger.service';
 import generateUUID from '../../../../shared/utils/uuid-generator';
 

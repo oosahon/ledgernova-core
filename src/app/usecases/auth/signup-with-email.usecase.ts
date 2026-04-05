@@ -12,11 +12,11 @@ import {
 import { NAIRA } from '../../bootstrap/data/currencies';
 import { IIndividualSignupReq } from '../../contracts/dto/auth.dto';
 import IAuthService from '../../contracts/infra/auth-service.contract';
-import IDbService from '../../contracts/infra/db.contract';
+import { IRepoService } from '../../contracts/infra/repo.contract';
 import IRequestContext from '../../contracts/app/request-context.contract';
 
 export default function signupWithEmailUsecase(
-  dbService: IDbService,
+  repoService: IRepoService,
   requestContext: IRequestContext,
   userRepo: IUserRepo,
   authService: IAuthService,
@@ -62,7 +62,7 @@ export default function signupWithEmailUsecase(
     const passwordHash = await authService.hashPassword(password);
     const userWithPassword = { ...user, password: passwordHash };
 
-    await dbService.runInTransaction(async (tx) => {
+    await repoService.runInTransaction(async (tx) => {
       await userRepo.save(userWithPassword, { tx, correlationId });
       await accountingEntityRepo.save(individualDomain, {
         tx,

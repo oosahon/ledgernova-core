@@ -1,5 +1,5 @@
 import appContext from '../../context';
-import repos from '../../../infra/db/repos';
+import repos from '../../../infra/persistence/repos';
 import getCurrenciesUseCase from './get-currencies.usecase';
 
 const currencyUseCase = Object.freeze({

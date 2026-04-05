@@ -1,12 +1,12 @@
 import path from 'path';
 import fs from 'fs';
 import { eq } from 'drizzle-orm';
-import { db } from '../src/infra/db';
+import { db } from '../src/infra/persistence';
 import logger from '../src/infra/observability/logger';
-import { seeds } from '../src/infra/db/drizzle/schema';
+import { seeds } from '../src/infra/persistence/drizzle/schema';
 
 function getAllSeeds() {
-  const seedsDir = path.join(__dirname, '../src/infra/db/seeds');
+  const seedsDir = path.join(__dirname, '../src/infra/persistence/seeds');
   return fs
     .readdirSync(seedsDir)
     .filter((file) => file.endsWith('.ts') && !file.startsWith('index.'));
@@ -15,7 +15,7 @@ function getAllSeeds() {
 async function runSeed(seed: string) {
   try {
     const seedModule = require(
-      path.join(__dirname, '../src/infra/db/seeds', seed)
+      path.join(__dirname, '../src/infra/persistence/seeds', seed)
     );
 
     await db.transaction(async (tx) => {

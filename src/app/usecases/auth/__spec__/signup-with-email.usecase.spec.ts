@@ -6,13 +6,13 @@ import {
 } from '../../../../shared/value-objects/error';
 import emailValue from '../../../../domain/user/value-objects/email.vo';
 import mockRequestContext from '../../../contracts/app/__mocks__/request-context.mock';
-import mockDbService from '../../../../infra/services/__mocks__/db.service.mock';
-import mockUserRepo from '../../../../infra/db/repos/__mocks__/user.repo.impl.mock';
-import mockAccountingEntityRepo from '../../../../infra/db/repos/__mocks__/accounting-entity.repo.impl.mock';
+import mockDbService from '../../../../infra/services/__mocks__/repo.service.mock';
+import mockUserRepo from '../../../../infra/persistence/repos/__mocks__/user.repo.impl.mock';
+import mockAccountingEntityRepo from '../../../../infra/persistence/repos/__mocks__/accounting-entity.repo.impl.mock';
 import mockAuthService from '../../../../infra/services/__mocks__/auth.service.mock';
-import IRequestContextData from '../../../../shared/types/request-context.types';
+import { IRequestContextData } from '../../../contracts/app/request-context.contract';
 import { IUser } from '../../../../domain/user/types/user.types';
-import { TDBTransaction } from '../../../../shared/types/seeder.types';
+import { ITransactionContext } from '../../../contracts/infra/repo.contract';
 
 describe('signupWithEmailUsecase', () => {
   beforeEach(() => {
@@ -36,7 +36,7 @@ describe('signupWithEmailUsecase', () => {
 
     const mockTx = { txId: 'tx-1' };
     mockDbService.runInTransaction.mockImplementation(async (cb) => {
-      await cb(mockTx as unknown as TDBTransaction);
+      return await cb(mockTx as unknown as ITransactionContext);
     });
 
     mockUserRepo.findByEmail.mockResolvedValue(null);
