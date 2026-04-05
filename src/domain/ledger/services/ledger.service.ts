@@ -1,3 +1,4 @@
+import { IRepoOptions } from '../../../app/contracts/infra/repo.contract';
 import { TEntityWithEvents } from '../../../shared/types/event.types';
 import { TEntityId } from '../../../shared/types/uuid';
 import { ICurrency } from '../../currency/types/currency.types';
@@ -42,7 +43,8 @@ interface IBaseIndividualAccountsCreationParams {
 
 const makeBaseAssetAccounts = async (
   params: IBaseIndividualAccountsCreationParams,
-  ledgerAccountRepo: ILedgerAccountRepo
+  ledgerAccountRepo: ILedgerAccountRepo,
+  repoOptions: IRepoOptions
 ) => {
   const { userId, accountingEntityId, functionalCurrency } = params;
   // ========== Assets ==========
@@ -54,7 +56,8 @@ const makeBaseAssetAccounts = async (
   // ========== Cash and Cash Equivalents ==========
   const existingCashAndEquivalentsAccount = await ledgerAccountRepo.findByCode(
     '100000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingCashAndEquivalentsAccount) {
     const cashAndCashEquivalentsAccount = cashAndEquivalentAccountEntity.make(
@@ -77,7 +80,8 @@ const makeBaseAssetAccounts = async (
   // ========== Receivables ==========
   const existingReceivables = await ledgerAccountRepo.findByCode(
     '102000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingReceivables) {
     const receivablesAccount = receivablesAccountEntity.make(
@@ -103,7 +107,8 @@ const makeBaseAssetAccounts = async (
 };
 const makeBaseLiabilityAccounts = async (
   params: IBaseIndividualAccountsCreationParams,
-  ledgerAccountRepo: ILedgerAccountRepo
+  ledgerAccountRepo: ILedgerAccountRepo,
+  repoOptions: IRepoOptions
 ) => {
   const { userId, accountingEntityId, functionalCurrency } = params;
   // ========== Liabilities ==========
@@ -115,7 +120,8 @@ const makeBaseLiabilityAccounts = async (
   // ============ Short term debts ============
   const existingShortTermDebts = await ledgerAccountRepo.findByCode(
     '200000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingShortTermDebts) {
     const shortTermDebtsAccount = shortTermLoanAccountEntity.make(
@@ -138,7 +144,8 @@ const makeBaseLiabilityAccounts = async (
   let payablesAccountId: TEntityId;
   const existingPayables = await ledgerAccountRepo.findByCode(
     '201000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingPayables) {
     const payablesAccount = payableAccountEntity.make(
@@ -165,7 +172,8 @@ const makeBaseLiabilityAccounts = async (
   // ========== Statutory Payables ==========
   const existingStatutoryPayables = await ledgerAccountRepo.findByCode(
     '201001',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingStatutoryPayables) {
     const statutoryPayablesAccount = payableAccountEntity.make(
@@ -190,7 +198,8 @@ const makeBaseLiabilityAccounts = async (
 };
 const makeBaseEquityAccounts = async (
   params: IBaseIndividualAccountsCreationParams,
-  ledgerAccountRepo: ILedgerAccountRepo
+  ledgerAccountRepo: ILedgerAccountRepo,
+  repoOptions: IRepoOptions
 ) => {
   const { userId, accountingEntityId, functionalCurrency } = params;
   const equityAccounts: TEntityWithEvents<
@@ -201,7 +210,8 @@ const makeBaseEquityAccounts = async (
   // ========== Retained Earnings ==========
   const existingRetainedEarnings = await ledgerAccountRepo.findByCode(
     '301000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingRetainedEarnings) {
     const retainedEarningsAccount = retainedEarningAccountEntity.make(
@@ -219,7 +229,8 @@ const makeBaseEquityAccounts = async (
   // ========== Opening Balance Equity ==========
   const existingOpeningBalanceEquity = await ledgerAccountRepo.findByCode(
     '399000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingOpeningBalanceEquity) {
     const openingBalanceEquityAccount = openingBalanceEquityLedgerEntity.make(
@@ -238,7 +249,8 @@ const makeBaseEquityAccounts = async (
 };
 const makeBaseRevenueAccounts = async (
   params: IBaseIndividualAccountsCreationParams,
-  ledgerAccountRepo: ILedgerAccountRepo
+  ledgerAccountRepo: ILedgerAccountRepo,
+  repoOptions: IRepoOptions
 ) => {
   const { userId, accountingEntityId, functionalCurrency } = params;
   const revenueAccounts: TEntityWithEvents<
@@ -249,7 +261,8 @@ const makeBaseRevenueAccounts = async (
   // ========== Services (401000) ==========
   const existingServices = await ledgerAccountRepo.findByCode(
     '401000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingServices) {
     const servicesAccount = servicesAccountEntity.make(
@@ -270,7 +283,8 @@ const makeBaseRevenueAccounts = async (
   // ========== Employment Income (403000) ==========
   const existingEmploymentIncome = await ledgerAccountRepo.findByCode(
     '403000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingEmploymentIncome) {
     const employmentIncomeAccount = employmentIncomeAccountEntity.make(
@@ -291,7 +305,8 @@ const makeBaseRevenueAccounts = async (
   // ========== Gain on Sale of Assets (405000) ==========
   const existingGainOnSaleOfAssets = await ledgerAccountRepo.findByCode(
     '405000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingGainOnSaleOfAssets) {
     const gainOnSaleOfAssetsAccount = gainOnSaleAccountEntity.make(
@@ -312,7 +327,8 @@ const makeBaseRevenueAccounts = async (
   // ========== Unrealized Gain (406000) ==========
   const existingUnrealizedGain = await ledgerAccountRepo.findByCode(
     '406000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingUnrealizedGain) {
     const unrealizedGainAccount = unrealizedGainAccountEntity.make(
@@ -334,7 +350,8 @@ const makeBaseRevenueAccounts = async (
 };
 const makeBaseExpenseAccounts = async (
   params: IBaseIndividualAccountsCreationParams,
-  ledgerAccountRepo: ILedgerAccountRepo
+  ledgerAccountRepo: ILedgerAccountRepo,
+  repoOptions: IRepoOptions
 ) => {
   const { userId, accountingEntityId, functionalCurrency } = params;
   const expenseAccounts: TEntityWithEvents<
@@ -345,7 +362,8 @@ const makeBaseExpenseAccounts = async (
   // ========== Direct Costs (500000) ==========
   const existingDirectCosts = await ledgerAccountRepo.findByCode(
     '500000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingDirectCosts) {
     const directCostsAccount = directCostsAccountEntity.make(
@@ -367,7 +385,8 @@ const makeBaseExpenseAccounts = async (
   // ========== Rent and Utilities (502000) ==========
   const existingRentAndUtilities = await ledgerAccountRepo.findByCode(
     '502000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingRentAndUtilities) {
     const rentAndUtilitiesAccount = rentAndUtilitiesAccountEntity.make(
@@ -388,7 +407,8 @@ const makeBaseExpenseAccounts = async (
   // ========== Finance Costs (507000) ==========
   const existingFinanceCosts = await ledgerAccountRepo.findByCode(
     '507000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingFinanceCosts) {
     const financeCostsAccount = financeCostsAccountEntity.make(
@@ -409,7 +429,8 @@ const makeBaseExpenseAccounts = async (
   // ========== Tax Expense (508000) ==========
   const existingTaxExpense = await ledgerAccountRepo.findByCode(
     '508000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingTaxExpense) {
     const taxExpenseAccount = taxExpenseAccountEntity.make(
@@ -430,7 +451,8 @@ const makeBaseExpenseAccounts = async (
   // ========== Unrealized Loss (FX) (509000) ==========
   const existingUnrealizedLoss = await ledgerAccountRepo.findByCode(
     '509000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingUnrealizedLoss) {
     const unrealizedLossAccount = unrealizedLossAccountEntity.make(
@@ -451,7 +473,8 @@ const makeBaseExpenseAccounts = async (
   // ========== Asset Disposal Loss (510000) ==========
   const existingAssetDisposalLoss = await ledgerAccountRepo.findByCode(
     '510000',
-    accountingEntityId
+    accountingEntityId,
+    repoOptions
   );
   if (!existingAssetDisposalLoss) {
     const assetDisposalLossAccount = assetDisposalLossAccountEntity.make(
@@ -499,27 +522,33 @@ export default function ledgerService(ledgerAccountRepo: ILedgerAccountRepo) {
      *        - Asset Disposal Loss: 510000
      */
     async setupBaseIndividualAccounts(
-      params: IBaseIndividualAccountsCreationParams
+      params: IBaseIndividualAccountsCreationParams,
+      repoOptions: IRepoOptions
     ) {
       const assetAccounts = await makeBaseAssetAccounts(
         params,
-        ledgerAccountRepo
+        ledgerAccountRepo,
+        repoOptions
       );
       const liabilityAccounts = await makeBaseLiabilityAccounts(
         params,
-        ledgerAccountRepo
+        ledgerAccountRepo,
+        repoOptions
       );
       const equityAccounts = await makeBaseEquityAccounts(
         params,
-        ledgerAccountRepo
+        ledgerAccountRepo,
+        repoOptions
       );
       const revenueAccounts = await makeBaseRevenueAccounts(
         params,
-        ledgerAccountRepo
+        ledgerAccountRepo,
+        repoOptions
       );
       const expenseAccounts = await makeBaseExpenseAccounts(
         params,
-        ledgerAccountRepo
+        ledgerAccountRepo,
+        repoOptions
       );
 
       const entitiesAndEvents = [

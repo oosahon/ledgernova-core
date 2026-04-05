@@ -22,6 +22,12 @@ export const accountingEntityTypeInCore = core.enum('accounting_entity_type', [
   'sole_trader',
   'company',
 ]);
+export const adjunctAccountRuleInCore = core.enum('adjunct_account_rule', [
+  'adjunct_permitted',
+  'adjunct_not_permitted',
+  'adjunct_only',
+  'adjunct_not_applicable',
+]);
 export const categoryStatusInCore = core.enum('category_status', [
   'active',
   'archived',
@@ -34,6 +40,27 @@ export const categoryTypeInCore = core.enum('category_type', [
   'expense',
   'payment',
   'receipt',
+]);
+export const contraAccountRuleInCore = core.enum('contra_account_rule', [
+  'contra_permitted',
+  'contra_not_permitted',
+  'contra_only',
+  'contra_not_applicable',
+]);
+export const ledgerAccountStatusInCore = core.enum('ledger_account_status', [
+  'active',
+  'archived',
+]);
+export const ledgerTypeInCore = core.enum('ledger_type', [
+  'asset',
+  'liability',
+  'equity',
+  'revenue',
+  'expense',
+]);
+export const normalBalanceTypeInCore = core.enum('normal_balance_type', [
+  'debit',
+  'credit',
 ]);
 
 export const pgmigrations = pgTable('pgmigrations', {
@@ -131,12 +158,12 @@ export const currencyExchangeRatesInCore = core.table(
       columns: [table.baseCurrencyCode],
       foreignColumns: [currenciesInCore.code],
       name: 'currency_exchange_rates_base_currency_code_fkey',
-    }),
+    }).onDelete('cascade'),
     foreignKey({
       columns: [table.targetCurrencyCode],
       foreignColumns: [currenciesInCore.code],
       name: 'currency_exchange_rates_target_currency_code_fkey',
-    }),
+    }).onDelete('cascade'),
   ]
 );
 
@@ -176,7 +203,7 @@ export const categoriesInCore = core.table(
       columns: [table.createdBy],
       foreignColumns: [usersInCore.id],
       name: 'categories_created_by_fkey',
-    }).onDelete('set null'),
+    }).onDelete('cascade'),
   ]
 );
 
@@ -191,11 +218,11 @@ export const accountingEntitiesInCore = core.table(
     functionalCurrencyCode: varchar('functional_currency_code', {
       length: 3,
     }).notNull(),
-    fiscalYearEndMonth: smallint('fiscal_year_end_month').default(12).notNull(),
-    fiscalYearEndDay: smallint('fiscal_year_end_day').default(31).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
       .defaultNow()
       .notNull(),
+    fiscalYearStartMonth: smallint('fiscal_year_start_month').notNull(),
+    fiscalYearStartDay: smallint('fiscal_year_start_day').notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
       .defaultNow()
       .notNull(),
@@ -206,11 +233,66 @@ export const accountingEntitiesInCore = core.table(
       columns: [table.ownerId],
       foreignColumns: [usersInCore.id],
       name: 'accounting_entities_owner_id_fkey',
-    }),
+    }).onDelete('cascade'),
     foreignKey({
       columns: [table.functionalCurrencyCode],
       foreignColumns: [currenciesInCore.code],
       name: 'accounting_entities_functional_currency_code_fkey',
-    }),
+    }).onDelete('restrict'),
+  ]
+);
+
+export const ledgerAccountsInCore = core.table(
+  'ledger_accounts',
+  {
+    id: uuid()
+      .default(sql`uuid_generate_v4()`)
+      .notNull(),
+    code: varchar({ length: 6 }).notNull(),
+    accountingEntityId: uuid('accounting_entity_id').notNull(),
+    type: ledgerTypeInCore().notNull(),
+    normalBalance: normalBalanceTypeInCore('normal_balance').notNull(),
+    subType: varchar('sub_type').notNull(),
+    behavior: varchar().notNull(),
+    isControlAccount: boolean('is_control_account').default(false).notNull(),
+    controlAccountId: uuid('control_account_id'),
+    name: varchar({ length: 100 }).notNull(),
+    currencyCode: varchar('currency_code', { length: 3 }).notNull(),
+    status: ledgerAccountStatusInCore().notNull(),
+    contraAccountRule: contraAccountRuleInCore('contra_account_rule').notNull(),
+    adjunctAccountRule: adjunctAccountRuleInCore(
+      'adjunct_account_rule'
+    ).notNull(),
+    meta: jsonb(),
+    createdBy: uuid('created_by').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' })
+      .defaultNow()
+      .notNull(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true, mode: 'string' }),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.accountingEntityId],
+      foreignColumns: [accountingEntitiesInCore.id],
+      name: 'ledger_accounts_accounting_entity_id_fkey',
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [table.controlAccountId],
+      foreignColumns: [table.id],
+      name: 'ledger_accounts_control_account_id_fkey',
+    }).onDelete('restrict'),
+    foreignKey({
+      columns: [table.currencyCode],
+      foreignColumns: [currenciesInCore.code],
+      name: 'ledger_accounts_currency_code_fkey',
+    }).onDelete('restrict'),
+    foreignKey({
+      columns: [table.createdBy],
+      foreignColumns: [usersInCore.id],
+      name: 'ledger_accounts_created_by_fkey',
+    }).onDelete('cascade'),
   ]
 );

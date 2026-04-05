@@ -15,7 +15,7 @@ export type UAccountingEntityType =
  * Defaults to December 31 for individuals. Companies and sole traders
  * may configure any valid calendar date (e.g., March 31, June 30).
  */
-export interface IFiscalYearEnd {
+export interface IFiscalYearStart {
   month: number;
   day: number;
 }
@@ -25,7 +25,7 @@ export interface IAccountingEntity {
   type: UAccountingEntityType;
   ownerId: TEntityId;
   functionalCurrency: ICurrency;
-  fiscalYearEnd: IFiscalYearEnd;
+  fiscalYearStart: IFiscalYearStart;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

@@ -165,6 +165,55 @@ describe('Ledger Account Shared Entity', () => {
     });
   });
 
+  describe('getNormalBalance', () => {
+    it('returns Debit for Asset and Expense', () => {
+      expect(ledgerAccountEntity.getNormalBalance(ELedgerType.Asset)).toBe(
+        ENormalBalance.Debit
+      );
+      expect(ledgerAccountEntity.getNormalBalance(ELedgerType.Expense)).toBe(
+        ENormalBalance.Debit
+      );
+    });
+
+    it('returns Credit for Liability, Equity, and Revenue', () => {
+      expect(ledgerAccountEntity.getNormalBalance(ELedgerType.Liability)).toBe(
+        ENormalBalance.Credit
+      );
+      expect(ledgerAccountEntity.getNormalBalance(ELedgerType.Equity)).toBe(
+        ENormalBalance.Credit
+      );
+      expect(ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue)).toBe(
+        ENormalBalance.Credit
+      );
+    });
+
+    it('throws AppError for invalid ledger type', () => {
+      expect(() =>
+        ledgerAccountEntity.getNormalBalance('INVALID_TYPE' as any)
+      ).toThrow(AppError);
+    });
+  });
+
+  describe('getContraBalance', () => {
+    it('returns Credit when normal balance is Debit', () => {
+      expect(ledgerAccountEntity.getContraBalance(ENormalBalance.Debit)).toBe(
+        ENormalBalance.Credit
+      );
+    });
+
+    it('returns Debit when normal balance is Credit', () => {
+      expect(ledgerAccountEntity.getContraBalance(ENormalBalance.Credit)).toBe(
+        ENormalBalance.Debit
+      );
+    });
+
+    it('throws AppError for invalid normal balance', () => {
+      expect(() =>
+        ledgerAccountEntity.getContraBalance('INVALID_BALANCE' as any)
+      ).toThrow(AppError);
+    });
+  });
+
   describe('make', () => {
     it('should successfully create a ledger account with valid inputs', () => {
       const account = ledgerAccountEntity.make(validPayload);
@@ -246,6 +295,14 @@ describe('Ledger Account Shared Entity', () => {
       const invalidPayload = {
         ...validPayload,
         isControlAccount: 'yes' as any,
+      };
+      expect(() => ledgerAccountEntity.make(invalidPayload)).toThrow(AppError);
+    });
+
+    it('should throw if normalBalance is invalid', () => {
+      const invalidPayload = {
+        ...validPayload,
+        normalBalance: 'invalid' as any,
       };
       expect(() => ledgerAccountEntity.make(invalidPayload)).toThrow(AppError);
     });

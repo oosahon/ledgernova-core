@@ -19,6 +19,17 @@ describe('Email Value Object', () => {
       expect(email.isValid("!#$%&'*+-/=?^_`{}|~@example.org")).toBe(true);
     });
 
+    it('should return false for non-string inputs', () => {
+      // @ts-expect-error Testing invalid runtime input
+      expect(email.isValid(null)).toBe(false);
+      // @ts-expect-error Testing invalid runtime input
+      expect(email.isValid(123)).toBe(false);
+      // @ts-expect-error Testing invalid runtime input
+      expect(email.isValid({})).toBe(false);
+      // @ts-expect-error Testing invalid runtime input
+      expect(email.isValid(undefined)).toBe(false);
+    });
+
     it('should return false for missing parts', () => {
       expect(email.isValid('plainaddress')).toBe(false);
       expect(email.isValid('@missinglocal.org')).toBe(false);

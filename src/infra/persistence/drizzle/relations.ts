@@ -6,6 +6,7 @@ import {
   currencyExchangeRatesInCore,
   categoriesInCore,
   accountingEntitiesInCore,
+  ledgerAccountsInCore,
 } from './schema';
 
 export const userActivitiesInAuditRelations = relations(
@@ -22,6 +23,7 @@ export const usersInCoreRelations = relations(usersInCore, ({ many }) => ({
   userActivitiesInAudits: many(userActivitiesInAudit),
   categoriesInCores: many(categoriesInCore),
   accountingEntitiesInCores: many(accountingEntitiesInCore),
+  ledgerAccountsInCores: many(ledgerAccountsInCore),
 }));
 
 export const currencyExchangeRatesInCoreRelations = relations(
@@ -60,6 +62,7 @@ export const currenciesInCoreRelations = relations(
       }
     ),
     accountingEntitiesInCores: many(accountingEntitiesInCore),
+    ledgerAccountsInCores: many(ledgerAccountsInCore),
   })
 );
 
@@ -83,7 +86,7 @@ export const categoriesInCoreRelations = relations(
 
 export const accountingEntitiesInCoreRelations = relations(
   accountingEntitiesInCore,
-  ({ one }) => ({
+  ({ one, many }) => ({
     usersInCore: one(usersInCore, {
       fields: [accountingEntitiesInCore.ownerId],
       references: [usersInCore.id],
@@ -91,6 +94,35 @@ export const accountingEntitiesInCoreRelations = relations(
     currenciesInCore: one(currenciesInCore, {
       fields: [accountingEntitiesInCore.functionalCurrencyCode],
       references: [currenciesInCore.code],
+    }),
+    ledgerAccountsInCores: many(ledgerAccountsInCore),
+  })
+);
+
+export const ledgerAccountsInCoreRelations = relations(
+  ledgerAccountsInCore,
+  ({ one, many }) => ({
+    accountingEntitiesInCore: one(accountingEntitiesInCore, {
+      fields: [ledgerAccountsInCore.accountingEntityId],
+      references: [accountingEntitiesInCore.id],
+    }),
+    ledgerAccountsInCore: one(ledgerAccountsInCore, {
+      fields: [ledgerAccountsInCore.controlAccountId],
+      references: [ledgerAccountsInCore.id],
+      relationName:
+        'ledgerAccountsInCore_controlAccountId_ledgerAccountsInCore_id',
+    }),
+    ledgerAccountsInCores: many(ledgerAccountsInCore, {
+      relationName:
+        'ledgerAccountsInCore_controlAccountId_ledgerAccountsInCore_id',
+    }),
+    currenciesInCore: one(currenciesInCore, {
+      fields: [ledgerAccountsInCore.currencyCode],
+      references: [currenciesInCore.code],
+    }),
+    usersInCore: one(usersInCore, {
+      fields: [ledgerAccountsInCore.createdBy],
+      references: [usersInCore.id],
     }),
   })
 );

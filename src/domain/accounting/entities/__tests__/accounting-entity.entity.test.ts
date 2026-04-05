@@ -3,11 +3,12 @@ import accountingEntityTypeEntity from '../accounting-entity.entity';
 import userEntity from '../../../user/entities/user.entity';
 import { ICurrency } from '../../../currency/types/currency.types';
 import { IUser } from '../../../user/types/user.types';
-import { EAccountingEntity } from '../../events/accounting-entity.events';
+import { EAccountingEntityEvents } from '../../events/accounting-entity.events';
 import { TCreationOmits } from '../../../../shared/types/creation-omits.types';
 import {
   EAccountingEntityType,
   IAccountingEntity,
+  UAccountingEntityType,
 } from '../../types/accounting.types';
 import { TEntityId } from '../../../../shared/types/uuid';
 
@@ -46,23 +47,21 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 12, day: 31 },
+        fiscalYearStart: { month: 12, day: 31 },
       };
 
       const [domain, events] = accountingEntityTypeEntity.make(payload);
 
       expect(events).toHaveLength(1);
-      expect(events[0].event.type).toBe(
-        EAccountingEntity.AccountingEntityCreated
-      );
+      expect(events[0].event.type).toBe(EAccountingEntityEvents.Created);
       expect(events[0].event.data).toEqual(domain);
 
       expect(typeof domain.id).toBe('string');
       expect(domain.id.length).toBeGreaterThan(0);
       expect(domain.ownerId).toEqual(validUser.id);
       expect(domain.functionalCurrency).toEqual(validCurrency);
-      expect(domain.fiscalYearEnd).toEqual({ month: 12, day: 31 });
-      expect(Object.isFrozen(domain.fiscalYearEnd)).toBe(true);
+      expect(domain.fiscalYearStart).toEqual({ month: 12, day: 31 });
+      expect(Object.isFrozen(domain.fiscalYearStart)).toBe(true);
       expect(domain.createdAt).toEqual(new Date('2026-03-15T00:00:00.000Z'));
       expect(domain.updatedAt).toEqual(new Date('2026-03-15T00:00:00.000Z'));
       expect(domain.deletedAt).toBeNull();
@@ -74,12 +73,26 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Company,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 3, day: 31 },
+        fiscalYearStart: { month: 3, day: 31 },
       };
 
       const [domain] = accountingEntityTypeEntity.make(payload);
 
-      expect(domain.fiscalYearEnd).toEqual({ month: 3, day: 31 });
+      expect(domain.fiscalYearStart).toEqual({ month: 3, day: 31 });
+    });
+
+    it('should throw an AppError if the entity type is invalid', () => {
+      const payload: TCreationOmits<IAccountingEntity> = {
+        ownerId: validUser.id as TEntityId,
+        type: 'INVALID_TYPE' as UAccountingEntityType,
+        functionalCurrency: validCurrency,
+        fiscalYearStart: { month: 12, day: 31 },
+      };
+
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
+      expect(() => accountingEntityTypeEntity.make(payload)).toThrow(
+        'Invalid accounting entity type'
+      );
     });
 
     it('should throw an AppError if the ownerId is invalid', () => {
@@ -87,7 +100,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: 'invalid-uuid' as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 12, day: 31 },
+        fiscalYearStart: { month: 12, day: 31 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -100,7 +113,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: invalidCurrency,
-        fiscalYearEnd: { month: 12, day: 31 },
+        fiscalYearStart: { month: 12, day: 31 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -116,7 +129,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.SoleTrader,
         functionalCurrency: invalidCurrency,
-        fiscalYearEnd: { month: 12, day: 31 },
+        fiscalYearStart: { month: 12, day: 31 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -127,7 +140,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 13, day: 31 },
+        fiscalYearStart: { month: 13, day: 31 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -138,7 +151,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 0, day: 15 },
+        fiscalYearStart: { month: 0, day: 15 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -149,7 +162,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 4, day: 31 }, // April has 30 days
+        fiscalYearStart: { month: 4, day: 31 }, // April has 30 days
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -160,7 +173,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Individual,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 6, day: 0 },
+        fiscalYearStart: { month: 6, day: 0 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);
@@ -171,12 +184,12 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Company,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 2, day: 29 },
+        fiscalYearStart: { month: 2, day: 29 },
       };
 
       const [domain] = accountingEntityTypeEntity.make(payload);
 
-      expect(domain.fiscalYearEnd).toEqual({ month: 2, day: 29 });
+      expect(domain.fiscalYearStart).toEqual({ month: 2, day: 29 });
     });
 
     it('should throw an AppError if February day exceeds 29', () => {
@@ -184,7 +197,7 @@ describe('Accounting Domain Entity', () => {
         ownerId: validUser.id as TEntityId,
         type: EAccountingEntityType.Company,
         functionalCurrency: validCurrency,
-        fiscalYearEnd: { month: 2, day: 30 },
+        fiscalYearStart: { month: 2, day: 30 },
       };
 
       expect(() => accountingEntityTypeEntity.make(payload)).toThrow(AppError);

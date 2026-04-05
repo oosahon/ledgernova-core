@@ -8,7 +8,7 @@ import accountingEntityTypeEvents from '../events/accounting-entity.events';
 import {
   EAccountingEntityType,
   IAccountingEntity,
-  IFiscalYearEnd,
+  IFiscalYearStart,
   UAccountingEntityType,
 } from '../types/accounting.types';
 
@@ -27,8 +27,8 @@ const DAYS_IN_MONTH: Record<number, number> = {
   12: 31,
 };
 
-function validateFiscalYearEnd(fiscalYearEnd: IFiscalYearEnd) {
-  const { month, day } = fiscalYearEnd;
+function validateFiscalYearStart(fiscalYearStart: IFiscalYearStart) {
+  const { month, day } = fiscalYearStart;
 
   if (
     !Number.isInteger(month) ||
@@ -57,7 +57,7 @@ function validate(entity: TCreationOmits<IAccountingEntity>) {
   stringUtils.validateUUID(entity.ownerId);
   currencyEntity.validateCode(entity.functionalCurrency.code);
   validateType(entity.type);
-  validateFiscalYearEnd(entity.fiscalYearEnd);
+  validateFiscalYearStart(entity.fiscalYearStart);
 }
 
 function make(
@@ -72,7 +72,7 @@ function make(
     ownerId: payload.ownerId,
     type: payload.type,
     functionalCurrency: payload.functionalCurrency,
-    fiscalYearEnd: Object.freeze({ ...payload.fiscalYearEnd }),
+    fiscalYearStart: Object.freeze({ ...payload.fiscalYearStart }),
     createdAt: timestamp,
     updatedAt: timestamp,
     deletedAt: null,
@@ -87,7 +87,7 @@ const accountingEntity = Object.freeze({
   make,
   validate,
   validateType,
-  validateFiscalYearEnd,
+  validateFiscalYearStart,
 });
 
 export default accountingEntity;

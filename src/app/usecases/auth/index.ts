@@ -1,3 +1,4 @@
+import messaging from '../../../infra/messaging';
 import repos from '../../../infra/persistence/repos';
 import services from '../../../infra/services';
 import repoService from '../../../infra/services/repo.service';
@@ -10,7 +11,8 @@ const authUseCase = {
     appContext.request,
     repos.user,
     services.auth,
-    repos.accountingEntity
+    repos.accountingEntity,
+    messaging.eventBus
   ),
 };
 

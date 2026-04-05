@@ -4,7 +4,7 @@ import {
 } from '../../app/contracts/infra/repo.contract';
 import { postgres } from '../config/postgres.config';
 
-const dbService: IRepoService = {
+const repoService: IRepoService = {
   async runInTransaction<T>(
     fn: (tx: ITransactionContext) => Promise<T>
   ): Promise<T> {
@@ -14,4 +14,4 @@ const dbService: IRepoService = {
   },
 };
 
-export default dbService;
+export default repoService;

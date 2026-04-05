@@ -13,6 +13,7 @@ import mockAuthService from '../../../../infra/services/__mocks__/auth.service.m
 import { IRequestContextData } from '../../../contracts/app/request-context.contract';
 import { IUser } from '../../../../domain/user/types/user.types';
 import { ITransactionContext } from '../../../contracts/infra/repo.contract';
+import mockEventBus from '../../../../infra/messaging/__mock__/event-bus.mock';
 
 describe('signupWithEmailUsecase', () => {
   beforeEach(() => {
@@ -21,9 +22,11 @@ describe('signupWithEmailUsecase', () => {
 
   it('should successfully sign up a new user and create an individual accounting domain', async () => {
     const correlationId = 'test-corr-id';
+    const idempotencyKey = 'test-idemp-key';
     mockRequestContext.get.mockReturnValue({
       correlationId,
-    } as unknown as IRequestContextData);
+      idempotencyKey,
+    } as IRequestContextData);
 
     const payload = {
       firstName: 'John',
@@ -47,7 +50,8 @@ describe('signupWithEmailUsecase', () => {
       mockRequestContext,
       mockUserRepo,
       mockAuthService,
-      mockAccountingEntityRepo
+      mockAccountingEntityRepo,
+      mockEventBus
     );
 
     await usecase(payload);
@@ -55,8 +59,8 @@ describe('signupWithEmailUsecase', () => {
     expect(mockRequestContext.get).toHaveBeenCalledTimes(1);
 
     // Check if user was searched by email
-    const emailVo = emailValue.make(payload.email);
-    expect(mockUserRepo.findByEmail).toHaveBeenCalledWith(emailVo, {
+    const email = emailValue.make(payload.email);
+    expect(mockUserRepo.findByEmail).toHaveBeenCalledWith(email, {
       correlationId,
     });
 
@@ -69,7 +73,7 @@ describe('signupWithEmailUsecase', () => {
     expect(savedUserArgs[0]).toMatchObject({
       firstName: payload.firstName,
       lastName: payload.lastName,
-      email: emailVo,
+      email,
       emailVerified: false,
       password: 'hashed-password',
     });
@@ -85,6 +89,16 @@ describe('signupWithEmailUsecase', () => {
       }),
     });
     expect(savedDomainArgs[1]).toEqual({ tx: mockTx, correlationId });
+
+    expect(mockEventBus.publish).toHaveBeenCalled();
+    const publishCalls = (mockEventBus.publish as jest.Mock).mock.calls;
+    expect(publishCalls.length).toBeGreaterThan(0);
+    publishCalls.forEach(([event]) => {
+      expect(event).toMatchObject({
+        correlationId,
+        idempotencyKey,
+      });
+    });
   });
 
   it('should throw ErrorConflict if user already exists', async () => {
@@ -111,7 +125,8 @@ describe('signupWithEmailUsecase', () => {
       mockRequestContext,
       mockUserRepo,
       mockAuthService,
-      mockAccountingEntityRepo
+      mockAccountingEntityRepo,
+      mockEventBus
     );
 
     await expect(usecase(payload)).rejects.toThrow(ErrorConflict);
@@ -142,7 +157,8 @@ describe('signupWithEmailUsecase', () => {
       mockRequestContext,
       mockUserRepo,
       mockAuthService,
-      mockAccountingEntityRepo
+      mockAccountingEntityRepo,
+      mockEventBus
     );
 
     await expect(usecase(payload)).rejects.toThrow(ErrorForbidden);

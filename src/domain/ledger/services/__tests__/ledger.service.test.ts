@@ -1,4 +1,5 @@
 import { ICurrency } from '../../../currency/types/currency.types';
+import { IRepoOptions } from '../../../../app/contracts/infra/repo.contract';
 import mockLedgerAccountRepo from '../../../../infra/persistence/repos/__mocks__/ledger-account.repo.impl.mock';
 import ledgerService from '../ledger.service';
 import generateUUID from '../../../../shared/utils/uuid-generator';
@@ -17,6 +18,8 @@ describe('Ledger Service', () => {
     } as ICurrency,
   };
 
+  const mockRepoOptions: IRepoOptions = { correlationId: generateUUID() };
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -25,7 +28,7 @@ describe('Ledger Service', () => {
     it('should fetch from ledger account repo for each base account', async () => {
       mockLedgerAccountRepo.findByCode.mockResolvedValue(null);
 
-      await service.setupBaseIndividualAccounts(mockParams);
+      await service.setupBaseIndividualAccounts(mockParams, mockRepoOptions);
 
       expect(mockLedgerAccountRepo.findByCode).toHaveBeenCalledTimes(17);
     });
@@ -33,7 +36,10 @@ describe('Ledger Service', () => {
     it('should create all base accounts if none exist in the repository', async () => {
       mockLedgerAccountRepo.findByCode.mockResolvedValue(null);
 
-      const result = await service.setupBaseIndividualAccounts(mockParams);
+      const result = await service.setupBaseIndividualAccounts(
+        mockParams,
+        mockRepoOptions
+      );
 
       const codes = result.map((r) => r[0].code);
 
@@ -68,7 +74,10 @@ describe('Ledger Service', () => {
         id: generateUUID(),
       } as any);
 
-      const result = await service.setupBaseIndividualAccounts(mockParams);
+      const result = await service.setupBaseIndividualAccounts(
+        mockParams,
+        mockRepoOptions
+      );
 
       expect(result).toHaveLength(0);
     });
@@ -90,7 +99,10 @@ describe('Ledger Service', () => {
         return null;
       });
 
-      const result = await service.setupBaseIndividualAccounts(mockParams);
+      const result = await service.setupBaseIndividualAccounts(
+        mockParams,
+        mockRepoOptions
+      );
 
       const createdCodes = result.map((r) => r[0].code);
 
@@ -128,7 +140,10 @@ describe('Ledger Service', () => {
         return null;
       });
 
-      const result = await service.setupBaseIndividualAccounts(mockParams);
+      const result = await service.setupBaseIndividualAccounts(
+        mockParams,
+        mockRepoOptions
+      );
 
       const statutoryPayables = result.find((r) => r[0].code === '201001');
 

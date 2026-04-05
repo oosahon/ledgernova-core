@@ -33,6 +33,11 @@ describe('Currency Domain Entity', () => {
     it('should return false for an unknown/invalid 3-letter code', () => {
       expect(currencyEntity.isValidCode('ZZZ')).toBe(false);
     });
+
+    it('should return false if Intl.DisplayNames throws (e.g. malformed codes)', () => {
+      expect(currencyEntity.isValidCode('123')).toBe(false);
+      expect(currencyEntity.isValidCode('$$$')).toBe(false);
+    });
   });
 
   describe('isValidMinorUnit', () => {
