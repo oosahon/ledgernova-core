@@ -30,7 +30,7 @@ describe('Ledger Service', () => {
 
       await service.setupBaseIndividualAccounts(mockParams, mockRepoOptions);
 
-      expect(mockLedgerAccountRepo.findByCode).toHaveBeenCalledTimes(17);
+      expect(mockLedgerAccountRepo.findByCode).toHaveBeenCalledTimes(16);
     });
 
     it('should create all base accounts if none exist in the repository', async () => {
@@ -43,10 +43,10 @@ describe('Ledger Service', () => {
 
       const codes = result.map((r) => r[0].code);
 
-      expect(result).toHaveLength(17);
+      expect(result).toHaveLength(16);
 
       const expectedAssetCodes = ['100000', '102000'];
-      const expectedLiabilityCodes = ['200000', '201000', '201001'];
+      const expectedLiabilityCodes = ['200000', '201000'];
       const expectedEquityCodes = ['301000', '399000'];
       const expectedRevenueCodes = ['401000', '403000', '405000', '406000'];
       const expectedExpenseCodes = [
@@ -107,7 +107,7 @@ describe('Ledger Service', () => {
       const createdCodes = result.map((r) => r[0].code);
 
       const expectedAssetCodes = ['102000'];
-      const expectedLiabilityCodes = ['201000', '201001'];
+      const expectedLiabilityCodes = ['201000'];
       const expectedEquityCodes = ['399000'];
       const expectedRevenueCodes = ['403000', '405000', '406000'];
       const expectedExpenseCodes = [
@@ -128,27 +128,6 @@ describe('Ledger Service', () => {
 
       expect(result).toHaveLength(expectedCodes.length);
       expect(createdCodes).toEqual(expect.arrayContaining(expectedCodes));
-    });
-
-    it('should link statutory payables to existing payables account if payables exist', async () => {
-      const existingPayablesId = generateUUID();
-      mockLedgerAccountRepo.findByCode.mockImplementation(async (code) => {
-        if (code === '201000') {
-          return { id: existingPayablesId } as any;
-        }
-
-        return null;
-      });
-
-      const result = await service.setupBaseIndividualAccounts(
-        mockParams,
-        mockRepoOptions
-      );
-
-      const statutoryPayables = result.find((r) => r[0].code === '201001');
-
-      expect(statutoryPayables).toBeDefined();
-      expect(statutoryPayables![0].controlAccountId).toBe(existingPayablesId);
     });
   });
 });

@@ -168,32 +168,6 @@ const makeBaseLiabilityAccounts = async (
   } else {
     payablesAccountId = existingPayables.id;
   }
-
-  // ========== Statutory Payables ==========
-  const existingStatutoryPayables = await ledgerAccountRepo.findByCode(
-    '201001',
-    accountingEntityId,
-    repoOptions
-  );
-  if (!existingStatutoryPayables) {
-    const statutoryPayablesAccount = payableAccountEntity.make(
-      {
-        name: 'Statutory Payables',
-        createdBy: userId,
-        accountingEntityId,
-        currency: functionalCurrency,
-        isControlAccount: true,
-        controlAccountId: payablesAccountId,
-        behavior: ELiabilityAccountBehavior.TaxPayable,
-        meta: null,
-        contraAccountRule: EContraAccountRule.ContraPermitted,
-        adjunctAccountRule: EAdjunctAccountRule.AdjunctPermitted,
-      },
-      '201000'
-    );
-    liabilityAccounts.push(statutoryPayablesAccount);
-  }
-
   return liabilityAccounts;
 };
 const makeBaseEquityAccounts = async (
