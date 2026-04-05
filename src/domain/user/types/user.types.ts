@@ -1,5 +1,7 @@
+import { TEntityId } from '../../../shared/types/uuid';
+
 export interface IUser {
-  id: string;
+  id: TEntityId;
   email: string;
   emailVerified: boolean;
   firstName: string;

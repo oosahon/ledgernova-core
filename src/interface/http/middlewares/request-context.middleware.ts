@@ -1,12 +1,7 @@
 import { RequestHandler } from 'express';
-import IRequestContext from '../../../app/contracts/storage/request-context.contract';
+import IRequestContext from '../../../app/contracts/app/request-context.contract';
 import generateUUID from '../../../shared/utils/uuid-generator';
-import {
-  EAccountingEntityType,
-  UAccountingEntityType,
-} from '../../../domain/accounting/types/accounting.types';
-import { ErrorForbidden } from '../../../shared/value-objects/error';
-import accountingHelpers from '../../../domain/accounting/helpers/accounting.helpers';
+import { UAccountingEntityType } from '../../../domain/accounting/types/accounting.types';
 import getHttpHeaderValue from '../helpers/get-http-header-value';
 
 /**

@@ -3,21 +3,19 @@ flowchart LR
 
     Liabilities --> CLiabilities & NCLiabilities & SuspenseAccounts
 
-    SuspenseAccounts["Suspense Accounts: 200xxx"]
+ 
     CLiabilities["Current Liabilities"]
-        CLiabilities --> TradePayables["Trade Payables: 201xxx"]
-        CLiabilities --> StatutoryPayables["Statutory Payables: 202xxx"]
-        CLiabilities --> Accruals["Accrued Expenses: 203xxx"]
-        CLiabilities --> DeferredRevenues["Deferred Revenues: 204xxx"]
-        CLiabilities --> ShortTermDebts["Short Term Debts/Overdrafts: 205xxx"]
-        CLiabilities --> OtherCurrentLiabilities["Other Current Liabilities: 206xxx"]
+        CLiabilities --> ShortTermDebts["Short Term Debts/Overdrafts: 200xxx"]
+        CLiabilities --> Payables["Payables: 201xxx"]
+            Payables --> StatutoryPayables["Statutory Payables: 201001"]
+        CLiabilities --> Accruals["Accrued Expenses: 202xxx"]
+        CLiabilities --> DeferredRevenues["Deferred Revenues: 203xxx"]
 
     NCLiabilities["Non-Current Liabilities"]
-        NCLiabilities --> LongTermLoan["Long Term Loans: 207xxx"]
-        NCLiabilities --> LeaseLiabilities["Lease Liabilities: 208xxx"]
-        NCLiabilities --> Provisions["Provisions: 209xxx"]
-        NCLiabilities --> OtherNCL["Other Non-Current Liabilities: 210xxx"]
+        NCLiabilities --> LongTermLoan["Long Term Loans: 204xxx"]
+        NCLiabilities --> LeaseLiabilities["Lease Liabilities: 205xxx"]
+        NCLiabilities --> Provisions["Provisions: 206xxx"]
 
 
     %% For positioning
-    CLiabilities ~~~ SuspenseAccounts
+    NCLiabilities ~~~  SuspenseAccounts["Suspense Accounts: 299xxx"]

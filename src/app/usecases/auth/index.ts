@@ -1,16 +1,18 @@
-import repos from '../../../infra/db/repos';
+import messaging from '../../../infra/messaging';
+import repos from '../../../infra/persistence/repos';
 import services from '../../../infra/services';
-import dbService from '../../../infra/services/db.service';
+import repoService from '../../../infra/services/repo.service';
 import appContext from '../../context';
 import signupWithEmailUsecase from './signup-with-email.usecase';
 
 const authUseCase = {
   signupWithEmail: signupWithEmailUsecase(
-    dbService,
+    repoService,
     appContext.request,
     repos.user,
     services.auth,
-    repos.accountingEntity
+    repos.accountingEntity,
+    messaging.eventBus
   ),
 };
 

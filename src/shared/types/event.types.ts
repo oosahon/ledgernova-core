@@ -21,3 +21,5 @@ export type TEntityWithEvents<Entity, EventPayload> = [
   Entity,
   IEventWithEnricher<EventPayload>[],
 ];
+
+export type TEventHandler<T> = (event: IEvent<T>) => Promise<void>;

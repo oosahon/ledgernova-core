@@ -3,9 +3,29 @@ import { TEntityWithEvents } from '../../../shared/types/event.types';
 import stringUtils from '../../../shared/utils/string';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import userEvents from '../events/user.events';
-import userHelpers from '../helpers/user.helpers';
+
 import { IUser } from '../types/user.types';
 import emailValue from '../value-objects/email.vo';
+
+function validate(user: IUser) {
+  stringUtils.validateUUID(user.id);
+
+  stringUtils.sanitizeAndValidate(user.firstName, {
+    min: 1,
+    max: 100,
+  });
+
+  stringUtils.sanitizeAndValidate(user.lastName, {
+    min: 1,
+    max: 100,
+  });
+
+  emailValue.validate(user.email);
+}
+
+const userHelpers = Object.freeze({
+  validate,
+});
 
 function make(payload: TCreationOmits<IUser>): TEntityWithEvents<IUser, IUser> {
   const timestamp = new Date();
@@ -57,7 +77,7 @@ function verifyEmail(user: IUser): TEntityWithEvents<IUser, IUser> {
 function update(
   user: IUser,
   options: Partial<Pick<IUser, 'firstName' | 'lastName'>>
-) {
+): TEntityWithEvents<IUser, IUser> {
   userHelpers.validate(user);
 
   const firstName = stringUtils.sanitizeAndValidate(

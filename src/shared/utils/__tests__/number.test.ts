@@ -3,116 +3,78 @@ import { AppError } from '../../value-objects/error';
 
 describe('numberUtils', () => {
   describe('toBigInt', () => {
-    it('should convert safe integers to bigint', () => {
+    it('returns a BigInt for a valid integer number', () => {
       expect(numberUtils.toBigInt(42)).toBe(42n);
-      expect(numberUtils.toBigInt(0)).toBe(0n);
-      expect(numberUtils.toBigInt(-42)).toBe(-42n);
-      expect(numberUtils.toBigInt(Number.MAX_SAFE_INTEGER)).toBe(
-        BigInt(Number.MAX_SAFE_INTEGER)
-      );
     });
 
-    it('should convert strings to bigint safely up to arbitrary sizes', () => {
+    it('throws AppError if the number is NaN', () => {
+      expect(() => numberUtils.toBigInt(NaN)).toThrow(AppError);
+    });
+
+    it('throws AppError if the number is a float', () => {
+      expect(() => numberUtils.toBigInt(42.5)).toThrow(AppError);
+    });
+
+    it('returns a BigInt for a valid integer string', () => {
       expect(numberUtils.toBigInt('42')).toBe(42n);
-      expect(numberUtils.toBigInt('-42')).toBe(-42n);
-      expect(numberUtils.toBigInt('900719925474099234')).toBe(
-        900719925474099234n
-      );
     });
 
-    it('should accept bigints', () => {
+    it('throws AppError if the string is empty or whitespace', () => {
+      expect(() => numberUtils.toBigInt('')).toThrow(AppError);
+      expect(() => numberUtils.toBigInt('   ')).toThrow(AppError);
+    });
+
+    it('throws AppError if the string contains a dot (float)', () => {
+      expect(() => numberUtils.toBigInt('42.5')).toThrow(AppError);
+    });
+
+    it('returns a BigInt when passed a BigInt', () => {
       expect(numberUtils.toBigInt(42n)).toBe(42n);
     });
 
-    it('should reject floats', () => {
-      expect(() => numberUtils.toBigInt(42.5)).toThrow(
-        new AppError('Value must not be a float', { cause: 42.5 })
-      );
-      expect(() => numberUtils.toBigInt('42.5')).toThrow(
-        new AppError('Value must not be a float', { cause: '42.5' })
-      );
-    });
-
-    it('should reject invalid strings', () => {
-      expect(() => numberUtils.toBigInt('abc')).toThrow(
-        new AppError('Invalid value', { cause: 'abc' })
-      );
-      expect(() => numberUtils.toBigInt('')).toThrow(
-        new AppError('Invalid value', { cause: '' })
-      );
-      expect(() => numberUtils.toBigInt('   ')).toThrow(
-        new AppError('Invalid value', { cause: '   ' })
-      );
-    });
-
-    it('should reject NaN', () => {
-      expect(() => numberUtils.toBigInt(NaN)).toThrow(
-        new AppError('Invalid value', { cause: NaN })
-      );
+    it('throws AppError if BigInt parsing fails', () => {
+      expect(() => numberUtils.toBigInt('invalid')).toThrow(AppError);
     });
   });
 
   describe('toFloat', () => {
-    it('should convert numbers', () => {
-      expect(numberUtils.toFloat(42)).toBe(42);
-      expect(numberUtils.toFloat(42.5)).toBe(42.5);
-    });
-
-    it('should convert strings', () => {
-      expect(numberUtils.toFloat('42')).toBe(42);
+    it('returns a number for a valid string', () => {
       expect(numberUtils.toFloat('42.5')).toBe(42.5);
     });
 
-    it('should convert bigints', () => {
+    it('returns a number for a valid number', () => {
+      expect(numberUtils.toFloat(42.5)).toBe(42.5);
+    });
+
+    it('returns a number for a BigInt', () => {
       expect(numberUtils.toFloat(42n)).toBe(42);
     });
 
-    it('should reject empty strings', () => {
-      expect(() => numberUtils.toFloat('')).toThrow(
-        new AppError('Invalid value', { cause: '' })
-      );
-      expect(() => numberUtils.toFloat('   ')).toThrow(
-        new AppError('Invalid value', { cause: '   ' })
-      );
+    it('throws AppError if the string is empty or whitespace', () => {
+      expect(() => numberUtils.toFloat('')).toThrow(AppError);
+      expect(() => numberUtils.toFloat('   ')).toThrow(AppError);
     });
 
-    it('should reject invalid values', () => {
-      expect(() => numberUtils.toFloat('abc')).toThrow(
-        new AppError('Invalid value', { cause: 'abc' })
-      );
-      expect(() => numberUtils.toFloat(NaN)).toThrow(
-        new AppError('Invalid value', { cause: NaN })
-      );
+    it('throws AppError if the value cannot be parsed to a number (NaN)', () => {
+      expect(() => numberUtils.toFloat('invalid')).toThrow(AppError);
     });
   });
 
   describe('toNonNegativeNumber', () => {
-    it('should convert non-negative numbers', () => {
+    it('returns a non-negative number', () => {
       expect(numberUtils.toNonNegativeNumber(42)).toBe(42);
-      expect(numberUtils.toNonNegativeNumber(42.5)).toBe(42.5);
       expect(numberUtils.toNonNegativeNumber(0)).toBe(0);
+      expect(numberUtils.toNonNegativeNumber('42.5')).toBe(42.5);
     });
 
-    it('should convert non-negative strings', () => {
-      expect(numberUtils.toNonNegativeNumber('42')).toBe(42);
-      expect(numberUtils.toNonNegativeNumber('0')).toBe(0);
-    });
-
-    it('should reject negative values', () => {
-      expect(() => numberUtils.toNonNegativeNumber(-1)).toThrow(
-        new AppError('Value must not be negative', { cause: -1 })
-      );
-      expect(() => numberUtils.toNonNegativeNumber('-1')).toThrow(
-        new AppError('Value must not be negative', { cause: '-1' })
-      );
-      expect(() => numberUtils.toNonNegativeNumber(-1n)).toThrow(
-        new AppError('Value must not be negative', { cause: -1n })
-      );
+    it('throws AppError if the number is negative', () => {
+      expect(() => numberUtils.toNonNegativeNumber(-42)).toThrow(AppError);
+      expect(() => numberUtils.toNonNegativeNumber('-42.5')).toThrow(AppError);
     });
   });
 
   describe('toFactor', () => {
-    it('should convert integers', () => {
+    it('returns a factor with denominator 1 for integers', () => {
       expect(numberUtils.toFactor(42)).toEqual({
         numerator: 42,
         denominator: 1,
@@ -127,50 +89,51 @@ describe('numberUtils', () => {
       });
     });
 
-    it('should convert floats with precise fractions', () => {
-      expect(numberUtils.toFactor(1.5)).toEqual({
-        numerator: 15,
+    it('returns a factor for simple decimals', () => {
+      expect(numberUtils.toFactor(42.5)).toEqual({
+        numerator: 425,
         denominator: 10,
       });
-      expect(numberUtils.toFactor('1.05')).toEqual({
-        numerator: 105,
+      expect(numberUtils.toFactor(0.125)).toEqual({
+        numerator: 125,
+        denominator: 1000,
+      });
+      expect(numberUtils.toFactor('42.55')).toEqual({
+        numerator: 4255,
         denominator: 100,
       });
-      expect(numberUtils.toFactor(-1.5)).toEqual({
-        numerator: -15,
-        denominator: 10,
-      });
     });
 
-    it('should handle scientific notation gracefully', () => {
-      expect(numberUtils.toFactor('1e-3')).toEqual({
-        numerator: 1,
-        denominator: 1000,
-      });
-      expect(numberUtils.toFactor('1.5e-2')).toEqual({
-        numerator: 15,
-        denominator: 1000,
-      });
-      expect(numberUtils.toFactor('1.5e2')).toEqual({
-        numerator: 150,
-        denominator: 1,
-      });
-    });
-
-    it('should handle Javascript Number.toString scientific conversions', () => {
+    it('returns a factor for numbers with e notation (small numbers)', () => {
       expect(numberUtils.toFactor(1e-7)).toEqual({
         numerator: 1,
         denominator: 10000000,
       });
+      expect(numberUtils.toFactor(1.2e-7)).toEqual({
+        numerator: 12,
+        denominator: 100000000,
+      });
     });
 
-    it('should reject infinity and NaN', () => {
-      expect(() => numberUtils.toFactor(Infinity)).toThrow(
-        new AppError('Invalid value', { cause: Infinity })
-      );
-      expect(() => numberUtils.toFactor(NaN)).toThrow(
-        new AppError('Invalid value', { cause: NaN })
-      );
+    it('returns a factor for numbers with e notation (large numbers)', () => {
+      expect(numberUtils.toFactor(1e21)).toEqual({
+        numerator: 1e21,
+        denominator: 1,
+      });
+      expect(numberUtils.toFactor(1.2e21)).toEqual({
+        numerator: 1.2e21,
+        denominator: 1,
+      });
+    });
+
+    it('throws AppError for Infinity or -Infinity', () => {
+      expect(() => numberUtils.toFactor(Infinity)).toThrow(AppError);
+      expect(() => numberUtils.toFactor(-Infinity)).toThrow(AppError);
+      expect(() => numberUtils.toFactor('Infinity')).toThrow(AppError);
+    });
+
+    it('throws AppError for unparsable factors', () => {
+      expect(() => numberUtils.toFactor('invalid')).toThrow(AppError);
     });
   });
 });

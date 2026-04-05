@@ -85,12 +85,17 @@ function make<T>(
 }
 
 function validateEnrichmentPayload(payload: IEventEnrichmentPayload) {
-  if (payload.correlationId !== undefined) {
-    stringUtils.validateUUID(payload.correlationId);
+  if (
+    payload.correlationId !== undefined &&
+    typeof payload.correlationId !== 'string'
+  ) {
+    throw new AppError('Correlation ID must be a string', { cause: payload });
   }
-
-  if (payload.idempotencyKey !== undefined) {
-    stringUtils.validateUUID(payload.idempotencyKey);
+  if (
+    payload.idempotencyKey !== undefined &&
+    typeof payload.idempotencyKey !== 'string'
+  ) {
+    throw new AppError('Idempotency key must be a string', { cause: payload });
   }
 }
 
@@ -120,6 +125,7 @@ function validate<T = object>(
 
 const eventValue = Object.freeze({
   make,
+  enrich,
   validate,
 });
 

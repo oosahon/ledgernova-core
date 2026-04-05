@@ -1,34 +1,84 @@
-import { IGeneralLedgerAccount, ILedgerAccount } from './index.types';
+import { ELedgerType, ILedgerAccount } from './ledger.types';
+import {
+  TEquityLedgerCode,
+  TCapitalLedgerCode,
+  TRetainedEarningsLedgerCode,
+  TReservesLedgerCode,
+  TOpeningBalanceEquityLedgerCode,
+} from './ledger-code.types';
+import { EAdjunctAccountRule, EContraAccountRule } from './ledger.types';
 
-export const EEquityAccountType = {
-  OwnerInvestment: 'equity_owner_investment',
-  RetainedEarnings: 'equity_retained_earnings',
-  Other: 'equity_other',
-};
-export type UEquityLedgerType =
-  (typeof EEquityAccountType)[keyof typeof EEquityAccountType];
+export const EEquitySubType = {
+  Capital: 'capital',
+  RetainedEarnings: 'retained_earnings',
+  Reserve: 'reserve',
+  OpeningBalance: 'opening_balance',
+} as const;
 
-export const EEquityOwnerSubType = {
-  CommonStock: 'equity_owner_common_stock',
-  PreferredStock: 'equity_owner_preferred_stock',
-  OwnerDraws: 'equity_owner_draws',
-  OwnerContributions: 'equity_owner_contributions',
-};
-export type UEquityOwnerSubType =
-  (typeof EEquityOwnerSubType)[keyof typeof EEquityOwnerSubType];
+export type UEquitySubType =
+  (typeof EEquitySubType)[keyof typeof EEquitySubType];
 
-export const EEquityAccountSubType = {
-  ...EEquityOwnerSubType,
-  Other: 'equity_sub_type_other',
-};
+export const EEquityAccountBehavior = {
+  OwnerCapital: 'owner_capital',
+  RetainedEarnings: 'retained_earnings',
+  RevaluationReserve: 'revaluation_reserve',
+  OpeningBalanceEquity: 'opening_balance_equity',
+} as const;
 
-export type UEquityLedgerSubType =
-  (typeof EEquityAccountSubType)[keyof typeof EEquityAccountSubType];
+export type UEquityAccountBehavior =
+  (typeof EEquityAccountBehavior)[keyof typeof EEquityAccountBehavior];
 
-export interface IEquityGeneralLedgerAccount extends IGeneralLedgerAccount {
-  ledgerAccountType: UEquityLedgerSubType;
+export interface IEquityLedgerAccount extends ILedgerAccount {
+  code: TEquityLedgerCode;
+  type: typeof ELedgerType.Equity;
+  subType: UEquitySubType;
+  behavior: UEquityAccountBehavior;
 }
 
-export interface IEquityAccount extends ILedgerAccount {
-  subType: UEquityLedgerSubType;
+/**
+ * =============== Capital ===============
+ * code: 300xxx
+ */
+export interface ICapitalAccount extends IEquityLedgerAccount {
+  code: TCapitalLedgerCode;
+  subType: typeof EEquitySubType.Capital;
+  behavior: typeof EEquityAccountBehavior.OwnerCapital;
+  contraAccountRule: typeof EContraAccountRule.ContraPermitted;
+  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctPermitted;
+}
+
+/**
+ * =============== Retained Earnings ===============
+ * code: 301xxx
+ */
+export interface IRetainedEarningsAccount extends IEquityLedgerAccount {
+  code: TRetainedEarningsLedgerCode;
+  subType: typeof EEquitySubType.RetainedEarnings;
+  behavior: typeof EEquityAccountBehavior.RetainedEarnings;
+  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
+}
+
+/**
+ * =============== Reserves ===============
+ * code: 302xxx
+ */
+export interface IRevaluationReserveAccount extends IEquityLedgerAccount {
+  code: TReservesLedgerCode;
+  subType: typeof EEquitySubType.Reserve;
+  behavior: typeof EEquityAccountBehavior.RevaluationReserve;
+  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
+}
+
+/**
+ * =============== Opening Balance Equity ===============
+ * code: 399xxx
+ */
+export interface IOpeningBalanceEquityAccount extends IEquityLedgerAccount {
+  code: TOpeningBalanceEquityLedgerCode;
+  subType: typeof EEquitySubType.OpeningBalance;
+  behavior: typeof EEquityAccountBehavior.OpeningBalanceEquity;
+  contraAccountRule: typeof EContraAccountRule.ContraNotPermitted;
+  adjunctAccountRule: typeof EAdjunctAccountRule.AdjunctNotPermitted;
 }

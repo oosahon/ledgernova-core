@@ -3,12 +3,18 @@ import { ValidateError } from 'tsoa';
 import {
   ErrorInternalServerError,
   ErrorUnprocessableEntity,
+  IApiValidationError,
 } from '../../../shared/value-objects/error';
 
 import { NODE_ENV } from '../../../infra/config/vars.config';
-import ILogger from '../../../app/contracts/infra-services/logger.contract';
-import IReporter from '../../../app/contracts/infra-services/reporter.contract';
-import { IApiError } from '../../../app/contracts/dto/errors.dto';
+import ILogger from '../../../app/contracts/infra/logger.contract';
+import IReporter from '../../../app/contracts/infra/reporter.contract';
+
+export interface IApiError {
+  message: string;
+  validationErrors?: IApiValidationError[];
+  cause?: any;
+}
 
 function httpErrorHandler(logger: ILogger, reporter: IReporter) {
   return (req: Request, res: Response<IApiError>, error: any) => {

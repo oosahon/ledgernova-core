@@ -51,12 +51,12 @@ describe('event.vo', () => {
       expect(event.idempotencyKey).toBe(validUUID2);
     });
 
-    it('throws error if correlationId is invalid UUID', () => {
+    it('throws error if correlationId is not a string', () => {
       expect(() =>
         eventValue.make({
           type: 'TestEvent',
           data: {},
-          correlationId: 'invalid-uuid',
+          correlationId: 123 as any,
         })
       ).toThrow(AppError);
     });
@@ -117,9 +117,10 @@ describe('event.vo', () => {
       expect(enrichedEvent.idempotencyKey).toBe(validUUID2);
     });
 
-    it('throws error if enriched with invalid UUIDs', () => {
+    it('throws error if enriched with non-string correlationId or idempotencyKey', () => {
       const { enricher } = eventValue.make({ type: 'TestEvent', data: {} });
-      expect(() => enricher({ correlationId: 'invalid' })).toThrow(AppError);
+      expect(() => enricher({ correlationId: 123 as any })).toThrow(AppError);
+      expect(() => enricher({ idempotencyKey: 123 as any })).toThrow(AppError);
     });
   });
 

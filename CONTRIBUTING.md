@@ -47,8 +47,8 @@ Here are the top level folders you would find on the application:
 src/
 ├─ app/                 # Application layer: orchestrates use-cases, handles commands, maps data between domain and external interfaces
 │  ├─ bootstrap/        # Application bootstrap logic and server initialization
+│  ├─ context/          # Request contexts and related abstractions
 │  ├─ contracts/        # Defines infrastructure services interfaces (contracts) used in the application. (Only use-cases/* uses actual implementations)
-│  ├─ events/           # Application events: domain or feature events that trigger async behavior
 │  ├─ mappers/          # Mapping between domain entities and application interfaces
 │  └─ usecases/         # Usecases: concrete business operations, orchestrating domain entities, repos, and services.
 │
@@ -56,8 +56,8 @@ src/
 │
 ├─ infra/               # Technical layer: implementations of services, database, and infrastructure concerns
 │  ├─ config/           # Configuration files for app, environment variables, secrets, and third-party services
-│  ├─ db/               # Database-specific implementations (e.g., drizzle schemas and repo implementations)
 │  ├─ observability/    # Logging, metrics, monitoring, and tracing
+│  ├─ persistence/      # Data persistence mechanisms including DB (Drizzle), caching, and concrete repo implementations
 │  ├─ server/           # Express (or other HTTP) server setup and bootstrapping
 │  └─ services/         # External service clients (e.g., third-party API clients)
 │
@@ -66,6 +66,7 @@ src/
 │  └─ mcp/              # MCP (Model Context Protocol) endpoints
 │
 └─ shared/              # Shared utilities and types used across multiple layers
+   ├─ __docs__/         # Shared documentation covering concepts like monetary values
    ├─ types/            # Global TypeScript types and interfaces
    ├─ utils/            # Helper functions, constants, and reusable utilities
    └─ value-objects/    # Shared value objects and related entities

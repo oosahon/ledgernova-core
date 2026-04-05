@@ -1,5 +1,5 @@
 import * as winston from 'winston';
-import ILogger from '../../app/contracts/infra-services/logger.contract';
+import ILogger from '../../app/contracts/infra/logger.contract';
 
 const logger: ILogger = winston.createLogger({
   level: 'info',

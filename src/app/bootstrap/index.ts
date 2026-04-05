@@ -1,13 +1,18 @@
-import repos from '../../infra/db/repos';
+import repos from '../../infra/persistence/repos';
 import logger from '../../infra/observability/logger';
 import setupServer from '../../infra/server';
 import bootstrapCurrencies from './setup-currencies';
-import { setupIndividualDomainCategories } from './setup-system-categories';
+import eventsRegistry from '../event-registry';
+import eventBus from '../../infra/messaging/event-bus';
 
 async function bootstrap() {
   await bootstrapCurrencies(repos.currency, logger);
-  await setupIndividualDomainCategories(repos.category, logger);
-  setupServer();
+
+  const serverCallback = async () => {
+    eventsRegistry(eventBus);
+  };
+
+  setupServer(serverCallback);
 }
 
 bootstrap();

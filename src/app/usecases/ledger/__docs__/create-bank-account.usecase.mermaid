@@ -14,8 +14,8 @@ sequenceDiagram
     alt Option 1: Manual Opening Balance
         App->>API: POST /api/ledgers/bank-accounts (Balance)
         API->>UseCase: CreateAccountCmd
-        UseCase->>Ledger: Create Sub-Ledger (101xxx)
-        UseCase->>Ledger: Create Suspense Ledger (100100)
+        UseCase->>Ledger: Create Sub-Ledger (100xxx)
+        UseCase->>Ledger: Create Suspense Ledger (199xxx)
         UseCase->>Ledger: Create OBE Sub-Ledger (300xxx)
         Note over UseCase,Ledger: System offsets Opening Balance<br/>against Opening Balance Equity (Sub-Ledger)
         UseCase->>Ledger: Post Opening Balance Journal
@@ -25,8 +25,8 @@ sequenceDiagram
     else Option 2: Statement Upload
         App->>API: POST /api/ledgers/bank-accounts (with PDF)
         API->>UseCase: CreateAccountWithStatementCmd
-        UseCase->>Ledger: Create Sub-Ledger (101xxx)
-        UseCase->>Ledger: Create Suspense Ledger (100100)
+        UseCase->>Ledger: Create Sub-Ledger (100xxx)
+        UseCase->>Ledger: Create Suspense Ledger (199xxx)
         UseCase->>Ledger: Create OBE Sub-Ledger (300xxx)
         UseCase->>S3: Upload Statement PDF
         UseCase->>EventBus: Publish StatementUploadedEvent
@@ -44,7 +44,7 @@ sequenceDiagram
         EventBus->>BSTHandler: Consume TransactionsExtractedEvent
         Note over BSTHandler,Ledger: System offsets Opening Balance<br/>against Opening Balance Equity (Sub-Ledger)
         BSTHandler->>Ledger: Post Opening Balance Journal
-        BSTHandler->>Ledger: Store Raw Transactions in Suspense Ledger (100100)
+        BSTHandler->>Ledger: Store Raw Transactions in Suspense Ledger (199xxx)
         BSTHandler->>App: Push Notification: "Ready for Review"
         
         %% User Review Flow
@@ -52,6 +52,6 @@ sequenceDiagram
         User->>App: Review & Modify Descriptions (Amt/Date Locked)
         App->>API: POST /api/reconciliation/match
         API->>UseCase: ReconcileTransactionsCmd
-        UseCase->>Ledger: Clear Suspense (100100) & Credit Target Accounts
+        UseCase->>Ledger: Clear Suspense (199xxx) & Credit Target Accounts
         UseCase-->>User: Reconciled & Recorded
     end

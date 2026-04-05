@@ -6,8 +6,6 @@ import { fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CurrencyController } from './src/interface/http/controllers/currency.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { CategoryController } from './src/interface/http/controllers/category.controller';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './src/interface/http/controllers/auth.controller';
 import type {
   Request as ExRequest,
@@ -19,115 +17,6 @@ import type {
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-  UAccountingEntityType: {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['individual'] },
-        { dataType: 'enum', enums: ['sole_trader'] },
-        { dataType: 'enum', enums: ['company'] },
-      ],
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UCategoryType: {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['expense'] },
-        { dataType: 'enum', enums: ['sale'] },
-        { dataType: 'enum', enums: ['purchase'] },
-        { dataType: 'enum', enums: ['credit_note'] },
-        { dataType: 'enum', enums: ['debit_note'] },
-        { dataType: 'enum', enums: ['payment'] },
-        { dataType: 'enum', enums: ['receipt'] },
-      ],
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UCategoryStatus: {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['active'] },
-        { dataType: 'enum', enums: ['archived'] },
-      ],
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  ICategory: {
-    dataType: 'refObject',
-    properties: {
-      id: { dataType: 'string', required: true },
-      name: { dataType: 'string', required: true },
-      accountingEntityType: { ref: 'UAccountingEntityType', required: true },
-      type: { ref: 'UCategoryType', required: true },
-      taxKey: { dataType: 'string', required: true },
-      status: { ref: 'UCategoryStatus', required: true },
-      description: { dataType: 'string', required: true },
-      parentId: {
-        dataType: 'union',
-        subSchemas: [
-          { dataType: 'string' },
-          { dataType: 'enum', enums: [null] },
-        ],
-        required: true,
-      },
-      createdBy: {
-        dataType: 'union',
-        subSchemas: [
-          { dataType: 'string' },
-          { dataType: 'enum', enums: [null] },
-        ],
-        required: true,
-      },
-      createdAt: { dataType: 'datetime', required: true },
-      updatedAt: { dataType: 'datetime', required: true },
-      deletedAt: {
-        dataType: 'union',
-        subSchemas: [
-          { dataType: 'datetime' },
-          { dataType: 'enum', enums: [null] },
-        ],
-        required: true,
-      },
-    },
-    additionalProperties: false,
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  ULedgerType: {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['asset'] },
-        { dataType: 'enum', enums: ['liability'] },
-        { dataType: 'enum', enums: ['revenue'] },
-        { dataType: 'enum', enums: ['expense'] },
-        { dataType: 'enum', enums: ['equity'] },
-      ],
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  UJournalDirection: {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'union',
-      subSchemas: [
-        { dataType: 'enum', enums: ['debit'] },
-        { dataType: 'enum', enums: ['credit'] },
-      ],
-      validators: {},
-    },
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   IApiValidationError: {
     dataType: 'refObject',
     properties: {
@@ -205,61 +94,6 @@ export function RegisterRoutes(app: Router) {
 
         await templateService.apiHandler({
           methodName: 'getCurrencies',
-          controller,
-          response,
-          next,
-          validatedArgs,
-          successStatus: 200,
-        });
-      } catch (err) {
-        return next(err);
-      }
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsCategoryController_getCategories: Record<
-    string,
-    TsoaRoute.ParameterSchema
-  > = {
-    _: {
-      in: 'header',
-      name: 'x-accounting-entity-type',
-      required: true,
-      ref: 'UAccountingEntityType',
-    },
-    ledgerType: { in: 'query', name: 'ledgerType', ref: 'ULedgerType' },
-    transactionDirection: {
-      in: 'query',
-      name: 'transactionDirection',
-      ref: 'UJournalDirection',
-    },
-  };
-  app.get(
-    '/api/v1/categories',
-    ...fetchMiddlewares<RequestHandler>(CategoryController),
-    ...fetchMiddlewares<RequestHandler>(
-      CategoryController.prototype.getCategories
-    ),
-
-    async function CategoryController_getCategories(
-      request: ExRequest,
-      response: ExResponse,
-      next: any
-    ) {
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsCategoryController_getCategories,
-          request,
-          response,
-        });
-
-        const controller = new CategoryController();
-
-        await templateService.apiHandler({
-          methodName: 'getCategories',
           controller,
           response,
           next,

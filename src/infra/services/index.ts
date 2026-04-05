@@ -1,10 +1,12 @@
 import authService from './auth.service';
 import logger from '../observability/logger';
-import redisCacheStorage from '../cache/redis-cache-storage';
+import cacheStorage from '../persistence/cache/cache-storage';
+import repoService from './repo.service';
 
 const services = {
-  auth: authService(redisCacheStorage),
+  auth: authService(cacheStorage),
   logger,
+  repo: repoService,
 };
 
 export default services;

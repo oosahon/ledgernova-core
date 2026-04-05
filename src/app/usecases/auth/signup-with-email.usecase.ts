@@ -11,19 +11,21 @@ import {
 } from '../../../shared/value-objects/error';
 import { NAIRA } from '../../bootstrap/data/currencies';
 import { IIndividualSignupReq } from '../../contracts/dto/auth.dto';
-import IAuthService from '../../contracts/infra-services/auth-service.contract';
-import IDbService from '../../contracts/infra-services/db.contract';
-import IRequestContext from '../../contracts/storage/request-context.contract';
+import IAuthService from '../../contracts/infra/auth-service.contract';
+import { IRepoService } from '../../contracts/infra/repo.contract';
+import IRequestContext from '../../contracts/app/request-context.contract';
+import IEventBus from '../../contracts/infra/event-bus.contract';
 
 export default function signupWithEmailUsecase(
-  dbService: IDbService,
+  repoService: IRepoService,
   requestContext: IRequestContext,
   userRepo: IUserRepo,
   authService: IAuthService,
-  accountingEntityRepo: IAccountingEntityRepo
+  accountingEntityRepo: IAccountingEntityRepo,
+  eventBus: IEventBus
 ) {
   return async (payload: IIndividualSignupReq) => {
-    const { correlationId } = requestContext.get();
+    const { correlationId, idempotencyKey } = requestContext.get();
 
     const email = emailValue.make(payload.email);
 
@@ -41,7 +43,6 @@ export default function signupWithEmailUsecase(
       throw new ErrorConflict('User already exists');
     }
 
-    // TODO: publish events
     const [user, userEvents] = userEntity.make({
       firstName: payload.firstName,
       lastName: payload.lastName,
@@ -49,26 +50,27 @@ export default function signupWithEmailUsecase(
       emailVerified: false,
     });
 
-    // TODO: publish events
-    const [individualDomain, individualDomainEvents] =
+    const [individualDomain, individualEntityEvents] =
       accountingEntityTypeEntity.make({
-        owner: user,
+        ownerId: user.id,
         functionalCurrency: NAIRA,
         type: EAccountingEntityType.Individual,
+        fiscalYearStart: { month: 12, day: 31 },
       });
 
     const password = passwordValue.make(payload.password);
     const passwordHash = await authService.hashPassword(password);
     const userWithPassword = { ...user, password: passwordHash };
 
-    await dbService.runInTransaction(async (tx) => {
-      await userRepo.save(userWithPassword, { tx, correlationId });
-      await accountingEntityRepo.save(individualDomain, {
-        tx,
-        correlationId,
-      });
+    await repoService.runInTransaction(async (tx) => {
+      const repoOptions = { tx, correlationId };
+      await userRepo.save(userWithPassword, repoOptions);
+      await accountingEntityRepo.save(individualDomain, repoOptions);
     });
 
-    // TODO: send email verification
+    [...userEvents, ...individualEntityEvents].forEach(({ enricher }) => {
+      const event = enricher({ correlationId, idempotencyKey });
+      eventBus.publish(event);
+    });
   };
 }

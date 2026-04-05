@@ -1,28 +1,30 @@
 flowchart LR
-    Assets["Assets: 1xxxxx"] --> SuspenseAccounts & CAssets & NCAssets
+    Assets["Assets: 1xxxxx"] --> CAssets & NCAssets & SuspenseAccounts
 
-    SuspenseAccounts["Suspense Accounts: 100xxx"]
+    SuspenseAccounts["Suspense Accounts: 199xxx"]
     CAssets["Current Assets"]  
-        CAssets --> Cash["Cash and Equivalents: 101xxx"]
-        CAssets --> STInvestments["Short Term Investments: 102xxx"]
-        CAssets --> Receivables["Receivables: 103xxx"] 
-            Receivables --> TradeReceivables["Trade Receivables: 103xxx"]
-            Receivables --> StatutoryReceivables["Statutory Receivables: 103xxx"]
-            Receivables --> OtherReceivables["Other Receivables: 103xxx"]
+        CAssets --> Cash["Cash and Equivalents: 100xxx"]
+        CAssets --> STInvestments["Short Term Investments: 101xxx"]
+        CAssets --> Receivables["Receivables: 102xxx"] 
+            Receivables --> TradeReceivables["Trade Receivables: 102001"]
+            Receivables --> StatutoryReceivables["Statutory Receivables: 102002"]
             
-        CAssets --> Inventories["Inventories: 104xxx"]
-        CAssets --> AccruedIncome["Accrued Income: 105xxx"]
-        CAssets --> Prepayments["Prepayments: 106xxx"]
+        CAssets --> Inventories["Inventories: 103xxx"]
+        CAssets --> AccruedIncome["Accrued Income: 104xxx"]
+        CAssets --> Prepayments["Prepayments: 105xxx"]
 
-    CAssets ~~~ SuspenseAccounts
+
       
 
     NCAssets["Non Current Assets"]
-        NCAssets --> LTInvestments["Long Term Investments: 107xxx"]
-        NCAssets --> PPE["Property, Plant & Equipment: 108xxx"]
-        NCAssets --> IntangibleAssets["Intangible Assets: 109xxx"]
-        NCAssets --> ROU["Right-of-Use Assets: 110xxx"]
-        NCAssets --> Goodwill["Goodwill: 111xxx"]
-
+        NCAssets --> LTInvestments["Long Term Investments: 106xxx"]
+        NCAssets --> PPE["Property, Plant & Equipment: 107xxx"]
+        NCAssets --> IntangibleAssets["Intangible Assets: 108xxx"]
+        NCAssets --> ROU["Right-of-Use Assets: 109xxx"]
+        NCAssets --> Goodwill["Goodwill: 110xxx"]
+        %% For individuals only
+        NCAssets --> PersonalChattels["Personal Chattels: 111xxx"] 
+        
+    NCAssets ~~~ SuspenseAccounts
 
 
