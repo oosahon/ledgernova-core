@@ -40,6 +40,7 @@ const EDirectCostsBehavior = {
   COGS: 'cogs',
   CostOfServices: 'cost_of_services',
   CostOfRevenue: 'cost_of_revenue',
+  DefaultDirectCost: 'default_direct_cost',
 } as const;
 
 type UDirectCostsBehavior =

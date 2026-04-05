@@ -93,5 +93,10 @@ describe('Services Revenue Entity', () => {
         servicesAccountEntity.make(invalidPayload, '401000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 401000 when predecessorCode is null', () => {
+      const [account] = servicesAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('401000');
+    });
   });
 });

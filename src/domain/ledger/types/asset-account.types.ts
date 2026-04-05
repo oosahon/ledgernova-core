@@ -46,6 +46,7 @@ export type UAssetSubType = (typeof EAssetSubType)[keyof typeof EAssetSubType];
 const ECashBehavior = {
   Bank: 'bank',
   PettyCash: 'petty_cash',
+  DefaultCash: 'default_cash',
 } as const;
 
 type UCashBehavior = (typeof ECashBehavior)[keyof typeof ECashBehavior];
@@ -53,6 +54,7 @@ type UCashBehavior = (typeof ECashBehavior)[keyof typeof ECashBehavior];
 const EReceivableBehavior = {
   TaxReceivable: 'tax_receivable',
   TradeReceivable: 'trade_receivable',
+  DefaultReceivables: 'default_receivables',
 } as const;
 
 type UReceivableBehavior =

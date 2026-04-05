@@ -128,5 +128,10 @@ describe('Direct Costs Expense Entity', () => {
         directCostsAccountEntity.make(invalidPayload, '500000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 500000 when predecessorCode is null', () => {
+      const [account] = directCostsAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('500000');
+    });
   });
 });

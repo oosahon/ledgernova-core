@@ -115,6 +115,11 @@ describe('Payable Liability Entity', () => {
       const [account] = payableAccountEntity.make(validPayload, '201000');
       expect(account.controlAccountId).toBeNull();
     });
+
+    it('should use base code 201000 when predecessorCode is null', () => {
+      const [account] = payableAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('201000');
+    });
   });
 
   describe('makeStatutoryPayableAccountMeta', () => {
@@ -154,6 +159,15 @@ describe('Payable Liability Entity', () => {
         taxType: 'value_added_tax',
       });
       expect(meta.taxType).toBe('value_added_tax');
+    });
+
+    it('should throw AppError if taxType is invalid', () => {
+      expect(() =>
+        payableAccountEntity.makeStatutoryPayableAccountMeta({
+          ...validMeta,
+          taxType: 'invalid_tax_type' as any,
+        })
+      ).toThrow(AppError);
     });
   });
 

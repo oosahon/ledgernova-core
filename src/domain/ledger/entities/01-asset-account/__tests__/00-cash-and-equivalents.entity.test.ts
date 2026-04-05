@@ -112,6 +112,11 @@ describe('Cash and Cash Equivalent Entity', () => {
       );
       expect(account.controlAccountId).toBeNull();
     });
+
+    it('should use base code 100000 when predecessorCode is null', () => {
+      const [account] = cashAndEquivalentAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('100000');
+    });
   });
 
   describe('makeBankAccountMeta', () => {

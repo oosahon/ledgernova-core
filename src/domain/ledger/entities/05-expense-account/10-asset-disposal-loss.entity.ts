@@ -34,12 +34,12 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TAssetDisposalLossLedgerCode
+  predecessorCode: TAssetDisposalLossLedgerCode | null
 ): TEntityWithEvents<IAssetDisposalLossAccount, IAssetDisposalLossAccount> {
   const account = ledgerAccountEntity.make<IAssetDisposalLossAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '510000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Expense),
     type: ELedgerType.Expense,
     subType: EExpenseSubType.LossOnAssetDisposal,

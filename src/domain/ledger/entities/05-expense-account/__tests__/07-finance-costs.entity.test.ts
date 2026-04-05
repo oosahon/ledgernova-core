@@ -126,5 +126,10 @@ describe('Finance Costs Expense Entity', () => {
         financeCostsAccountEntity.make(invalidPayload, '507000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 507000 when predecessorCode is null', () => {
+      const [account] = financeCostsAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('507000');
+    });
   });
 });

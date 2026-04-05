@@ -115,6 +115,11 @@ describe('Receivables Entity', () => {
       const [account] = receivablesAccountEntity.make(validPayload, '102000');
       expect(account.controlAccountId).toBeNull();
     });
+
+    it('should use base code 102000 when predecessorCode is null', () => {
+      const [account] = receivablesAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('102000');
+    });
   });
 
   describe('makeStatutoryReceivableAccountMeta', () => {

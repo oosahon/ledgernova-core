@@ -126,5 +126,10 @@ describe('Asset Disposal Loss Entity', () => {
         assetDisposalLossAccountEntity.make(invalidPayload, '510000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 510000 when predecessorCode is null', () => {
+      const [account] = assetDisposalLossAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('510000');
+    });
   });
 });

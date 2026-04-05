@@ -67,19 +67,6 @@ export interface IAdjustmentMetaData {
   targetAccountId: TEntityId;
 }
 
-/**
- * PLAN:
- * - I'm trying to make ledger accounts in such a way that they will support different types of behaviors.
- * What I'm not sure of:
- *  - Using meta data to store these behaviors or creating separate entities, persistable in the db.
- *  - Use relationships to link bank accounts and their corresponding suspense accounts or have a bank account hold its suspense account
- *
- * What I'm most likely going to do:
- * - define ledger account behavioral types in a new file
- * - have behavioral entities carry their own contra and adjunct account rules
- * - Create a special transaction category for cash/cash equivalents: FX sale/purchase.
- *   This will allow us determine realized gains and losses on FX transactions.
- */
 export interface ILedgerAccount {
   id: TEntityId;
   code: string;

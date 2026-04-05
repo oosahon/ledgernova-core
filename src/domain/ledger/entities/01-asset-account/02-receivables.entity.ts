@@ -51,7 +51,7 @@ function make(
     | 'contraAccountRule'
     | 'adjunctAccountRule'
   >,
-  predecessorCode: TReceivablesLedgerCode
+  predecessorCode: TReceivablesLedgerCode | null // null for the root receivable account
 ): TEntityWithEvents<IReceivablesAccount, IReceivablesAccount> {
   if (payload.controlAccountId) {
     stringUtils.validateUUID(payload.controlAccountId);
@@ -60,7 +60,7 @@ function make(
   const account = ledgerAccountEntity.make<IReceivablesAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '102000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Asset),
     type: ELedgerType.Asset,
     subType: EAssetSubType.Receivables,

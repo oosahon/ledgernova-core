@@ -1,6 +1,6 @@
 import { AppError } from '../../../../../shared/value-objects/error';
 import generateUUID from '../../../../../shared/utils/uuid-generator';
-import retainedEarningLedgerEntity from '../01-retained-earning.entity';
+import retainedEarningAccountEntity from '../01-retained-earning.entity';
 import {
   EEquityAccountBehavior,
   EEquitySubType,
@@ -36,13 +36,13 @@ describe('Retained Earning Entity', () => {
 
   describe('getCode', () => {
     it('should generate the next sub-ledger code for retained earning accounts', () => {
-      expect(retainedEarningLedgerEntity.getCode('301000')).toBe('301001');
-      expect(retainedEarningLedgerEntity.getCode('301099')).toBe('301100');
+      expect(retainedEarningAccountEntity.getCode('301000')).toBe('301001');
+      expect(retainedEarningAccountEntity.getCode('301099')).toBe('301100');
     });
 
     it('should throw if predecessor code does not match header code', () => {
       expect(() =>
-        retainedEarningLedgerEntity.getCode('300000' as any)
+        retainedEarningAccountEntity.getCode('300000' as any)
       ).toThrow(AppError);
     });
   });
@@ -56,7 +56,7 @@ describe('Retained Earning Entity', () => {
     };
 
     it('should successfully create a retained earning account', () => {
-      const [account, events] = retainedEarningLedgerEntity.make(
+      const [account, events] = retainedEarningAccountEntity.make(
         validPayload,
         '301000'
       );
@@ -87,8 +87,13 @@ describe('Retained Earning Entity', () => {
     it('should throw if payload values are invalid', () => {
       const invalidPayload = { ...validPayload, name: 'A' };
       expect(() =>
-        retainedEarningLedgerEntity.make(invalidPayload, '301000')
+        retainedEarningAccountEntity.make(invalidPayload, '301000')
       ).toThrow(AppError);
+    });
+
+    it('should use base code 301000 when predecessorCode is null', () => {
+      const [account] = retainedEarningAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('301000');
     });
   });
 });

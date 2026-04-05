@@ -34,12 +34,12 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TUnrealizedGainLedgerCode
+  predecessorCode: TUnrealizedGainLedgerCode | null
 ): TEntityWithEvents<IUnrealizedGainAccount, IUnrealizedGainAccount> {
   const account = ledgerAccountEntity.make<IUnrealizedGainAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '406000',
     type: ELedgerType.Revenue,
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue),
     subType: ERevenueSubType.UnrealizedGains,

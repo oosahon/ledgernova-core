@@ -28,12 +28,12 @@ function make(
     IRetainedEarningsAccount,
     'name' | 'createdBy' | 'accountingEntityId' | 'currency'
   >,
-  predecessorCode: TRetainedEarningsLedgerCode
+  predecessorCode: TRetainedEarningsLedgerCode | null
 ): TEntityWithEvents<IRetainedEarningsAccount, IRetainedEarningsAccount> {
   const account = ledgerAccountEntity.make<IRetainedEarningsAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '301000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Equity),
     type: ELedgerType.Equity,
     subType: EEquitySubType.RetainedEarnings,
@@ -52,9 +52,9 @@ function make(
   return [account, [event]];
 }
 
-const retainedEarningLedgerEntity = Object.freeze({
+const retainedEarningAccountEntity = Object.freeze({
   make,
   getCode,
 });
 
-export default retainedEarningLedgerEntity;
+export default retainedEarningAccountEntity;

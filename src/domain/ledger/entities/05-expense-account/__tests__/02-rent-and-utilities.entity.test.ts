@@ -1,5 +1,6 @@
+import { AppError } from '../../../../../shared/value-objects/error';
 import generateUUID from '../../../../../shared/utils/uuid-generator';
-import rentAndUtilitiesAccountEntity from '../03-rent-and-utilities.entity';
+import rentAndUtilitiesAccountEntity from '../02-rent-and-utilities.entity';
 import {
   EExpenseAccountBehavior,
   EExpenseSubType,
@@ -39,6 +40,12 @@ describe('Rent and Utilities Expense Entity', () => {
       // Base code from ledger-code.types.ts for rent and utilities is 502
       expect(rentAndUtilitiesAccountEntity.getCode('502000')).toBe('502001');
       expect(rentAndUtilitiesAccountEntity.getCode('502099')).toBe('502100');
+    });
+
+    it('should throw if predecessor code does not match header code', () => {
+      expect(() =>
+        rentAndUtilitiesAccountEntity.getCode('503000' as any)
+      ).toThrow(AppError);
     });
   });
 
@@ -86,6 +93,44 @@ describe('Rent and Utilities Expense Entity', () => {
       expect(account.createdBy).toBe(validUUID2);
       expect(account.accountingEntityId).toBe(validUUID1);
       expect(events).toHaveLength(1);
+    });
+
+    it('should successfully create a rent and utilities account with controlAccountId', () => {
+      const validUUID3 = generateUUID();
+      const payloadWithControl = {
+        ...validPayload,
+        isControlAccount: true,
+        controlAccountId: validUUID3,
+      };
+      const [account, events] = rentAndUtilitiesAccountEntity.make(
+        payloadWithControl,
+        '502000'
+      );
+      expect(account.isControlAccount).toBe(true);
+      expect(account.controlAccountId).toBe(validUUID3);
+      expect(events).toHaveLength(1);
+    });
+
+    it('should throw if payload values are invalid', () => {
+      const invalidPayload = { ...validPayload, name: 'A' };
+      expect(() =>
+        rentAndUtilitiesAccountEntity.make(invalidPayload, '502000')
+      ).toThrow(AppError);
+    });
+
+    it('should throw if controlAccountId is invalid', () => {
+      const invalidPayload = {
+        ...validPayload,
+        controlAccountId: 'invalid-uuid' as any,
+      };
+      expect(() =>
+        rentAndUtilitiesAccountEntity.make(invalidPayload, '502000')
+      ).toThrow(AppError);
+    });
+
+    it('should use base code 502000 when predecessorCode is null', () => {
+      const [account] = rentAndUtilitiesAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('502000');
     });
   });
 });

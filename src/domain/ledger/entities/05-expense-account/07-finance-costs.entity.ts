@@ -34,12 +34,12 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TInterestFinanceLedgerCode
+  predecessorCode: TInterestFinanceLedgerCode | null
 ): TEntityWithEvents<IInterestFinanceAccount, IInterestFinanceAccount> {
   const account = ledgerAccountEntity.make<IInterestFinanceAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '507000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Expense),
     type: ELedgerType.Expense,
     subType: EExpenseSubType.InterestAndFinanceCharges,

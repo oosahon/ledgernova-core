@@ -93,5 +93,10 @@ describe('Gain on Sale Revenue Entity', () => {
         gainOnSaleAccountEntity.make(invalidPayload, '405000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 405000 when predecessorCode is null', () => {
+      const [account] = gainOnSaleAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('405000');
+    });
   });
 });

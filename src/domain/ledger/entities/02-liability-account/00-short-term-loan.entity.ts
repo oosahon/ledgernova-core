@@ -49,7 +49,7 @@ function make(
     | 'behavior'
     | 'meta'
   >,
-  predecessorCode: TShortTermDebtLedgerCode
+  predecessorCode: TShortTermDebtLedgerCode | null // null for the control account
 ): TEntityWithEvents<IShortTermDebtAccount, IShortTermDebtAccount> {
   if (payload.controlAccountId) {
     stringUtils.validateUUID(payload.controlAccountId);
@@ -58,7 +58,7 @@ function make(
   const account = ledgerAccountEntity.make<IShortTermDebtAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '200000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Liability),
     type: ELedgerType.Liability,
     subType: ELiabilitySubType.ShortTermDebt,

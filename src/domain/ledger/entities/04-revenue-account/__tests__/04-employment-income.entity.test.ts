@@ -93,5 +93,10 @@ describe('Employment Income Revenue Entity', () => {
         employmentIncomeAccountEntity.make(invalidPayload, '403000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 403000 when predecessorCode is null', () => {
+      const [account] = employmentIncomeAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('403000');
+    });
   });
 });

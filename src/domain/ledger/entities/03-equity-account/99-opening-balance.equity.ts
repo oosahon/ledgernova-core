@@ -28,7 +28,7 @@ function make(
     IOpeningBalanceEquityAccount,
     'name' | 'createdBy' | 'accountingEntityId' | 'currency'
   >,
-  predecessorCode: TOpeningBalanceEquityLedgerCode
+  predecessorCode: TOpeningBalanceEquityLedgerCode | null
 ): TEntityWithEvents<
   IOpeningBalanceEquityAccount,
   IOpeningBalanceEquityAccount
@@ -36,7 +36,7 @@ function make(
   const account = ledgerAccountEntity.make<IOpeningBalanceEquityAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '399000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Equity),
     type: ELedgerType.Equity,
     subType: EEquitySubType.OpeningBalance,

@@ -49,7 +49,7 @@ function make(
     | 'contraAccountRule'
     | 'adjunctAccountRule'
   >,
-  predecessorCode: TPayablesLedgerCode
+  predecessorCode: TPayablesLedgerCode | null // null for the control account
 ): TEntityWithEvents<IPayableAccount, IPayableAccount> {
   if (payload.controlAccountId) {
     stringUtils.validateUUID(payload.controlAccountId);
@@ -58,7 +58,7 @@ function make(
   const account = ledgerAccountEntity.make<IPayableAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '201000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Liability),
     type: ELedgerType.Liability,
     subType: ELiabilitySubType.Payable,

@@ -92,5 +92,13 @@ describe('Opening Balance Equity Entity', () => {
         openingBalanceEquityLedgerEntity.make(invalidPayload, '399000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 399000 when predecessorCode is null', () => {
+      const [account] = openingBalanceEquityLedgerEntity.make(
+        validPayload,
+        null
+      );
+      expect(account.code).toBe('399000');
+    });
   });
 });

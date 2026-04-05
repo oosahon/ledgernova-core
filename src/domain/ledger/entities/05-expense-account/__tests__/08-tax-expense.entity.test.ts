@@ -126,5 +126,10 @@ describe('Tax Expense Entity', () => {
         taxExpenseAccountEntity.make(invalidPayload, '508000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 508000 when predecessorCode is null', () => {
+      const [account] = taxExpenseAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('508000');
+    });
   });
 });

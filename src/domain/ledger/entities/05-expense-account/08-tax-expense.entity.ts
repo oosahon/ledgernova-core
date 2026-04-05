@@ -32,12 +32,12 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TIncomeTaxLedgerCode
+  predecessorCode: TIncomeTaxLedgerCode | null
 ): TEntityWithEvents<IIncomeTaxExpenseAccount, IIncomeTaxExpenseAccount> {
   const account = ledgerAccountEntity.make<IIncomeTaxExpenseAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '508000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Expense),
     type: ELedgerType.Expense,
     subType: EExpenseSubType.IncomeTaxExpense,

@@ -34,12 +34,12 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TEmploymentIncomeLedgerCode
+  predecessorCode: TEmploymentIncomeLedgerCode | null
 ): TEntityWithEvents<IEmploymentIncomeAccount, IEmploymentIncomeAccount> {
   const account = ledgerAccountEntity.make<IEmploymentIncomeAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '403000',
     type: ELedgerType.Revenue,
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue),
     subType: ERevenueSubType.EmploymentIncome,

@@ -32,10 +32,11 @@ export const ELiabilitySubType = {
 export type ULiabilitySubType =
   (typeof ELiabilitySubType)[keyof typeof ELiabilitySubType];
 
-const EShortTermDebtBehavior = {
+export const EShortTermDebtBehavior = {
   CreditCard: 'credit_card',
   Overdraft: 'overdraft',
   ShortTermLoan: 'short_term_loan',
+  DefaultShortTermDebt: 'default_short_term_debt',
 } as const;
 
 type UShortTermDebtBehavior =
@@ -44,6 +45,7 @@ type UShortTermDebtBehavior =
 const EPayableBehavior = {
   TaxPayable: 'tax_payable',
   TradePayable: 'trade_payable',
+  DefaultPayable: 'default_payable',
 } as const;
 
 type UPayableBehavior =

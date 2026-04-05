@@ -34,12 +34,12 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TGainOnSaleLedgerCode
+  predecessorCode: TGainOnSaleLedgerCode | null
 ): TEntityWithEvents<IGainOnSaleAccount, IGainOnSaleAccount> {
   const account = ledgerAccountEntity.make<IGainOnSaleAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '405000',
     type: ELedgerType.Revenue,
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Revenue),
     subType: ERevenueSubType.GainOnSale,

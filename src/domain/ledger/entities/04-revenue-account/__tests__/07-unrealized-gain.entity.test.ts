@@ -93,5 +93,10 @@ describe('Unrealized Gains Revenue Entity', () => {
         unrealizedGainAccountEntity.make(invalidPayload, '406000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 406000 when predecessorCode is null', () => {
+      const [account] = unrealizedGainAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('406000');
+    });
   });
 });

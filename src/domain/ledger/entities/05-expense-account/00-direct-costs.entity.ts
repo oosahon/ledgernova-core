@@ -1,6 +1,5 @@
 import { TEntityWithEvents } from '../../../../shared/types/event.types';
 import stringUtils from '../../../../shared/utils/string';
-import { AppError } from '../../../../shared/value-objects/error';
 import expenseAccountEvents from '../../events/expense-account.events';
 import {
   EExpenseSubType,
@@ -36,7 +35,7 @@ function make(
     | 'controlAccountId'
     | 'meta'
   >,
-  predecessorCode: TDirectCostsLedgerCode
+  predecessorCode: TDirectCostsLedgerCode | null
 ): TEntityWithEvents<IDirectCostsAccount, IDirectCostsAccount> {
   if (payload.controlAccountId) {
     stringUtils.validateUUID(payload.controlAccountId);
@@ -45,7 +44,7 @@ function make(
   const account = ledgerAccountEntity.make<IDirectCostsAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '500000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Expense),
     type: ELedgerType.Expense,
     subType: EExpenseSubType.DirectCosts,

@@ -126,5 +126,10 @@ describe('Unrealized Loss Entity', () => {
         unrealizedLossAccountEntity.make(invalidPayload, '509000')
       ).toThrow(AppError);
     });
+
+    it('should use base code 509000 when predecessorCode is null', () => {
+      const [account] = unrealizedLossAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('509000');
+    });
   });
 });

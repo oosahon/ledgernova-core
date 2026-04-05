@@ -112,6 +112,11 @@ describe('Short Term Loan Liability Entity', () => {
       const [account] = shortTermLoanAccountEntity.make(validPayload, '200000');
       expect(account.controlAccountId).toBeNull();
     });
+
+    it('should use base code 200000 when predecessorCode is null', () => {
+      const [account] = shortTermLoanAccountEntity.make(validPayload, null);
+      expect(account.code).toBe('200000');
+    });
   });
 
   describe('makeCreditCardAccountMeta', () => {

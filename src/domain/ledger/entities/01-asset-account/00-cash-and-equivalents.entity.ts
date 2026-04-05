@@ -45,7 +45,7 @@ function make(
     | 'behavior'
     | 'meta'
   >,
-  predecessorCode: TCashLedgerCode
+  predecessorCode: TCashLedgerCode | null // null for the root cash and cash equivalent account
 ): TEntityWithEvents<
   ICashAndCashEquivalentAccount,
   ICashAndCashEquivalentAccount
@@ -57,7 +57,7 @@ function make(
   const account = ledgerAccountEntity.make<ICashAndCashEquivalentAccount>({
     name: payload.name,
     accountingEntityId: payload.accountingEntityId,
-    code: getCode(predecessorCode),
+    code: predecessorCode ? getCode(predecessorCode) : '100000',
     normalBalance: ledgerAccountEntity.getNormalBalance(ELedgerType.Asset),
     type: ELedgerType.Asset,
     subType: EAssetSubType.CashAndCashEquivalent,
