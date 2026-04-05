@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import IRequestContext from '../../../app/contracts/storage/request-context.contract';
+import IRequestContext from '../../../app/contracts/app/request-context.contract';
 import generateUUID from '../../../shared/utils/uuid-generator';
 import { UAccountingEntityType } from '../../../domain/accounting/types/accounting.types';
 import getHttpHeaderValue from '../helpers/get-http-header-value';

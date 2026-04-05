@@ -1,4 +1,4 @@
-import ILogger from '../../../app/contracts/infra-services/logger.contract';
+import ILogger from '../../../app/contracts/infra/logger.contract';
 
 export const MockLogger = {
   error: jest.fn(),

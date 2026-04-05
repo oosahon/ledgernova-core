@@ -1,4 +1,4 @@
-import IDbService from '../../../app/contracts/infra-services/db.contract';
+import IDbService from '../../../app/contracts/infra/db.contract';
 
 const mockDbService: jest.Mocked<IDbService> = {
   runInTransaction: jest.fn(),

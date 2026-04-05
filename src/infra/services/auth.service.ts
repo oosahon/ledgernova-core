@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs';
 import { WEB_APP_URL, JWT_SECRET_KEY, NODE_ENV } from '../config/vars.config';
 import IAuthService, {
   IAuthTokenPayload,
-} from '../../app/contracts/infra-services/auth-service.contract';
-import { ICacheStorage } from '../../app/contracts/infra-services/cache-storage.contract';
+} from '../../app/contracts/infra/auth-service.contract';
+import { ICacheStorage } from '../../app/contracts/infra/cache-storage.contract';
 import { NON_PROD_EMAIL_WHITELIST } from '../config/email-whitelist.config';
 
 export default function authService(cacheStorage: ICacheStorage): IAuthService {

@@ -11,9 +11,9 @@ import {
 } from '../../../shared/value-objects/error';
 import { NAIRA } from '../../bootstrap/data/currencies';
 import { IIndividualSignupReq } from '../../contracts/dto/auth.dto';
-import IAuthService from '../../contracts/infra-services/auth-service.contract';
-import IDbService from '../../contracts/infra-services/db.contract';
-import IRequestContext from '../../contracts/storage/request-context.contract';
+import IAuthService from '../../contracts/infra/auth-service.contract';
+import IDbService from '../../contracts/infra/db.contract';
+import IRequestContext from '../../contracts/app/request-context.contract';
 
 export default function signupWithEmailUsecase(
   dbService: IDbService,
@@ -69,7 +69,5 @@ export default function signupWithEmailUsecase(
         correlationId,
       });
     });
-
-    // TODO: send email verification
   };
 }

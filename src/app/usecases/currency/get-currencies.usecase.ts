@@ -1,9 +1,9 @@
 import ICurrencyRepo from '../../../domain/currency/repos/currency.repo';
-import IStorage from '../../contracts/storage/request-context.contract';
+import IRequestContext from '../../contracts/app/request-context.contract';
 
 export default function getCurrenciesUseCase(
   currencyRepo: ICurrencyRepo,
-  storage: IStorage
+  requestContext: IRequestContext
 ) {
   /**
    * ========= USECASE EXECUTOR =========
@@ -13,7 +13,7 @@ export default function getCurrenciesUseCase(
    * This usecase is used to get all supported currencies
    */
   return async () => {
-    const { correlationId } = storage.get();
+    const { correlationId } = requestContext.get();
 
     const res = await currencyRepo.findAll({
       correlationId,

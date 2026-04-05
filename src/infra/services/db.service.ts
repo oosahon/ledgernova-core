@@ -1,4 +1,4 @@
-import IDbService from '../../app/contracts/infra-services/db.contract';
+import IDbService from '../../app/contracts/infra/db.contract';
 import { db } from '../db';
 
 const dbService: IDbService = {

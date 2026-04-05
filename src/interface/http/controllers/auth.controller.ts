@@ -10,7 +10,7 @@ import {
 } from 'tsoa';
 import authUseCase from '../../../app/usecases/auth';
 import { IIndividualSignupReq } from '../../../app/contracts/dto/auth.dto';
-import { IApiError } from '../../../app/contracts/dto/errors.dto';
+import { IApiError } from '../handlers/error.handler';
 
 @Route('auth')
 @Tags('Auth')

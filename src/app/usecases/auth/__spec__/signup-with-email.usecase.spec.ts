@@ -5,7 +5,7 @@ import {
   ErrorForbidden,
 } from '../../../../shared/value-objects/error';
 import emailValue from '../../../../domain/user/value-objects/email.vo';
-import mockRequestContext from '../../../contracts/storage/__mocks__/request-context.mock';
+import mockRequestContext from '../../../contracts/app/__mocks__/request-context.mock';
 import mockDbService from '../../../../infra/services/__mocks__/db.service.mock';
 import mockUserRepo from '../../../../infra/db/repos/__mocks__/user.repo.impl.mock';
 import mockAccountingEntityRepo from '../../../../infra/db/repos/__mocks__/accounting-entity.repo.impl.mock';

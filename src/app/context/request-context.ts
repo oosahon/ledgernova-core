@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import IRequestContextData from '../../shared/types/request-context.types';
-import ILogger from '../../app/contracts/infra-services/logger.contract';
-import IRequestContext from '../../app/contracts/storage/request-context.contract';
+import ILogger from '../../app/contracts/infra/logger.contract';
+import IRequestContext from '../../app/contracts/app/request-context.contract';
 
 const asyncLocalStorage = new AsyncLocalStorage<IRequestContextData>();
 

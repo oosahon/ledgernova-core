@@ -1,8 +1,8 @@
 import { ErrorRequestHandler } from 'express';
 
 import httpErrorHandler from '../handlers/error.handler';
-import ILogger from '../../../app/contracts/infra-services/logger.contract';
-import IReporter from '../../../app/contracts/infra-services/reporter.contract';
+import ILogger from '../../../app/contracts/infra/logger.contract';
+import IReporter from '../../../app/contracts/infra/reporter.contract';
 
 const errorHandlerMiddleware = (
   logger: ILogger,
